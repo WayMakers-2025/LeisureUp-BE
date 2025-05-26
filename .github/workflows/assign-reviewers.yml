@@ -11,5 +11,5 @@ jobs:
     steps:
       - uses: kentaro-m/auto-assign-action@v2.0.0
         with:
-          configuration-path: '.github/workflows/auto-assign-config.yaml'
+          configuration-path: '.github/auto-assign-config.yaml'
 
