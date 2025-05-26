@@ -43,5 +43,4 @@ jobs:
 
       - name: Abort on test fail
         if: steps.test.outcome != true
-        run: |
-          echo "FAIL"
+        run: exit 1;
