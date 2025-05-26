@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - prod
+      - staging
+
+jobs:
+  run-test-and-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build application
+        uses: ./.github/workflows/composite/utils/build-application
+        with:
+          java_version: '21'
+
+      - name: Run test
+        shell: bash
+        run: |
+          ./gradlew test --build-cache --parallel
+
+      - name: Post test result
+        continue-on-error: true
+        uses: EnricoMi/publish-unit-test-result-action@v2.19.0
+        with:
+          files: ./build/test-results/**/*.xml
