@@ -15,7 +15,7 @@ on:
       - staging
 
 jobs:
-  run-test-and-report:
+  run-and-report-test:
     runs-on: ubuntu-latest
 
     steps:
