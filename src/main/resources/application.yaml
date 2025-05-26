@@ -1,3 +1,6 @@
 spring:
   application:
     name: LeisureUp-BE
+
+  jpa:
+    open-in-view: false
