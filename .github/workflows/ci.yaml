@@ -28,12 +28,20 @@ jobs:
           java_version: '21'
 
       - name: Run test
+        continue-on-error: true
+        id: test
         shell: bash
         run: |
           ./gradlew test --build-cache --parallel
 
       - name: Add test result as comment
+        if: always()
         continue-on-error: true
         uses: EnricoMi/publish-unit-test-result-action@v2.19.0
         with:
           files: ./build/test-results/**/*.xml
+
+      - name: Abort on test fail
+        if: steps.test.outcome != true
+        run: |
+          echo "FAIL"
