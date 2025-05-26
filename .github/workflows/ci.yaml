@@ -1,5 +1,12 @@
 name: CI
 
+# Required permission for test result comment
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
 on:
   pull_request:
     branches:
@@ -25,7 +32,7 @@ jobs:
         run: |
           ./gradlew test --build-cache --parallel
 
-      - name: Post test result
+      - name: Add test result as comment
         continue-on-error: true
         uses: EnricoMi/publish-unit-test-result-action@v2.19.0
         with:
