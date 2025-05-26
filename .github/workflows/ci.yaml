@@ -42,5 +42,5 @@ jobs:
           files: ./build/test-results/**/*.xml
 
       - name: Abort on test fail
-        if: steps.test.outcome != true
+        if: steps.test.outcome != success
         run: exit 1;
