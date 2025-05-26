@@ -1,5 +1,8 @@
 name: 'Assign reviewers'
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     types: [ opened, ready_for_review ]
