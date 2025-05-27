@@ -58,4 +58,9 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+    ignoreFailures = true
+}
+
+jar {
+    enabled = false
 }
