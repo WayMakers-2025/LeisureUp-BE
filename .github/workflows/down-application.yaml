@@ -1,0 +1,45 @@
+name: Down application
+
+on:
+  workflow_call:
+    inputs:
+      compose-file-name:
+        required: true
+        type: string
+        description: 'Name of a docker-compose file in server to down application'
+
+    secrets:
+      server-address:
+        required: true
+        description: 'An address of server'
+
+      server-id:
+        required: true
+        description: 'SSH user'
+
+      serve-key:
+        required: true
+        description: 'SSH key'
+
+jobs:
+  down-application:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Down composed containers
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.server-address }}
+          username: ${{ secrets.server-id }}
+          key: ${{ secrets.serve-key }}
+          script: |
+            docker compose -f "${{ inputs.compose-file-name }}" down || true
+
+      - name: Prune images
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.server-address }}
+          username: ${{ secrets.server-id }}
+          key: ${{ secrets.serve-key }}
+          script: |
+            docker image prune -af || true

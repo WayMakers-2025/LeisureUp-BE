@@ -1,0 +1,80 @@
+name: Up application
+
+on:
+  workflow_call:
+    inputs:
+      compose-file-name:
+        required: true
+        type: string
+        description: 'Name of a docker-compose file in server to up application'
+
+      image-tag:
+        required: true
+        type: string
+        description: 'Tag of an image to pull'
+
+    secrets:
+      server-address:
+        required: true
+        description: 'An address of server'
+
+      server-id:
+        required: true
+        description: 'SSH user'
+
+      serve-key:
+        required: true
+        description: 'SSH key'
+
+      docker-hub-id:
+        required: true
+        description: 'DockerHub ID'
+
+      docker-hub-pw:
+        required: true
+        description: 'DockerHub PW'
+
+env:
+  image-to-pull: 'waymakers/leisureupbe:${{ inputs.image-tag }}'
+  compose-file: ${{ inputs.compose-file-name }}
+  IMAGE_TAG: ${{ inputs.image-tag }}
+
+jobs:
+  up-application:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull docker image
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.server-address }}
+          username: ${{ secrets.server-id }}
+          key: ${{ secrets.serve-key }}
+          script: |
+            echo ${{ secrets.docker-hub-pw }} | \
+            docker login -u ${{ secrets.docker-hub-id }} --password-stdin
+            docker pull ${{ env.image-to-pull }}
+            docker logout
+
+      - name: Copy compose
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.server-address }}
+          username: ${{ secrets.server-id }}
+          key: ${{ secrets.serve-key }}
+          overwrite: true
+          source: ${{ env.compose-file }}
+          target: '/home/${{ secrets.server-id }}'
+
+      - name: Compose application
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.server-address }}
+          username: ${{ secrets.server-id }}
+          key: ${{ secrets.serve-key }}
+          envs: IMAGE_TAG
+          script: |
+            docker compose -f ${{ env.compose-file }} up -d
