@@ -1,12 +1,24 @@
 spring:
-  application:
-    name: LeisureUp-BE
+  application.name: LeisureUp-BE
+  threads.virtual.enabled: true
 
   datasource:
     url: jdbc:h2:mem:test
 
-  threads:
-    virtual:
-      enabled: true
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+
+logging:
+  level:
+    org.hibernate.SQL: debug

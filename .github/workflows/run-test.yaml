@@ -1,0 +1,55 @@
+name: Run test
+
+# Required permission for test result comment
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      comment-test-result:
+        required: true
+        type: boolean
+        description: 'Add test result comment in triggered pull request'
+        default: false
+
+env:
+  redis-port: '6379'
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build application
+        uses: ./.github/workflows/composite/utils/build-application
+
+      - name: Setup redis
+        uses: supercharge/redis-github-action@1.8.0
+        with:
+          redis-version: 'latest'
+          redis-port: ${{ env.redis-port }}
+
+      - name: Run test
+        continue-on-error: true
+        id: test
+        shell: bash
+        run: |
+          ./gradlew test --build-cache --parallel
+
+      - name: Add test result as comment
+        if: ${{ inputs.comment-test-result }}
+        continue-on-error: true
+        uses: EnricoMi/publish-unit-test-result-action@v2.19.0
+        with:
+          files: ./build/test-results/**/*.xml
+
+      - name: Abort on test fail
+        if: steps.test.outcome != 'success'
+        run: exit 1;
