@@ -1,0 +1,27 @@
+name: local-dev-compose
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql
+
+    ports:
+      - "3306:3306"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db-local
+      TZ: 'Asia/Seoul'
+
+    volumes:
+      - ./.local/.mysql:/var/lib/mysql
+
+    restart: on-failure
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+
+    restart: on-failure

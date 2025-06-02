@@ -1,0 +1,55 @@
+name: CD prod
+
+on:
+  push:
+    branches:
+      - prod
+
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  run-test-for-validation:
+    uses: ./.github/workflows/run-test.yaml
+    with:
+      comment-test-result: false
+
+  push-image:
+    needs: run-test-for-validation
+    uses: ./.github/workflows/push-docker-image.yaml
+    with:
+      tags: "${{ github.ref_name }}-${{ github.sha }}"
+    secrets:
+      docker-hub-id: ${{ secrets.DOCKER_HUB_ID }}
+      docker-hub-pw: ${{ secrets.DOCKER_HUB_PW }}
+      common-secret: ${{ secrets.COMMON_SECRET }}
+      prod-secret: ${{ secrets.PROD_SECRET }}
+      staging-secret: ${{ secrets.STAGING_SECRET }}
+
+  down-application:
+    needs: run-test-for-validation
+    uses: ./.github/workflows/down-application.yaml
+    with:
+      compose-file-name: 'docker-compose.prod.yaml'
+    secrets:
+      server-address: ${{ secrets.PROD_SERVER_ADDRESS }}
+      server-id: ${{ secrets.PROD_SERVER_ID }}
+      serve-key: ${{ secrets.PROD_SERVER_KEY }}
+
+  up-application:
+    needs:
+      - push-image
+      - down-application
+    uses: ./.github/workflows/up-application.yaml
+    with:
+      compose-file-name: 'docker-compose.prod.yaml'
+      image-tag: "${{ github.ref_name }}-${{ github.sha }}"
+    secrets:
+      server-address: ${{ secrets.PROD_SERVER_ADDRESS }}
+      server-id: ${{ secrets.PROD_SERVER_ID }}
+      serve-key: ${{ secrets.PROD_SERVER_KEY }}
+      docker-hub-id: ${{ secrets.DOCKER_HUB_ID }}
+      docker-hub-pw: ${{ secrets.DOCKER_HUB_PW }}

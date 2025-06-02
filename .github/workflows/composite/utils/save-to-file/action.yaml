@@ -1,0 +1,37 @@
+name: Save to file
+
+description: 'Save given context to file.'
+
+inputs:
+  context:
+    required: true
+    description: 'A context to be saved as a file'
+
+  file_dir:
+    required: true
+    description: 'A directory where file will exist'
+
+  file_name:
+    required: true
+    description: 'Name of the file to be saved'
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Check whether duplicate exists
+      shell: bash
+      run: |
+        if [ -f "${{ inputs.file_dir }}/${{ inputs.file_name }}" ]; then
+          exit 1
+        fi
+
+    - name: Create directory if not exists
+      shell: bash
+      run: |
+        mkdir -p "${{ inputs.file_dir }}"
+
+    - name: Save context to destination
+      shell: bash
+      run: |
+        echo "${{ inputs.context }}" > "${{ inputs.file_dir }}/${{ inputs.file_name }}"
