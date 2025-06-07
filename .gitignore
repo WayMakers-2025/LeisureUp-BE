@@ -5,6 +5,7 @@ src/main/resources/application-common-secret.yaml
 src/main/resources/application-prod-secret.yaml
 src/main/resources/application-staging-secret.yaml
 src/test/resources/application-common-test-secret.yaml
+ci-active
 
 HELP.md
 .gradle
