@@ -16,6 +16,11 @@ on:
         description: 'Add test result comment in triggered pull request'
         default: false
 
+    secrets:
+      common-test-secret:
+        required: true
+        description: 'COMMON_TEST_SECRET'
+
 env:
   redis-port: '6379'
 
@@ -26,6 +31,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup test secrets
+        uses: ./.github/workflows/composite/utils/setup-test-secrets
+        with:
+          common-test-context: ${{ secrets.common-test-secret }}
 
       - name: Build application
         uses: ./.github/workflows/composite/utils/build-application

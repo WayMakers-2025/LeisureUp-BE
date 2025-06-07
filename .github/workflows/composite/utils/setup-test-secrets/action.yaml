@@ -1,0 +1,20 @@
+name: Setup test secrets
+
+description: 'Setup secret property profiles for testing'
+
+inputs:
+  common-test-context:
+    required: true
+    description: 'Common secret property context for testing'
+
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Setup common test secret
+      uses: ./.github/workflows/composite/utils/save-to-file
+      with:
+        context: ${{ inputs.common-test-context }}
+        file_dir: 'src/test/resources'
+        file_name: 'application-common-test-secret.yaml'
