@@ -2,8 +2,10 @@ package org.leisureup;
 
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.openfeign.*;
+import org.springframework.data.jpa.repository.config.*;
 
+@EnableJpaAuditing
 @SpringBootApplication
 @EnableFeignClients(basePackages = "org.leisureup")
 public class LeisureUp {
