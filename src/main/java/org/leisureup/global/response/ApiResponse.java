@@ -1,22 +1,21 @@
 package org.leisureup.global.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class ApiResponse<T> {
-    private boolean success;
-    private T data;
-    private String message;
 
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(true, data, null);
+    private final boolean success;
+    private final int code;
+    private final T data;
+    private final String message;
+
+    public static <T> ApiResponse<T> success(int code, T data) {
+        return new ApiResponse<>(true, code, data, null);
     }
 
-    public static <T> ApiResponse<T> failure(String message) {
-        return new ApiResponse<>(false, null, message);
+    public static <T> ApiResponse<T> failure(int code, String message) {
+        return new ApiResponse<>(false, code, null, message);
     }
 }
