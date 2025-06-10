@@ -23,4 +23,10 @@ public class Interest {
     @Embedded
     private InterestInfo info;
 
+    public static Interest of(Member member, InterestInfo info) {
+        Interest interest = new Interest();
+        interest.member = member;
+        interest.info = InterestInfo.of(info);
+        return interest;
+    }
 }
