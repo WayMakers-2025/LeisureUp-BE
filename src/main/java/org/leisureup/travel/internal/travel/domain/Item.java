@@ -1,9 +1,8 @@
-package org.leisureup.travel.internal.item.domain;
+package org.leisureup.travel.internal.travel.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.leisureup.travel.internal.travel.domain.Travel;
 
 @Entity
 @AllArgsConstructor
