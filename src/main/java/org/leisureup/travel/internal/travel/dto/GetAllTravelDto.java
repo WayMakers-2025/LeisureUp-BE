@@ -2,6 +2,7 @@ package org.leisureup.travel.internal.travel.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.leisureup.travel.internal.travel.domain.Travel;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class GetAllTravelDto {
     private Long travelId;
 
