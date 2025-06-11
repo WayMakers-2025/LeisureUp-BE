@@ -8,8 +8,8 @@ public interface AppleOAuthRepository
         extends JpaRepository<AppleOAuth, Long> {
 
     @Query("""
-            select mid from AppleOAuth ao
-            right join ao.member.id mid
+            select m.id from AppleOAuth ao
+            right join ao.member m
             where ao.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(Long socialId);
