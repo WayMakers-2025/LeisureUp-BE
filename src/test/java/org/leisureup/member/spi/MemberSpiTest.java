@@ -10,6 +10,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.*;
 import org.junit.jupiter.params.provider.*;
 import org.leisureup.*;
+import org.leisureup.member.internal.domain.*;
 import org.leisureup.member.internal.repository.*;
 import org.mockito.invocation.*;
 import org.springframework.beans.factory.annotation.*;
@@ -27,6 +28,8 @@ class MemberSpiTest extends IntegrationTestSupport {
             invalidAppleId = 6L;
     @Autowired
     MemberSpi memberSpi;
+    @Autowired
+    MemberRepository memberRepo;
     @MockitoBean
     AppleOAuthRepository appleOAuthRepo;
     @MockitoBean
@@ -43,6 +46,14 @@ class MemberSpiTest extends IntegrationTestSupport {
     }
 
     private static Stream<Arguments> invalidSocialArgs() {
+        return Stream.of(
+                Arguments.of(SocialType.KAKAO, invalidKakaoId),
+                Arguments.of(SocialType.GOOGLE, invalidGoogleId),
+                Arguments.of(SocialType.APPLE, invalidAppleId)
+        );
+    }
+
+    private static Stream<Arguments> createNewMemberArgs() {
         return Stream.of(
                 Arguments.of(SocialType.KAKAO, invalidKakaoId),
                 Arguments.of(SocialType.GOOGLE, invalidGoogleId),
@@ -92,5 +103,27 @@ class MemberSpiTest extends IntegrationTestSupport {
         Optional<Long> id = memberSpi.getMemberIdWithSocial(type, socialId);
 
         assertThat(id).isEmpty();
+    }
+
+    @ParameterizedTest
+    @MethodSource("createNewMemberArgs")
+    @DisplayName("소셜 인증 타입에 따라 새로운 사용자를 생성할 수 있다.")
+    void createNewMember(SocialType type, Long socialId) {
+
+        String name = "test", email = "test@email";
+        Long id = memberSpi.saveNewMember(type, socialId, name, email);
+
+        Optional<Member> find = memberRepo.findById(id);
+
+        assertThat(id).isNotNull();
+        assertThat(find).isPresent();
+
+        var member = find.get();
+        assertThat(member).satisfies(
+                m -> assertThat(m.getId()).isEqualTo(id),
+                m -> assertThat(m.getNickname()).isEqualTo(name),
+                m -> assertThat(m.getEmail()).isEqualTo(email)
+        );
+
     }
 }
