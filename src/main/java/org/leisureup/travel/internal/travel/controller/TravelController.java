@@ -2,9 +2,9 @@ package org.leisureup.travel.internal.travel.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.leisureup.global.response.ApiResponse;
-import org.leisureup.travel.internal.travel.domain.Travel;
 import org.leisureup.travel.internal.travel.dto.CreateTravelDto;
 import org.leisureup.travel.internal.travel.dto.GetAllTravelDto;
+import org.leisureup.travel.internal.travel.dto.GetTravelDetailDto;
 import org.leisureup.travel.internal.travel.service.TravelService;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +26,14 @@ public class TravelController {
         return ApiResponse.success(
                 200,
                 travelService.getAllTravel()
+        );
+    }
+
+    @GetMapping("/travels/{id}")
+    public ApiResponse<GetTravelDetailDto> getTravelDetail(@PathVariable Long id){
+        return ApiResponse.success(
+                200,
+                travelService.getTravelDetail(id)
         );
     }
 

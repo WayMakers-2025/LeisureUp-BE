@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.leisureup.travel.internal.item.domain.Item;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
