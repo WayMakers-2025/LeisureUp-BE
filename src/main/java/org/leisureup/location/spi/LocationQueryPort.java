@@ -1,8 +1,6 @@
 package org.leisureup.location.spi;
 
-import org.leisureup.location.internal.dto.response.LocationResponse;
-
-import java.util.List;
+import java.util.*;
 
 public interface LocationQueryPort {
     LocationResponse getLocationById(Long locationId);

@@ -1,15 +1,10 @@
 package org.leisureup.travel.internal.travel.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.leisureup.location.internal.dto.response.LocationResponse;
-import org.leisureup.travel.internal.travel.domain.Travel;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.*;
+import java.util.*;
+import lombok.*;
+import org.leisureup.location.spi.*;
+import org.leisureup.travel.internal.travel.domain.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
