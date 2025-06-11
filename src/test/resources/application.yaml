@@ -2,8 +2,11 @@ spring:
   application.name: LeisureUp-BE
   threads.virtual.enabled: true
 
-  profiles.include:
-    - common-test-secret
+  profiles:
+    default: test
+    group:
+      test:
+        - common-test-secret
 
   datasource:
     url: jdbc:h2:mem:test
@@ -26,3 +29,4 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+    org.springframework.transaction: trace
