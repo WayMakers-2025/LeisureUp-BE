@@ -1,9 +1,7 @@
 package org.leisureup.location.spi;
 
-import org.leisureup.location.internal.dto.response.LocationResponse;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
+import java.util.*;
+import org.springframework.stereotype.*;
 
 @Component
 public class LocationQueryAdapter implements LocationQueryPort{

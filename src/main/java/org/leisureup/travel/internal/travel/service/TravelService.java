@@ -1,10 +1,9 @@
 package org.leisureup.travel.internal.travel.service;
 
 import lombok.*;
-import org.leisureup.global.exception.NotFound;
+import org.leisureup.global.exception.*;
 import org.leisureup.global.response.*;
-import org.leisureup.location.internal.dto.response.LocationResponse;
-import org.leisureup.location.spi.LocationQueryPort;
+import org.leisureup.location.spi.*;
 import org.leisureup.travel.internal.travel.domain.*;
 import org.leisureup.travel.internal.travel.dto.*;
 import org.leisureup.travel.internal.travel.repository.*;
