@@ -9,10 +9,10 @@ import org.leisureup.travel.internal.travel.domain.*;
 import org.leisureup.travel.internal.travel.dto.*;
 import org.leisureup.travel.internal.travel.repository.*;
 import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +29,9 @@ public class TravelService {
         return GetAllTravelDto.fromTravel(travels);
     }
 
-    public GetTravelDetailDto getTravelDetail(Long id){
-        Travel byId = travelRepository.findById(id)
+    @Transactional(readOnly = true)
+    public GetTravelDetailDto getTravelDetail(Long travelId){
+        Travel byId = travelRepository.findById(travelId)
                 .orElseThrow(()-> new NotFound("여행이 없습니다."));
         List<Long> locationIdList = new ArrayList<>();
 
