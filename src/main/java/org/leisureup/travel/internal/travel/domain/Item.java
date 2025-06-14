@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class Item {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long ItemId;
+
     private Long locationId;
 
     private int position;

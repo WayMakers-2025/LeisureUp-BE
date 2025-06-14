@@ -29,11 +29,11 @@ public class TravelController {
         );
     }
 
-    @GetMapping("/travels/{id}")
-    public ApiResponse<GetTravelDetailDto> getTravelDetail(@PathVariable Long id){
+    @GetMapping("/travels/{travelId}")
+    public ApiResponse<GetTravelDetailDto> getTravelDetail(@PathVariable Long travelId){
         return ApiResponse.success(
                 200,
-                travelService.getTravelDetail(id)
+                travelService.getTravelDetail(travelId)
         );
     }
 
