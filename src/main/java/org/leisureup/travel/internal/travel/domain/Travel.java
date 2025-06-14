@@ -3,8 +3,8 @@ package org.leisureup.travel.internal.travel.domain;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.leisureup.travel.internal.item.domain.Item;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,11 +14,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class Travel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long travelId;
 
     private String travelName;
+
+    private String travelDescription;
 
     private LocalDate travelDate;
 
