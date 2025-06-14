@@ -34,6 +34,9 @@ spring:
       port: 6379
       password:
 
+  cloud.openfeign.client.config.default:
+    logger-level: full
+
 springdoc:
   cache.disabled: true
   api-docs.groups.enabled: true
@@ -53,6 +56,10 @@ springdoc:
   show-actuator: true
   show-login-endpoint: true
   paths-to-match: /**
+
+feign:
+  tour-api:
+    url: http://apis.data.go.kr/B551011/KorService2
 
 logging:
   level:
