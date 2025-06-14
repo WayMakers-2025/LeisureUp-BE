@@ -31,7 +31,7 @@ public class LocationDescription {
      * @warning {@code TourApi} 에서 해당 정보는 {@code <a href="...">} 와 같은 태그로 제공됨. 그래서 파싱 제대로 안하면 이상할수도
      * 있음.
      */
-    @Column(length = 100)
+    @Lob
     private String homepageInfo;
 
     @Column(length = 30)
