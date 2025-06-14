@@ -27,6 +27,8 @@ spring:
       password:
 
 logging:
-  level:
-    org.hibernate.SQL: debug
-    org.springframework.transaction: trace
+  #  level:
+  #    org.hibernate.SQL: debug
+  #    org.springframework.transaction: trace
+  pattern:
+    dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul
