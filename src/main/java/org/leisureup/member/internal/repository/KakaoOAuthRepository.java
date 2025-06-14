@@ -8,8 +8,8 @@ public interface KakaoOAuthRepository
         extends JpaRepository<KakaoOAuth, Long> {
 
     @Query("""
-            select mid from KakaoOAuth ko
-            right join ko.member.id mid
+            select m.id from KakaoOAuth ko
+            right join ko.member m
             where ko.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(Long socialId);

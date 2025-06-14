@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoogleOAuth extends BaseTimeEntity {
 
     @Id
@@ -18,4 +19,7 @@ public class GoogleOAuth extends BaseTimeEntity {
     @JoinColumn(name = "member_id", nullable = false, updatable = false)
     private Member member;
 
+    public static GoogleOAuth of(Long socialId, Member member) {
+        return new GoogleOAuth(socialId, member);
+    }
 }

@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class AppleOAuth extends BaseTimeEntity {
 
     @Id
@@ -17,4 +18,8 @@ public class AppleOAuth extends BaseTimeEntity {
     @OneToOne(optional = false)
     @JoinColumn(name = "member_id", nullable = false, updatable = false)
     private Member member;
+
+    public static AppleOAuth of(Long socialId, Member member) {
+        return new AppleOAuth(socialId, member);
+    }
 }

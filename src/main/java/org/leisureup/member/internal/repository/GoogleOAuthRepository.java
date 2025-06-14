@@ -8,8 +8,8 @@ public interface GoogleOAuthRepository
         extends JpaRepository<GoogleOAuth, Long> {
 
     @Query("""
-            select mid from GoogleOAuth go
-            right join go.member.id mid
+            select m.id from GoogleOAuth go
+            right join go.member m
             where go.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(Long socialId);

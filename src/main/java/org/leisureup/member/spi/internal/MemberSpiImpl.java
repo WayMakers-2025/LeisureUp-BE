@@ -3,6 +3,7 @@ package org.leisureup.member.spi.internal;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+import org.leisureup.member.internal.domain.*;
 import org.leisureup.member.internal.repository.*;
 import org.leisureup.member.spi.*;
 import org.springframework.stereotype.*;
@@ -31,5 +32,17 @@ public class MemberSpiImpl implements MemberSpi {
     @Override
     public Optional<Long> getMemberIdWithSocial(SocialType type, Long socialId) {
         return socialAuths.get(type).findMemberIdBySocial(socialId);
+    }
+
+    @Override
+    public Long saveNewMember(
+            SocialType type, Long socialId,
+            String nickname, String email
+    ) {
+        Member save = memberRepo.save(Member.of(nickname, email));
+
+        socialAuths.get(type).save(socialId, save);
+
+        return save.getId();
     }
 }
