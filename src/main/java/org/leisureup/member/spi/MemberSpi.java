@@ -14,7 +14,7 @@ public interface MemberSpi {
      * 주어진 정보로 DB 에 저장된 사용자 ID 를 제공
      */
     Optional<Long> getMemberIdWithSocial(
-            SocialType type, Long socialId
+            SocialType type, String socialId
     );
 
     /**
@@ -22,7 +22,7 @@ public interface MemberSpi {
      */
     @Transactional
     Long saveNewMember(
-            SocialType type, Long socialId,
+            SocialType type, String socialId,
             String nickname, String email
     );
 }

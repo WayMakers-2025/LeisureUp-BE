@@ -20,12 +20,12 @@ import org.springframework.test.context.bean.override.mockito.*;
 class MemberSpiTest extends IntegrationTestSupport {
 
     private static final Long memberId = 1L;
-    private static final Long validKakaoId = 1L,
-            validGoogleId = 2L,
-            validAppleId = 3L;
-    private static final Long invalidKakaoId = 4L,
-            invalidGoogleId = 5L,
-            invalidAppleId = 6L;
+    private static final String validKakaoId = "1",
+            validGoogleId = "2",
+            validAppleId = "3";
+    private static final String invalidKakaoId = "4",
+            invalidGoogleId = "5",
+            invalidAppleId = "6";
     @Autowired
     MemberSpi memberSpi;
     @Autowired
@@ -62,24 +62,24 @@ class MemberSpiTest extends IntegrationTestSupport {
     }
 
     private static Optional<Long> setupMockAnswer(
-            Long validId, InvocationOnMock invocation
+            String validId, InvocationOnMock invocation
     ) {
-        Long id = invocation.getArgument(0, Long.class);
+        String id = invocation.getArgument(0, String.class);
         Long result = validId.equals(id) ? memberId : null;
         return Optional.ofNullable(result);
     }
 
     @BeforeEach
     void setUp() {
-        when(kakaoOAuthRepo.findMemberIdBySocial(anyLong()))
+        when(kakaoOAuthRepo.findMemberIdBySocial(anyString()))
                 .thenAnswer(invocation ->
                         setupMockAnswer(validKakaoId, invocation));
 
-        when(googleOAuthRepo.findMemberIdBySocial(anyLong()))
+        when(googleOAuthRepo.findMemberIdBySocial(anyString()))
                 .thenAnswer(invocation ->
                         setupMockAnswer(validGoogleId, invocation));
 
-        when(appleOAuthRepo.findMemberIdBySocial(anyLong()))
+        when(appleOAuthRepo.findMemberIdBySocial(anyString()))
                 .thenAnswer(invocation ->
                         setupMockAnswer(validAppleId, invocation));
     }
@@ -87,7 +87,7 @@ class MemberSpiTest extends IntegrationTestSupport {
     @ParameterizedTest
     @MethodSource("validSocialArgs")
     @DisplayName("등록된 유저는 소셜인증 타입과 번호에 따라 번호를 식별할 수 있다.")
-    void getMemberId(SocialType type, Long socialId) {
+    void getMemberId(SocialType type, String socialId) {
 
         Optional<Long> id = memberSpi.getMemberIdWithSocial(type, socialId);
 
@@ -98,7 +98,7 @@ class MemberSpiTest extends IntegrationTestSupport {
     @ParameterizedTest
     @MethodSource("invalidSocialArgs")
     @DisplayName("등록되지 않은 유저는 번호를 식별할 수 없다.")
-    void cannotGetMemberId(SocialType type, Long socialId) {
+    void cannotGetMemberId(SocialType type, String socialId) {
 
         Optional<Long> id = memberSpi.getMemberIdWithSocial(type, socialId);
 
@@ -108,7 +108,7 @@ class MemberSpiTest extends IntegrationTestSupport {
     @ParameterizedTest
     @MethodSource("createNewMemberArgs")
     @DisplayName("소셜 인증 타입에 따라 새로운 사용자를 생성할 수 있다.")
-    void createNewMember(SocialType type, Long socialId) {
+    void createNewMember(SocialType type, String socialId) {
 
         String name = "test", email = "test@email";
         Long id = memberSpi.saveNewMember(type, socialId, name, email);

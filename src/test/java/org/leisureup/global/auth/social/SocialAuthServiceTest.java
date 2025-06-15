@@ -23,9 +23,9 @@ class SocialAuthServiceTest extends IntegrationTestSupport {
 
     private static final String preAssignedToken = "사용자는 이전에 가입했었다.";
     private static final String newSocialToken = "사용자는 현재 처음 가입중이다.";
-    private static final Long kakaoSignIn = 1L, kakaoSignUp = 2L;
-    private static final Long appleSignIn = 3L, appleSignUp = 4L;
-    private static final Long googleSignIn = 5L, googleSignUp = 6L;
+    private static final String kakaoSignIn = "1", kakaoSignUp = "2";
+    private static final String appleSignIn = "3", appleSignUp = "4";
+    private static final String googleSignIn = "5", googleSignUp = "6";
     private static Long memberId;
     @Autowired
     SocialAuthService socialAuthService;
@@ -136,7 +136,7 @@ class SocialAuthServiceTest extends IntegrationTestSupport {
                 .isPresent();
     }
 
-    void setupOAuthClientMock(Long idOnSignIn, Long idOnSignUp, OAuthClient client) {
+    void setupOAuthClientMock(String idOnSignIn, String idOnSignUp, OAuthClient client) {
         when(client.fetchInfo(anyString()))
                 .thenAnswer(invocation -> {
                     String token = invocation.getArgument(0, String.class);
