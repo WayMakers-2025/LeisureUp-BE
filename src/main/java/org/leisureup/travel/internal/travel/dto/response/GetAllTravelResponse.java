@@ -1,4 +1,4 @@
-package org.leisureup.travel.internal.travel.dto;
+package org.leisureup.travel.internal.travel.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Getter
-public class GetAllTravelDto {
+public class GetAllTravelResponse {
     private Long travelId;
 
     private String travelName;
@@ -23,10 +23,10 @@ public class GetAllTravelDto {
 
     private LocalDate travelDate;
 
-    public static List<GetAllTravelDto> fromTravel(List<Travel> travels) {
-        List<GetAllTravelDto> dtos = new ArrayList<>();
+    public static List<GetAllTravelResponse> fromTravel(List<Travel> travels) {
+        List<GetAllTravelResponse> dtos = new ArrayList<>();
         for (Travel t : travels) {
-            GetAllTravelDto build = GetAllTravelDto.builder()
+            GetAllTravelResponse build = GetAllTravelResponse.builder()
                     .travelId(t.getTravelId())
                     .travelName(t.getTravelName())
                     .travelDescription(t.getTravelDescription())

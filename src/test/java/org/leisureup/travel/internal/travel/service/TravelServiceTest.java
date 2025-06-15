@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.leisureup.global.JwtAuthIfPossible;
 import org.leisureup.global.exception.NotFound;
 import org.leisureup.travel.internal.travel.domain.Travel;
-import org.leisureup.travel.internal.travel.dto.GetAllTravelDto;
+import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
 import org.leisureup.travel.internal.travel.repository.TravelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,7 +50,7 @@ class TravelServiceTest {
         travelRepository.save(travel2);
 
         // when
-        List<GetAllTravelDto> result = travelService.getAllTravel(1L);
+        List<GetAllTravelResponse> result = travelService.getAllTravel(1L);
 
         // then
         assertThat(result).hasSize(2);

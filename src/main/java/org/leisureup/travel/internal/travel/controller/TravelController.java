@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.leisureup.global.AuthHolder;
 import org.leisureup.global.JwtAuthRequired;
 import org.leisureup.global.response.ApiResponse;
-import org.leisureup.travel.internal.travel.dto.CreateTravelDto;
-import org.leisureup.travel.internal.travel.dto.GetAllTravelDto;
-import org.leisureup.travel.internal.travel.dto.GetTravelDetailDto;
+import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
+import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
+import org.leisureup.travel.internal.travel.dto.response.GetTravelDetailResponse;
 import org.leisureup.travel.internal.travel.service.TravelService;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,7 @@ public class TravelController {
      * 2) 하단의 경로 탭을 누른 경우
      */
     @GetMapping("/travels")
-    public ApiResponse<List<GetAllTravelDto>> getAllTravel(){
+    public ApiResponse<List<GetAllTravelResponse>> getAllTravel(){
         Long memberId = authHolder.getMemberId();
         return ApiResponse.success(
                 200,
@@ -35,7 +35,7 @@ public class TravelController {
     }
 
     @GetMapping("/travels/{travelId}")
-    public ApiResponse<GetTravelDetailDto> getTravelDetail(@PathVariable Long travelId){
+    public ApiResponse<GetTravelDetailResponse> getTravelDetail(@PathVariable Long travelId){
         Long memberId = authHolder.getMemberId();
         return ApiResponse.success(
                 200,
@@ -43,7 +43,12 @@ public class TravelController {
         );
     }
 
-    public ApiResponse<?> createTravel(CreateTravelDto createTravelDto) {
-        return travelService.createTravel(createTravelDto);
+//    @PostMapping("/travels/{travelId}")
+//    public ApiResponse<?> addItem(@PathVariable Long travelId){
+//        travelService.addItem();
+//    }
+
+    public ApiResponse<?> createTravel(CreateTravelRequest createTravelRequest) {
+        return travelService.createTravel(createTravelRequest);
     }
 }

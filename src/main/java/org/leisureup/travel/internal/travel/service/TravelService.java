@@ -5,7 +5,9 @@ import org.leisureup.global.exception.*;
 import org.leisureup.global.response.*;
 import org.leisureup.location.spi.*;
 import org.leisureup.travel.internal.travel.domain.*;
-import org.leisureup.travel.internal.travel.dto.*;
+import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
+import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
+import org.leisureup.travel.internal.travel.dto.response.GetTravelDetailResponse;
 import org.leisureup.travel.internal.travel.repository.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,27 +23,27 @@ public class TravelService {
     private final LocationQueryPort locationQueryPort;
 
     @Transactional(readOnly = true)
-    public List<GetAllTravelDto> getAllTravel(Long memberId){
+    public List<GetAllTravelResponse> getAllTravel(Long memberId){
         List<Travel> travels = travelRepository.findByMemberId((memberId));
         if (travels.isEmpty()){
             throw new NotFound("생성된 여행이 없습니다.");
         }
-        return GetAllTravelDto.fromTravel(travels);
+        return GetAllTravelResponse.fromTravel(travels);
     }
 
     @Transactional(readOnly = true)
-    public GetTravelDetailDto getTravelDetail(Long travelId, Long memberId){
+    public GetTravelDetailResponse getTravelDetail(Long travelId, Long memberId){
         Travel byId = travelRepository.findByTravelIdAndMemberId(travelId,memberId)
                 .orElseThrow(()-> new NotFound("여행이 없습니다."));
         List<Long> locationIdList = new ArrayList<>();
 
         byId.getItems().stream().forEach((item)->{locationIdList.add(item.getLocationId());});
         List<LocationResponse> locationListById = locationQueryPort.getLocationListById(locationIdList);
-        return GetTravelDetailDto.fromEntity(byId, locationListById);
+        return GetTravelDetailResponse.fromEntity(byId, locationListById);
     }
 
-    public ApiResponse<?> createTravel(CreateTravelDto createTravelDto) {
-        Travel entity = createTravelDto.toEntity();
+    public ApiResponse<?> createTravel(CreateTravelRequest createTravelRequest) {
+        Travel entity = createTravelRequest.toEntity();
         try {
             Travel saved = travelRepository.save(entity);
             return ApiResponse.success(201, "여행 정보가 저장되었습니다.");

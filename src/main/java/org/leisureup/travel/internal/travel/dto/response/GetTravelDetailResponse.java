@@ -1,4 +1,4 @@
-package org.leisureup.travel.internal.travel.dto;
+package org.leisureup.travel.internal.travel.dto.response;
 
 import java.time.*;
 import java.util.*;
@@ -10,15 +10,15 @@ import org.leisureup.travel.internal.travel.domain.*;
 @NoArgsConstructor
 @Builder
 @Getter
-public class GetTravelDetailDto {
+public class GetTravelDetailResponse {
     private Long travelId;
     private String travelName;
     private String travelDescription;
     private LocalDate travelDate;
     private List<LocationResponse> locations;
 
-    public static GetTravelDetailDto fromEntity(Travel travel, List<LocationResponse> locations) {
-        return GetTravelDetailDto.builder()
+    public static GetTravelDetailResponse fromEntity(Travel travel, List<LocationResponse> locations) {
+        return GetTravelDetailResponse.builder()
                 .travelId(travel.getTravelId())
                 .travelName(travel.getTravelName())
                 .travelDescription(travel.getTravelDescription())
