@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.leisureup.global.AuthHolder;
 import org.leisureup.global.JwtAuthRequired;
 import org.leisureup.global.response.ApiResponse;
+import org.leisureup.travel.internal.travel.dto.request.AddItemRequest;
 import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
 import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
 import org.leisureup.travel.internal.travel.dto.response.GetTravelDetailResponse;
@@ -43,10 +44,15 @@ public class TravelController {
         );
     }
 
-//    @PostMapping("/travels/{travelId}")
-//    public ApiResponse<?> addItem(@PathVariable Long travelId){
-//        travelService.addItem();
-//    }
+    @PostMapping("/travels/{travelId}")
+    public ApiResponse<String> addItem(@PathVariable Long travelId,
+                                  AddItemRequest addItemRequest){
+        Long memberId = authHolder.getMemberId();
+        return ApiResponse.success(
+                200,
+                travelService.addItem(travelId, addItemRequest.getLocationId(), memberId)
+        );
+    }
 
     public ApiResponse<?> createTravel(CreateTravelRequest createTravelRequest) {
         return travelService.createTravel(createTravelRequest);

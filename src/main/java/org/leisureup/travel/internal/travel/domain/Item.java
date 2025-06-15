@@ -2,6 +2,7 @@ package org.leisureup.travel.internal.travel.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 public class Item {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ItemId;
@@ -19,4 +21,12 @@ public class Item {
 
     @ManyToOne
     private Travel travel;
+
+    public static Item buildItem(Long locationId, int position, Travel travel) {
+        return Item.builder()
+                .locationId(locationId)
+                .position(position)
+                .travel(travel)
+                .build();
+    }
 }
