@@ -20,8 +20,9 @@ public class TravelService {
     private final TravelRepository travelRepository;
     private final LocationQueryPort locationQueryPort;
 
-    public List<GetAllTravelDto> getAllTravel(){
-        List<Travel> travels = travelRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<GetAllTravelDto> getAllTravel(Long memberId){
+        List<Travel> travels = travelRepository.findByMemberId((memberId));
         if (travels.isEmpty()){
             throw new NotFound("생성된 여행이 없습니다.");
         }
@@ -29,8 +30,8 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
-    public GetTravelDetailDto getTravelDetail(Long travelId){
-        Travel byId = travelRepository.findById(travelId)
+    public GetTravelDetailDto getTravelDetail(Long travelId, Long memberId){
+        Travel byId = travelRepository.findByTravelIdAndMemberId(travelId,memberId)
                 .orElseThrow(()-> new NotFound("여행이 없습니다."));
         List<Long> locationIdList = new ArrayList<>();
 
