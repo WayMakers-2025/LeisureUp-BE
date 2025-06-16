@@ -113,7 +113,7 @@ class SocialAuthServiceTest extends IntegrationTestSupport {
     @MethodSource("signUpRequests")
     @DisplayName("가입하지 않은 사용자는 소셜 인증을 통해 가입할 수 있다.")
     void signUp(SignInUpRequest req) {
-        log.info("start");
+
         var response = socialAuthService.signInOrSignUp(req);
         Long newMemberId = response.id();
 
@@ -137,17 +137,18 @@ class SocialAuthServiceTest extends IntegrationTestSupport {
     }
 
     void setupOAuthClientMock(String idOnSignIn, String idOnSignUp, OAuthClient client) {
-        when(client.fetchInfo(anyString()))
-                .thenAnswer(invocation -> {
-                    String token = invocation.getArgument(0, String.class);
 
-                    if (preAssignedToken.equals(token)) {
-                        return OAuthResponse.of(idOnSignIn, "signIn", "signIn");
-                    } else if (newSocialToken.equals(token)) {
-                        return OAuthResponse.of(idOnSignUp, "signUp", "signUp");
-                    }
+        doAnswer(invocation -> {
+            String token = invocation.getArgument(0, String.class);
 
-                    throw new RuntimeException();
-                });
+            if (preAssignedToken.equals(token)) {
+                return OAuthResponse.of(idOnSignIn, "signIn", "signIn");
+            } else if (newSocialToken.equals(token)) {
+                return OAuthResponse.of(idOnSignUp, "signUp", "signUp");
+            }
+
+            throw new RuntimeException();
+        }).when(client).fetchInfo(anyString());
+
     }
 }
