@@ -12,4 +12,12 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             where l.id = :id
             """)
     Optional<Location> findByIdFetchingCategory(Long id);
+
+    @Query("""
+            select l from Location l
+            right join fetch l.locationCategory
+            where l.id in :locationIds
+            """)
+    List<Location> findAllByLocationIds(List<Long> locationIds);
+
 }
