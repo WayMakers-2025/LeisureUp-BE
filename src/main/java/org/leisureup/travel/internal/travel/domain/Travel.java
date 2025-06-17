@@ -25,6 +25,8 @@ public class Travel {
 
     private LocalDate travelDate;
 
+    private Long memberId;
+
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Item> items = new ArrayList<>();
