@@ -15,7 +15,7 @@ public class KakaoSocialAuth implements SocialAuth {
     private final KakaoOAuthRepository repository;
 
     @Override
-    public Optional<Long> findMemberIdBySocial(Long socialId) {
+    public Optional<Long> findMemberIdBySocial(String socialId) {
         return repository.findMemberIdBySocial(socialId);
     }
 
@@ -26,7 +26,7 @@ public class KakaoSocialAuth implements SocialAuth {
 
     @Override
     @Transactional
-    public void save(Long socialId, Member member) {
+    public void save(String socialId, Member member) {
         repository.save(KakaoOAuth.of(socialId, member));
     }
 }

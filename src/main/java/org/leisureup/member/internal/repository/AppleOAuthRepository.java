@@ -12,5 +12,5 @@ public interface AppleOAuthRepository
             right join ao.member m
             where ao.id = :socialId
             """)
-    Optional<Long> findMemberIdBySocial(Long socialId);
+    Optional<Long> findMemberIdBySocial(String socialId);
 }

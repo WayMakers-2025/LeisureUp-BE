@@ -10,7 +10,7 @@ public interface SocialAuth {
     /**
      * {@code socialId} 를 통해 DB 에 저장된 사용자 ID 를 제공
      */
-    Optional<Long> findMemberIdBySocial(Long socialId);
+    Optional<Long> findMemberIdBySocial(String socialId);
 
     SocialType getSocialAuthType();
 
@@ -18,5 +18,5 @@ public interface SocialAuth {
      * 소셜 인증 repository 에 해당 정보를 생성 (회원가입용)
      */
     @Transactional
-    void save(Long socialId, Member member);
+    void save(String socialId, Member member);
 }

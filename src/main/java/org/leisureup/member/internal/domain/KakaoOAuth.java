@@ -13,13 +13,13 @@ import lombok.*;
 public class KakaoOAuth extends BaseTimeEntity {
 
     @Id
-    private Long id;
+    private String id;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "member_id", nullable = false, updatable = false)
     private Member member;
 
-    public static KakaoOAuth of(Long socialId, Member member) {
+    public static KakaoOAuth of(String socialId, Member member) {
         return new KakaoOAuth(socialId, member);
     }
 }
