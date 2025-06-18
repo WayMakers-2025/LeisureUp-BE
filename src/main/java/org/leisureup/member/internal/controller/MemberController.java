@@ -3,6 +3,7 @@ package org.leisureup.member.internal.controller;
 import jakarta.validation.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.leisureup.global.*;
 import org.leisureup.global.exception.*;
 import org.leisureup.global.response.*;
 import org.leisureup.member.internal.dto.request.*;
@@ -16,9 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MemberController {
 
-    // TODO : Request header 의 jwt 로 member id 가져오는 기능 필요
-
     private final MemberService memberService;
+    private final AuthHolder authHolder;
 
     private static PageRequest toPageRequest(int page, int size) {
 
@@ -29,11 +29,12 @@ public class MemberController {
         return PageRequest.of(page, Math.min(size, 100));
     }
 
-    // 멤버 정보 조회
-    @GetMapping
+    @GetMapping     // 멤버 정보 조회
+    @JwtAuthRequired
     public ApiResponse<GetMemberResponse> getMember() {
-        // TODO : 완성하기
-        throw new NotImplemented("API /member not implemented yet");
+        Long memberId = authHolder.getMemberId();
+        GetMemberResponse resp = memberService.getMember(memberId);
+        return ApiResponse.success(200, resp);
     }
 
     // 니즈 수집 질문 응답 저장

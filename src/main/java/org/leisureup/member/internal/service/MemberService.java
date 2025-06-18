@@ -17,6 +17,9 @@ public class MemberService {
     private final MemberRepository memberRepo;
     private final InterestRepository interestRepo;
 
+    /**
+     * 사용자 정보를 조회한다.
+     */
     public GetMemberResponse getMember(Long memberId) {
         Member find = memberRepo.findById(memberId)
                 .orElseThrow(() -> new NotFound("Member not found"));
