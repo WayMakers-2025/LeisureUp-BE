@@ -4,10 +4,12 @@ import jakarta.transaction.*;
 import java.util.*;
 import lombok.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.location.spi.*;
 import org.leisureup.member.internal.domain.*;
 import org.leisureup.member.internal.dto.request.*;
 import org.leisureup.member.internal.dto.response.*;
 import org.leisureup.member.internal.repository.*;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
 @Service
@@ -16,6 +18,8 @@ public class MemberService {
 
     private final MemberRepository memberRepo;
     private final InterestRepository interestRepo;
+    private final PickRepository pickRepo;
+    private final LocationQueryPort locationQueryPort;
 
     /**
      * 사용자 정보를 조회한다.
@@ -47,6 +51,30 @@ public class MemberService {
         }
 
         interestRepo.save(Interest.of(member, savingInfo));
+    }
+
+
+    /**
+     * 사용자 찜 장소 목록을 조회한다.
+     */
+    public PageResponse<PickLocation> getPickLocations(
+            Long memberId, PageRequest req
+    ) {
+        Page<Pick> pickLocations = pickRepo.findAllByMemberId(memberId, req);
+
+        if (pickLocations.isEmpty()) {
+            return PageResponse.of(pickLocations, Collections.emptyList());
+        }
+
+        List<Long> locationIds = pickLocations.map(Pick::getLocationId)
+                .getContent();
+
+        List<PickLocation> contents = locationQueryPort
+                .getLocationListById(locationIds).stream()
+                .map(PickLocation::of)
+                .toList();
+
+        return PageResponse.of(pickLocations, contents);
     }
 
 }

@@ -47,8 +47,9 @@ public class MemberController {
         throw new NotImplemented("API /member/interest not implemented yet");
     }
 
-    // 찜 목록 조회
-    @GetMapping("/picks")
+
+    @GetMapping("/picks")       // 찜 목록 조회
+    @JwtAuthRequired
     public ApiResponse<PageResponse<PickLocation>> getPickLocations(
             @RequestParam(value = "page", defaultValue = "0")
             int page,
@@ -56,8 +57,10 @@ public class MemberController {
             int size
     ) {
         PageRequest req = toPageRequest(page, size);
-        // TODO : 완성하기
-        throw new NotImplemented("API /member/picks (GET) not implemented yet");
+        Long memberId = authHolder.getMemberId();
+
+        var resp = memberService.getPickLocations(memberId, req);
+        return ApiResponse.success(200, resp);
     }
 
     // 장소 찜 저장
