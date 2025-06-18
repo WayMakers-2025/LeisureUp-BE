@@ -11,7 +11,6 @@ import org.leisureup.global.auth.dto.response.*;
 import org.leisureup.global.auth.token.service.*;
 import org.leisureup.member.spi.*;
 import org.springframework.stereotype.*;
-import org.springframework.transaction.annotation.*;
 
 @Slf4j
 @Service
@@ -43,7 +42,6 @@ public class SocialAuthService {
     /**
      * 소셜 인증 token 을 통해 로그인하거나 회원가입한다.
      */
-    @Transactional(readOnly = true)
     public SignInUpResponse signInOrSignUp(SignInUpRequest req) {
 
         // OAuth 로 사용자 정보를 가져온다.

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 
 public record SignInUpRequest(
         @NotNull AuthType authType,
-        @NotNull String token
+        @NotNull @NotBlank String token
 ) {
 
     public enum AuthType {
