@@ -1,6 +1,5 @@
 package org.leisureup.member.internal.service;
 
-import jakarta.transaction.*;
 import java.util.*;
 import lombok.*;
 import org.leisureup.global.exception.*;
@@ -11,6 +10,7 @@ import org.leisureup.member.internal.dto.response.*;
 import org.leisureup.member.internal.repository.*;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -77,4 +77,27 @@ public class MemberService {
         return PageResponse.of(pickLocations, contents);
     }
 
+    /**
+     * 어느 장소를 찜 목록에 저장한다.
+     */
+    @Transactional
+    public void savePickLocation(Long memberId, SavePickLocationRequest req) {
+
+        Long locationId = req.locationId();
+
+        if (locationQueryPort.notExists(locationId)) {
+            throw new NotFound("Location not found");
+        }
+
+        Member find = memberRepo.findById(memberId)
+                .orElseThrow(() -> new NotFound("Member not found"));
+
+        PickCompositeKey key = new PickCompositeKey(find, locationId);
+        if (pickRepo.existsById(key)) {
+            throw new DuplicatePickException("Pick already exists");
+        }
+
+        Pick newPick = Pick.of(find, locationId);
+        pickRepo.save(newPick);
+    }
 }

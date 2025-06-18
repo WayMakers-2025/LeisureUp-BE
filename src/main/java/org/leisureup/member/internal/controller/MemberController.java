@@ -63,13 +63,16 @@ public class MemberController {
         return ApiResponse.success(200, resp);
     }
 
-    // 장소 찜 저장
-    @PostMapping("/picks")
+
+    @PostMapping("/picks")      // 장소 찜 저장
+    @JwtAuthRequired
     public ApiResponse<?> savePickLocation(
-            @Valid SavePickLocationRequest req
+            @Valid @RequestBody SavePickLocationRequest req
     ) {
-        // TODO : 완성하기
-        throw new NotImplemented("API /member/picks (POST) not implemented yet");
+        Long memberId = authHolder.getMemberId();
+        memberService.savePickLocation(memberId, req);
+
+        return ApiResponse.success(201, null);
     }
 
     // 찜 장소 삭제

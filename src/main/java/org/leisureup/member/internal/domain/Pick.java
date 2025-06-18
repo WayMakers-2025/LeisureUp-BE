@@ -20,4 +20,13 @@ public class Pick extends BaseTimeEntity {
     @Id
     @Column(name = "b_location_id", nullable = false, updatable = false)
     private long locationId;
+
+    private Pick(Member member, long locationId) {
+        this.member = member;
+        this.locationId = locationId;
+    }
+
+    public static Pick of(Member member, long locationId) {
+        return new Pick(member, locationId);
+    }
 }
