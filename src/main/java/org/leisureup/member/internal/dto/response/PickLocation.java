@@ -20,16 +20,23 @@ public record PickLocation(
         String name = lResp.title();
 
         Desc desc = lResp.description();
-        String th1 = desc.largeThumbnail();
-        String th2 = desc.smallThumbnail();
+        String th1 = desc != null ? desc.largeThumbnail() : "";
+        String th2 = desc != null ? desc.smallThumbnail() : "";
 
-        Category cat = switch (lResp.category()) {
-            case EARTH -> Category.EARTH;
-            case WATER -> Category.WATER;
-            case SKY -> Category.SKY;
-            default -> Category.OTHER;
-        };
+        Category category;
+        Cat cat = lResp.category();
 
-        return new PickLocation(id, name, th1, th2, cat);
+        if (cat == null) {
+            category = Category.OTHER;
+        } else {
+            category = switch (cat) {
+                case EARTH -> Category.EARTH;
+                case WATER -> Category.WATER;
+                case SKY -> Category.SKY;
+                default -> Category.OTHER;
+            };
+        }
+
+        return new PickLocation(id, name, th1, th2, category);
     }
 }
