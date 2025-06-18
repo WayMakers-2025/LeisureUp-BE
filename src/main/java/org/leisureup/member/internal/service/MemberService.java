@@ -100,4 +100,20 @@ public class MemberService {
         Pick newPick = Pick.of(find, locationId);
         pickRepo.save(newPick);
     }
+
+    /**
+     * 찜 목록의 어느 장소를 삭제한다.
+     */
+    @Transactional
+    public void deletePickLocation(Long memberId, Long locationId) {
+
+        Member find = memberRepo.findById(memberId)
+                .orElseThrow(() -> new NotFound("Member not found"));
+
+        PickCompositeKey key = new PickCompositeKey(find, locationId);
+        Pick pick = pickRepo.findById(key)
+                .orElseThrow(() -> new NotFound("Pick not found"));
+
+        pickRepo.delete(pick);
+    }
 }

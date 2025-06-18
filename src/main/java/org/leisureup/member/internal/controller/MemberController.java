@@ -75,13 +75,16 @@ public class MemberController {
         return ApiResponse.success(201, null);
     }
 
-    // 찜 장소 삭제
-    @DeleteMapping("/picks/{locationId}")
+
+    @DeleteMapping("/picks/{locationId}")       // 찜 장소 삭제
+    @JwtAuthRequired
     public ApiResponse<?> deletePickLocation(
             @Valid @Positive @NotNull
             @PathVariable Long locationId
     ) {
-        // TODO : 완성하기
-        throw new NotImplemented("API /member/pick/{locationId} not implemented yet");
+        Long memberId = authHolder.getMemberId();
+        memberService.deletePickLocation(memberId, locationId);
+
+        return ApiResponse.success(204, null);
     }
 }
