@@ -54,6 +54,16 @@ public class TravelController {
         );
     }
 
+    @DeleteMapping("/travels/{travelId}")
+    public ApiResponse<String> deleteTravel(@PathVariable Long travelId){
+        Long memberId = authHolder.getMemberId();
+        return ApiResponse.success(
+                200,
+                travelService.deleteTravel(travelId, memberId)
+        );
+    }
+
+
     public ApiResponse<?> createTravel(CreateTravelRequest createTravelRequest) {
         return travelService.createTravel(createTravelRequest);
     }

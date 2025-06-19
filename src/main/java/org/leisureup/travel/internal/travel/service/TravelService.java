@@ -75,6 +75,15 @@ public class TravelService {
                 .orElseThrow(()-> new NotFound("여행이 없습니다."));
     }
 
+    public String deleteTravel(Long travelId, Long memberId){
+        try{
+            travelRepository.deleteByTravelIdAndMemberId(travelId, memberId);
+        } catch (Exception e){
+            throw new NotFound("여행이 없습니다.");
+        }
+        return "성공적으로 삭제되었습니다.";
+    }
+
     public ApiResponse<?> createTravel(CreateTravelRequest createTravelRequest) {
         Travel entity = createTravelRequest.toEntity();
         try {
