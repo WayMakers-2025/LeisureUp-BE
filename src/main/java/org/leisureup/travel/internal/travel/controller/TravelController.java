@@ -63,8 +63,9 @@ public class TravelController {
         );
     }
 
-
-    public ApiResponse<?> createTravel(CreateTravelRequest createTravelRequest) {
-        return travelService.createTravel(createTravelRequest);
+    @PostMapping("/travels")
+    public ApiResponse<String> createTravel(CreateTravelRequest createTravelRequest) {
+        Long memberId = authHolder.getMemberId();
+        return travelService.createTravel(createTravelRequest, memberId);
     }
 }
