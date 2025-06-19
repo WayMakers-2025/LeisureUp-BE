@@ -18,8 +18,16 @@ public class CatOther extends Category {
         super(name, categoryCode);
     }
 
+    private CatOther(String name, String categoryCode, String recommendationCode) {
+        super(name, categoryCode, recommendationCode);
+    }
+
     public static CatOther of(String name, String code) {
         return new CatOther(name, code);
+    }
+
+    public static CatOther of(String name, String code, String recommendationCode) {
+        return new CatOther(name, code, recommendationCode);
     }
 
     @Override

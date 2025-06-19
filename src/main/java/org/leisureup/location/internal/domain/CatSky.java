@@ -18,8 +18,16 @@ public class CatSky extends Category {
         super(name, categoryCode);
     }
 
+    private CatSky(String name, String categoryCode, String recommendationCode) {
+        super(name, categoryCode, recommendationCode);
+    }
+
     public static CatSky of(String name, String categoryCode) {
         return new CatSky(name, categoryCode);
+    }
+
+    public static CatSky of(String name, String categoryCode, String recommendationCode) {
+        return new CatSky(name, categoryCode, recommendationCode);
     }
 
     @Override
