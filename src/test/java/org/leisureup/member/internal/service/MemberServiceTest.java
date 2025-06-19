@@ -47,11 +47,10 @@ class MemberServiceTest extends IntegrationTestSupport {
     @MockitoBean
     LocationQueryPort locationQueryPort;
 
-    private static SaveInterestRequest genReq(int ageRange) {
+    private static SaveInterestRequest genReq(AgeRange ageRange) {
         return new SaveInterestRequest(
-                ageRange, ReqWith.alone, ReqExperience.first,
-                ReqType.relieving, ReqLeisureType.any, ReqPreferredSeason.any,
-                ReqDifficulty.low
+                ageRange, LeisureUsual.never, PreferredStyle.relieving,
+                Intensity.active, Theme.sky, AlongWith.family
         );
     }
 
@@ -88,7 +87,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @DisplayName("니즈 수집 질문을 저장한다.")
     void saveInterest() {
 
-        var req = genReq(10);
+        var req = genReq(AgeRange.A_20);
 
         service.saveInterest(testMemberId, req);
 
@@ -102,7 +101,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @DisplayName("멤버가 존재하지 않으면 에러가 발생한다.")
     void memberNotFound() {
 
-        var req = genReq(20);
+        var req = genReq(AgeRange.A_30);
 
         assertThatThrownBy(() -> service.getMember(invalidMemberId))
                 .isInstanceOf(NotFound.class);
