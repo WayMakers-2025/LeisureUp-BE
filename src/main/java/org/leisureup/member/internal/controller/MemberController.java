@@ -37,14 +37,17 @@ public class MemberController {
         return ApiResponse.success(200, resp);
     }
 
-    // 니즈 수집 질문 응답 저장
-    @PostMapping("/interest")
+
+    @PostMapping("/interest")       // 니즈 수집 질문 응답 저장
+    @JwtAuthRequired
     public ApiResponse<?> saveInterest(
             @Valid @RequestBody
             SaveInterestRequest req
     ) {
-        // TODO : 완성하기
-        throw new NotImplemented("API /member/interest not implemented yet");
+        Long memberId = authHolder.getMemberId();
+        memberService.saveInterest(memberId, req);
+
+        return ApiResponse.success(204, null);
     }
 
 
