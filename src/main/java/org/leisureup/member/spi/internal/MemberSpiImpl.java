@@ -30,13 +30,13 @@ public class MemberSpiImpl implements MemberSpi {
     }
 
     @Override
-    public Optional<Long> getMemberIdWithSocial(SocialType type, Long socialId) {
+    public Optional<Long> getMemberIdWithSocial(SocialType type, String socialId) {
         return socialAuths.get(type).findMemberIdBySocial(socialId);
     }
 
     @Override
     public Long saveNewMember(
-            SocialType type, Long socialId,
+            SocialType type, String socialId,
             String nickname, String email
     ) {
         Member save = memberRepo.save(Member.of(nickname, email));

@@ -13,13 +13,13 @@ import lombok.*;
 public class GoogleOAuth extends BaseTimeEntity {
 
     @Id
-    private Long id;
+    private String id;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "member_id", nullable = false, updatable = false)
     private Member member;
 
-    public static GoogleOAuth of(Long socialId, Member member) {
+    public static GoogleOAuth of(String socialId, Member member) {
         return new GoogleOAuth(socialId, member);
     }
 }

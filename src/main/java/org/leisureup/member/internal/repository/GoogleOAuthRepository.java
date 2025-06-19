@@ -12,5 +12,5 @@ public interface GoogleOAuthRepository
             right join go.member m
             where go.id = :socialId
             """)
-    Optional<Long> findMemberIdBySocial(Long socialId);
+    Optional<Long> findMemberIdBySocial(String socialId);
 }

@@ -26,7 +26,13 @@ spring:
       port: 6379
       password:
 
+feign:
+  tour-api:
+    url: http://apis.data.go.kr/B551011/KorService2
+
 logging:
-  level:
-    org.hibernate.SQL: debug
-    org.springframework.transaction: trace
+  #  level:
+  #    org.hibernate.SQL: debug
+  #    org.springframework.transaction: trace
+  pattern:
+    dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul

@@ -15,7 +15,7 @@ public class AppleSocialAuth implements SocialAuth {
     private final AppleOAuthRepository repository;
 
     @Override
-    public Optional<Long> findMemberIdBySocial(Long socialId) {
+    public Optional<Long> findMemberIdBySocial(String socialId) {
         return repository.findMemberIdBySocial(socialId);
     }
 
@@ -26,7 +26,7 @@ public class AppleSocialAuth implements SocialAuth {
 
     @Override
     @Transactional
-    public void save(Long socialId, Member member) {
+    public void save(String socialId, Member member) {
         repository.save(AppleOAuth.of(socialId, member));
     }
 }

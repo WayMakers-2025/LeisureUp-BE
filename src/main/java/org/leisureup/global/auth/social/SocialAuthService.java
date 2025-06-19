@@ -50,7 +50,7 @@ public class SocialAuthService {
         AuthType authType = req.authType();
         OAuthResponse oauthResponse = oauthClients.get(authType)
                 .fetchInfo(req.token());
-        Long socialId = oauthResponse.socialId();
+        String socialId = oauthResponse.socialId();
 
         // 사용자가 가입되어 있는지 아닌지 확인한다.
         SocialType socialType = getType(authType);
