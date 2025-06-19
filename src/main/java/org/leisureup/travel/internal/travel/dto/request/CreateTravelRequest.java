@@ -4,11 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.leisureup.travel.internal.travel.domain.Travel;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateTravelRequest {
     private String travelName;
 
+    private String travelDescription;
+
+    private LocalDate travelDate;
+
+    private List<Long> locationId;
+    
     public Travel toEntity() {
         return Travel.builder()
                 .travelName(travelName)

@@ -8,6 +8,7 @@ import org.leisureup.travel.internal.travel.domain.*;
 import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
 import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
 import org.leisureup.travel.internal.travel.dto.response.GetTravelDetailResponse;
+import org.leisureup.travel.internal.travel.dto.response.LocationResponseDetail;
 import org.leisureup.travel.internal.travel.repository.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +39,24 @@ public class TravelService {
         Travel travel = this.findTravel(travelId, memberId);
         List<Long> locationIdList = new ArrayList<>();
 
-        travel.getItems().stream().forEach((item)->{locationIdList.add(item.getLocationId());});
+//        travel.getItems().stream().forEach((item)->{locationIdList.add(item.getLocationId());});
+        List<Item> sortedItems = travel.getItems().stream()
+                .sorted(Comparator.comparing(Item::getPosition))
+                .toList();
+
+        // 정렬된 Item에서 locationId 추출
+        sortedItems.forEach(item -> locationIdList.add(item.getLocationId()));
+
         List<LocationResponse> locationListById = locationQueryPort.getLocationListById(locationIdList);
-        return GetTravelDetailResponse.fromEntity(travel, locationListById);
+        List<LocationResponseDetail> locationResponseDetailList = new ArrayList<>();
+        for(int i=0; i<sortedItems.size(); i++){
+            Item item = sortedItems.get(i);
+            LocationResponse locationResponse = locationListById.get(i);
+            LocationResponseDetail locationResponseDetail =
+                    new LocationResponseDetail(locationResponse, item.getPosition());
+            locationResponseDetailList.add(locationResponseDetail);
+        }
+        return GetTravelDetailResponse.fromEntity(travel, locationResponseDetailList);
     }
 
     public String addItem(Long travelId, Long locationId, Long memberId){
