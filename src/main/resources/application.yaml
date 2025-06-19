@@ -46,7 +46,7 @@ springdoc:
     enabled: true
     path: /api-doc
     tags-sorter: alpha
-    operations-sorter: method
+    operations-sorter: alpha
     display-request-duration: true
 
   api-docs.path: /api-doc

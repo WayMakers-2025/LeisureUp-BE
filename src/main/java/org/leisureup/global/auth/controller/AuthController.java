@@ -9,6 +9,8 @@ import org.leisureup.global.auth.dto.response.*;
 import org.leisureup.global.auth.social.*;
 import org.leisureup.global.auth.token.service.*;
 import org.leisureup.global.response.*;
+import org.leisureup.member.spi.*;
+import org.springframework.context.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -19,9 +21,10 @@ public class AuthController {
 
     private final SocialAuthService socialAuthService;
     private final TokenAuthService tokenAuthService;
+    private final MemberSpi memberSpi;
 
-    // 소셜 로그인 or 회원가입
-    @PostMapping
+
+    @PostMapping            // 소셜 로그인 or 회원가입
     public ApiResponse<SignInUpResponse> loginSingUp(
             @Valid @RequestBody SignInUpRequest req
     ) {
@@ -33,8 +36,8 @@ public class AuthController {
         );
     }
 
-    // 토큰 재발급
-    @PostMapping("/token")
+
+    @PostMapping("/token")  // 토큰 재발급
     public ApiResponse<RecreateTokenResponse> recreateToken(
             @Valid @RequestBody RecreateTokenRequest req
     ) {
@@ -47,4 +50,17 @@ public class AuthController {
         );
     }
 
+    @Profile("local")
+    @PostMapping("/new")
+    public ApiResponse<SignInUpResponse> createNewMember(
+            @RequestParam SocialType type, @RequestParam String socialId,
+            @RequestParam String nickname, @RequestParam String email
+    ) {
+        Long id = memberSpi.saveNewMember(type, socialId, nickname, email);
+        Tokens t = tokenAuthService.createTokens(id);
+        return ApiResponse.success(
+                201,
+                SignInUpResponse.of(id, t.accessToken(), t.refreshToken())
+        );
+    }
 }
