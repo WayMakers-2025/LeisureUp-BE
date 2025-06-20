@@ -23,7 +23,7 @@ public class LocationQueryAdapter implements LocationQueryPort {
         Location location = locationRepo.findByIdFetchingCategory(locationId)
                 .orElseThrow(() -> new NotFound("ID 에 해당하는 장소를 찾을 수 없습니다."));
 
-        return Utils.toRecord(location);
+        return LocationUtils.toRecord(location);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class LocationQueryAdapter implements LocationQueryPort {
         }
 
         return locations.stream()
-                .map(Utils::toRecord)
+                .map(LocationUtils::toRecord)
                 .toList();
     }
 
@@ -62,7 +62,7 @@ public class LocationQueryAdapter implements LocationQueryPort {
     }
 }
 
-class Utils {
+class LocationUtils {
 
     static LocationResponse toRecord(Location location) {
         Long locationId = location.getId();
