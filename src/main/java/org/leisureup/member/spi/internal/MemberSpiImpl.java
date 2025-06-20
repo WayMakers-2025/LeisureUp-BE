@@ -12,13 +12,15 @@ import org.springframework.stereotype.*;
 public class MemberSpiImpl implements MemberSpi {
 
     private final MemberRepository memberRepo;
+    private final InterestRepository interestRepo;
     private final Map<SocialType, SocialAuth> socialAuths;
 
     public MemberSpiImpl(
-            MemberRepository memberRepo,
+            MemberRepository memberRepo, InterestRepository interestRepo,
             List<SocialAuth> socialAuths
     ) {
         this.memberRepo = memberRepo;
+        this.interestRepo = interestRepo;
         this.socialAuths = socialAuths.stream().collect(
                 Collectors.toMap(SocialAuth::getSocialAuthType, Function.identity())
         );
@@ -44,5 +46,29 @@ public class MemberSpiImpl implements MemberSpi {
         socialAuths.get(type).save(socialId, save);
 
         return save.getId();
+    }
+
+    @Override
+    public Optional<InterestCode> getInterest(Long memberId) {
+
+        Interest interest = memberId != null ?
+                interestRepo.findById(memberId).orElse(null) : null;
+
+        return Optional.ofNullable(MemberSpiUtil.toRecord(interest));
+    }
+}
+
+
+class MemberSpiUtil {
+
+    static InterestCode toRecord(Interest interest) {
+
+        InterestInfo info;
+
+        if (interest == null || (info = interest.getInfo()) == null) {
+            return null;
+        }
+
+        return new InterestCode(info.getRepresentation());
     }
 }
