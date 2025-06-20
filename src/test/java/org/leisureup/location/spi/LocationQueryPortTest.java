@@ -19,6 +19,7 @@ class LocationQueryPortTest extends IntegrationTestSupport {
     private static final Random random = new Random();
     private static final List<Long> testIds = LongStream.rangeClosed(1, 10)
             .boxed().toList();
+    private static Long exsitingCategoryId;
     @Autowired
     LocationQueryPort port;
     @Autowired
@@ -43,7 +44,8 @@ class LocationQueryPortTest extends IntegrationTestSupport {
     void setUp() {
 
         Category sampleCat = CatOther.of("sample", "1234");
-        categoryRepo.save(sampleCat);
+        exsitingCategoryId = categoryRepo.save(sampleCat)
+                .getId();
 
         List<Location> locations = testIds.stream()
                 .map(LocationQueryPortTest::genEntity)
@@ -86,5 +88,36 @@ class LocationQueryPortTest extends IntegrationTestSupport {
                         String.valueOf(missingId1), String.valueOf(missingId2)
                 );
 
+    }
+
+    @Test
+    @DisplayName("랜덤한 장소를 제공받을 수 있다.")
+    void getAnyLocations() {
+
+        int max = testIds.size() / 2;
+        List<LocationResponse> resp = port.getAnyLocations(max);
+
+        assertThat(resp).isNotNull();
+
+    }
+
+    @Test
+    @DisplayName("특정 카테고리에 속한 랜덤한 장소를 제공받을 수 있다.")
+    void getAnyLocationsOnCategory() {
+
+        int max = testIds.size() / 2;
+        List<LocationResponse> resp = port.getAnyLocationsOnCategory(max,
+                List.of(exsitingCategoryId)
+        );
+
+        assertThat(resp).isNotNull();
+
+        // 없는 카테고리 ID 가 주어지면 빈 list
+        Long nonExistingCategoryId = Long.MAX_VALUE;
+        resp = port.getAnyLocationsOnCategory(max,
+                List.of(nonExistingCategoryId)
+        );
+
+        assertThat(resp).isNotNull().isEmpty();
     }
 }

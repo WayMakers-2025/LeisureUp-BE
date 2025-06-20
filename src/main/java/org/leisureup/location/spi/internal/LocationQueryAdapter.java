@@ -1,6 +1,7 @@
 package org.leisureup.location.spi.internal;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
@@ -8,6 +9,7 @@ import org.leisureup.global.exception.*;
 import org.leisureup.location.internal.domain.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.spi.*;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
 @Slf4j
@@ -16,6 +18,8 @@ import org.springframework.stereotype.*;
 public class LocationQueryAdapter implements LocationQueryPort {
 
     private final LocationRepository locationRepo;
+
+    private static final Random RAND = ThreadLocalRandom.current();
 
     @Override
     public LocationResponse getLocationById(Long locationId) {
@@ -59,6 +63,46 @@ public class LocationQueryAdapter implements LocationQueryPort {
     @Override
     public boolean notExists(Long locationId) {
         return !locationRepo.existsById(locationId);
+    }
+
+    private static PageRequest randomPageRequest(
+            int numOfElementsToInclude, long totalElements
+    ) {
+        int total = totalElements > Integer.MAX_VALUE ?
+                Integer.MAX_VALUE : (int) totalElements;
+
+        int totalPages = Math.ceilDiv(total, numOfElementsToInclude);
+        int randomPage = RAND.nextInt(totalPages + 1);
+
+        return PageRequest.of(randomPage, numOfElementsToInclude);
+    }
+
+    @Override
+    public List<LocationResponse> getAnyLocations(int maxElements) {
+        long cnt = locationRepo.count();
+
+        List<Location> locations = locationRepo.findAllBy(
+                randomPageRequest(maxElements, cnt)
+        );
+
+        return locations.stream()
+                .map(LocationUtils::toRecord)
+                .toList();
+    }
+
+    @Override
+    public List<LocationResponse> getAnyLocationsOnCategory(
+            int maxElements, List<Long> categoryIds
+    ) {
+        long cnt = locationRepo.countByCategories(categoryIds);
+
+        List<Location> locations = locationRepo.findAllByCategories(
+                randomPageRequest(maxElements, cnt), categoryIds
+        );
+
+        return locations.stream()
+                .map(LocationUtils::toRecord)
+                .toList();
     }
 }
 
