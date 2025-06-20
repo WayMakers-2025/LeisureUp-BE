@@ -4,6 +4,9 @@ import java.util.*;
 
 public interface CategorySpi {
 
+    /**
+     * DB 에 저장된 모든 카테고리 정보를 조회
+     */
     List<CategoryInfo> getAllCategories();
 
 }
