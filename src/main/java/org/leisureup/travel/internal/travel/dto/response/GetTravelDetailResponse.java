@@ -15,9 +15,10 @@ public class GetTravelDetailResponse {
     private String travelName;
     private String travelDescription;
     private LocalDate travelDate;
-    private List<LocationResponse> locations;
+    private List<LocationResponseDetail> locations;
 
-    public static GetTravelDetailResponse fromEntity(Travel travel, List<LocationResponse> locations) {
+    public static GetTravelDetailResponse fromEntity(Travel travel, List<LocationResponseDetail> locations) {
+
         return GetTravelDetailResponse.builder()
                 .travelId(travel.getTravelId())
                 .travelName(travel.getTravelName())
