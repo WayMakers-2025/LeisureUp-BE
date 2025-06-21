@@ -19,8 +19,6 @@ public class LocationQueryAdapter implements LocationQueryPort {
 
     private final LocationRepository locationRepo;
 
-    private static final Random RAND = ThreadLocalRandom.current();
-
     @Override
     public LocationResponse getLocationById(Long locationId) {
 
@@ -65,24 +63,16 @@ public class LocationQueryAdapter implements LocationQueryPort {
         return !locationRepo.existsById(locationId);
     }
 
-    private static PageRequest randomPageRequest(
-            int numOfElementsToInclude, long totalElements
-    ) {
-        int total = totalElements > Integer.MAX_VALUE ?
-                Integer.MAX_VALUE : (int) totalElements;
-
-        int totalPages = Math.ceilDiv(total, numOfElementsToInclude);
-        int randomPage = RAND.nextInt(totalPages + 1);
-
-        return PageRequest.of(randomPage, numOfElementsToInclude);
-    }
-
     @Override
     public List<LocationResponse> getAnyLocations(int maxElements) {
         long cnt = locationRepo.count();
 
+        if (cnt == 0) {
+            return Collections.emptyList();
+        }
+
         List<Location> locations = locationRepo.findAllBy(
-                randomPageRequest(maxElements, cnt)
+                LocationUtils.randomPageRequest(maxElements, cnt)
         );
 
         return locations.stream()
@@ -96,8 +86,12 @@ public class LocationQueryAdapter implements LocationQueryPort {
     ) {
         long cnt = locationRepo.countByCategories(categoryIds);
 
+        if (cnt == 0) {
+            return Collections.emptyList();
+        }
+
         List<Location> locations = locationRepo.findAllByCategories(
-                randomPageRequest(maxElements, cnt), categoryIds
+                LocationUtils.randomPageRequest(maxElements, cnt), categoryIds
         );
 
         return locations.stream()
@@ -107,6 +101,20 @@ public class LocationQueryAdapter implements LocationQueryPort {
 }
 
 class LocationUtils {
+
+    private static final Random RAND = ThreadLocalRandom.current();
+
+    static PageRequest randomPageRequest(
+            int pageSize, long totalElements
+    ) {
+        int total = totalElements > Integer.MAX_VALUE ?
+                Integer.MAX_VALUE : (int) totalElements;
+
+        int totalPages = Math.ceilDiv(total, pageSize);
+        int randomPage = RAND.nextInt(totalPages);
+
+        return PageRequest.of(randomPage, pageSize);
+    }
 
     static LocationResponse toRecord(Location location) {
         Long locationId = location.getId();
