@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
         name = "GoogleApi",
-        url = "https://openidconnect.googleapis.com",
+        url = "${feign.openid.google}",
         configuration = GoogleApiErrorDecoder.class
 )
 interface GoogleApi {

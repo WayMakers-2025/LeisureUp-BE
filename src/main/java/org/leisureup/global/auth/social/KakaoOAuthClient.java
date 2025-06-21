@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
         name = "KakaoApi",
-        url = "https://kapi.kakao.com",
+        url = "${feign.openid.kakao}",
         configuration = KakaoApiErrorDecoder.class
 )
 interface KakaoApi {
