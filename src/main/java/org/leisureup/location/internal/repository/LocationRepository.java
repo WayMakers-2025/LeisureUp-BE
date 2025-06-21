@@ -9,21 +9,21 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query("""
             select l from Location l
-            right join fetch l.locationCategory
+            inner join fetch l.locationCategory
             where l.id = :id
             """)
     Optional<Location> findByIdFetchingCategory(Long id);
 
     @Query("""
             select l from Location l
-            right join fetch l.locationCategory
+            inner join fetch l.locationCategory
             where l.id in :locationIds
             """)
     List<Location> findAllByLocationIds(List<Long> locationIds);
 
     @Query("""
             select l from Location l
-            right join fetch l.locationCategory
+            inner join fetch l.locationCategory
             """)
     List<Location> findAllBy(Pageable pageable);
 
@@ -35,7 +35,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query("""
             select l from Location l
-            right join fetch l.locationCategory
+            inner join fetch l.locationCategory
             where l.locationCategory.id in :categoryIds
             """)
     List<Location> findAllByCategories(Pageable pageable, List<Long> categoryIds);

@@ -9,7 +9,7 @@ public interface GoogleOAuthRepository
 
     @Query("""
             select m.id from GoogleOAuth go
-            right join go.member m
+            inner join go.member m
             where go.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(String socialId);
