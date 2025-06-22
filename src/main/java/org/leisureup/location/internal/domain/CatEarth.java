@@ -18,8 +18,16 @@ public class CatEarth extends Category {
         super(name, categoryCode);
     }
 
+    private CatEarth(String name, String categoryCode, String recommendationCode) {
+        super(name, categoryCode, recommendationCode);
+    }
+
     public static CatEarth of(String name, String code) {
         return new CatEarth(name, code);
+    }
+
+    public static CatEarth of(String name, String code, String recommendationCode) {
+        return new CatEarth(name, code, recommendationCode);
     }
 
     @Override

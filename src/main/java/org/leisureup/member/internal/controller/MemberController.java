@@ -12,6 +12,7 @@ import org.leisureup.member.internal.service.*;
 import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 
+@JwtAuthRequired
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
@@ -30,26 +31,26 @@ public class MemberController {
     }
 
     @GetMapping     // 멤버 정보 조회
-    @JwtAuthRequired
     public ApiResponse<GetMemberResponse> getMember() {
         Long memberId = authHolder.getMemberId();
         GetMemberResponse resp = memberService.getMember(memberId);
         return ApiResponse.success(200, resp);
     }
 
-    // 니즈 수집 질문 응답 저장
-    @PostMapping("/interest")
+
+    @PostMapping("/interest")       // 니즈 수집 질문 응답 저장
     public ApiResponse<?> saveInterest(
             @Valid @RequestBody
             SaveInterestRequest req
     ) {
-        // TODO : 완성하기
-        throw new NotImplemented("API /member/interest not implemented yet");
+        Long memberId = authHolder.getMemberId();
+        memberService.saveInterest(memberId, req);
+
+        return ApiResponse.success(204, null);
     }
 
 
     @GetMapping("/picks")       // 찜 목록 조회
-    @JwtAuthRequired
     public ApiResponse<PageResponse<PickLocation>> getPickLocations(
             @RequestParam(value = "page", defaultValue = "0")
             int page,
@@ -65,7 +66,6 @@ public class MemberController {
 
 
     @PostMapping("/picks")      // 장소 찜 저장
-    @JwtAuthRequired
     public ApiResponse<?> savePickLocation(
             @Valid @RequestBody SavePickLocationRequest req
     ) {
@@ -77,7 +77,6 @@ public class MemberController {
 
 
     @DeleteMapping("/picks/{locationId}")       // 찜 장소 삭제
-    @JwtAuthRequired
     public ApiResponse<?> deletePickLocation(
             @Valid @Positive @NotNull
             @PathVariable Long locationId

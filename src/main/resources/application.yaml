@@ -8,6 +8,7 @@ spring:
       local:
         - common-secret
         - local-secret
+        - init-categories
       staging:
         - common-secret
         - staging-secret

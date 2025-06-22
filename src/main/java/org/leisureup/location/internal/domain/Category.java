@@ -31,6 +31,9 @@ public abstract class Category {
     @Column(length = 20, nullable = false, unique = true)
     private String categoryCode;
 
+    @Embedded
+    private CategoryRecommend recommendation;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -42,6 +45,13 @@ public abstract class Category {
     protected Category(String name, String categoryCode) {
         this.name = name;
         this.categoryCode = categoryCode;
+        this.recommendation = CategoryRecommend.of("");
+    }
+
+    protected Category(String name, String categoryCode, String recommendationCode) {
+        this.name = name;
+        this.categoryCode = categoryCode;
+        this.recommendation = CategoryRecommend.of(recommendationCode);
     }
 
     public abstract String getCategoryType();
