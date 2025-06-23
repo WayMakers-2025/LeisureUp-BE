@@ -29,6 +29,7 @@ public class Travel {
 
     @OneToMany(mappedBy = "travel", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @OrderBy("position")
     private List<Item> items = new ArrayList<>();
 
 }

@@ -64,7 +64,7 @@ public class TravelController {
     }
 
     @PostMapping("/travels")
-    public ApiResponse<String> createTravel(CreateTravelRequest createTravelRequest) {
+    public ApiResponse<String> createTravel(@RequestBody CreateTravelRequest createTravelRequest) {
         Long memberId = authHolder.getMemberId();
         return travelService.createTravel(createTravelRequest, memberId);
     }
