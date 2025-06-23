@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,41 +39,41 @@ public class TravelService {
     }
 
     @Transactional(readOnly = true)
-    public GetTravelDetailResponse getTravelDetail(Long travelId, Long memberId){
+    public GetTravelDetailResponse getTravelDetail(Long travelId, Long memberId) {
         Travel travel = this.findTravel(travelId, memberId);
-        List<Long> locationIdList = new ArrayList<>();
 
-//        travel.getItems().stream().forEach((item)->{locationIdList.add(item.getLocationId());});
-        List<Item> sortedItems = travel.getItems().stream()
-                .sorted(Comparator.comparing(Item::getPosition))
-                .toList();
+        // ID : Item mapping
+        Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
 
-        // 정렬된 Item에서 locationId 추출
-        sortedItems.forEach(item -> locationIdList.add(item.getLocationId()));
+        // 필요한 장소 목록들 가져온 후 ID : Resp mapping
+        var resp = locationQueryPort.getLocationListById(
+                new ArrayList<>(itemMap.keySet())
+        );
+        Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
 
-        List<LocationResponse> locationListById = locationQueryPort.getLocationListById(locationIdList);
-        List<LocationResponseDetail> locationResponseDetailList = new ArrayList<>();
-        for(int i=0; i<sortedItems.size(); i++){
-            Item item = sortedItems.get(i);
-            LocationResponse locationResponse = locationListById.get(i);
-            LocationResponseDetail locationResponseDetail =
-                    new LocationResponseDetail(locationResponse, item.getPosition());
-            locationResponseDetailList.add(locationResponseDetail);
+        // 응답 만들기
+        List<LocationResponseDetail> detailList = new ArrayList<>();
+        for (Long id : locationInfoMap.keySet()) {
+            var info = locationInfoMap.get(id);
+            var item = itemMap.get(id);
+            var detail = new LocationResponseDetail(info, item.getPosition());
+            detailList.add(detail);
         }
-        return GetTravelDetailResponse.fromEntity(travel, locationResponseDetailList);
+        detailList.sort(Comparator.comparing(LocationResponseDetail::getPosition));
+
+        return GetTravelDetailResponse.fromEntity(travel, detailList);
+    }
+
+    private static <K, V> Map<K, V> listToMap(List<V> list, Function<V, K> keyMapper) {
+        return list.stream()
+                .collect(Collectors.toMap(keyMapper, Function.identity()));
     }
 
     @Transactional
     public String addItem(Long travelId, Long locationId, Long memberId){
         Travel travel = this.findTravel(travelId, memberId);
-        
-        // position 계산: 기존 아이템이 없으면 0, 있으면 최대값 + 1
-        int position = travel.getItems().isEmpty() ? 0 : 
-                travel.getItems().stream()
-                        .mapToInt(Item::getPosition)
-                        .max()
-                        .orElse(0) + 1;
-        
+
+        int position = travel.getItems().size();
         Item newItem = Item.buildItem(locationId, position, travel);
         itemRepository.save(newItem);
         
