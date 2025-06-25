@@ -9,7 +9,7 @@ public interface AppleOAuthRepository
 
     @Query("""
             select m.id from AppleOAuth ao
-            right join ao.member m
+            inner join ao.member m
             where ao.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(String socialId);

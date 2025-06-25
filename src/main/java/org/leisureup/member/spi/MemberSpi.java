@@ -25,4 +25,9 @@ public interface MemberSpi {
             SocialType type, String socialId,
             String nickname, String email
     );
+
+    /**
+     * 사용자의 질문 응답 정보를 코드화 하여 제공
+     */
+    Optional<InterestCode> getInterest(Long memberId);
 }

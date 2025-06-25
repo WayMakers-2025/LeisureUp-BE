@@ -1,6 +1,7 @@
 package org.leisureup.location.spi.internal;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
@@ -8,6 +9,7 @@ import org.leisureup.global.exception.*;
 import org.leisureup.location.internal.domain.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.spi.*;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
 @Slf4j
@@ -60,9 +62,59 @@ public class LocationQueryAdapter implements LocationQueryPort {
     public boolean notExists(Long locationId) {
         return !locationRepo.existsById(locationId);
     }
+
+    @Override
+    public List<LocationResponse> getAnyLocations(int maxElements) {
+        long cnt = locationRepo.count();
+
+        if (cnt == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Location> locations = locationRepo.findAllBy(
+                LocationUtils.randomPageRequest(maxElements, cnt)
+        );
+
+        return locations.stream()
+                .map(LocationUtils::toRecord)
+                .toList();
+    }
+
+    @Override
+    public List<LocationResponse> getAnyLocationsOnCategory(
+            int maxElements, List<Long> categoryIds
+    ) {
+        long cnt = locationRepo.countByCategories(categoryIds);
+
+        if (cnt == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Location> locations = locationRepo.findAllByCategories(
+                LocationUtils.randomPageRequest(maxElements, cnt), categoryIds
+        );
+
+        return locations.stream()
+                .map(LocationUtils::toRecord)
+                .toList();
+    }
 }
 
 class LocationUtils {
+
+    private static final Random RAND = ThreadLocalRandom.current();
+
+    static PageRequest randomPageRequest(
+            int pageSize, long totalElements
+    ) {
+        int total = totalElements > Integer.MAX_VALUE ?
+                Integer.MAX_VALUE : (int) totalElements;
+
+        int totalPages = Math.ceilDiv(total, pageSize);
+        int randomPage = RAND.nextInt(totalPages);
+
+        return PageRequest.of(randomPage, pageSize);
+    }
 
     static LocationResponse toRecord(Location location) {
         Long locationId = location.getId();

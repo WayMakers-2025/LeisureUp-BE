@@ -9,7 +9,7 @@ public interface KakaoOAuthRepository
 
     @Query("""
             select m.id from KakaoOAuth ko
-            right join ko.member m
+            inner join ko.member m
             where ko.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(String socialId);
