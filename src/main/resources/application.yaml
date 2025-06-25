@@ -62,6 +62,9 @@ springdoc:
 feign:
   tour-api:
     url: http://apis.data.go.kr/B551011/KorService2
+  openid:
+    google: https://openidconnect.googleapis.com
+    kakao: https://kapi.kakao.com
 
 logging:
   level:

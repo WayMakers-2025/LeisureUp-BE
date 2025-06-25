@@ -1,6 +1,7 @@
 package org.leisureup.global.auth.social;
 
 import org.leisureup.global.auth.dto.request.SignInUpRequest.*;
+import org.leisureup.global.exception.*;
 import org.springframework.stereotype.*;
 
 @Component
@@ -9,7 +10,7 @@ public class AppleOAuthClient implements OAuthClient {
     @Override
     public OAuthResponse fetchInfo(String token) {
         // TODO : Apple OAuth 구현
-        return null;
+        throw new NotImplemented("Apple OAuth Client not implemented yet");
     }
 
     @Override

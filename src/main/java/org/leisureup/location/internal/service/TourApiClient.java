@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @FeignClient(
         name = "tourApiClient",
-        url = "${feign.tour-api.url}"
+        url = "${feign.tour-api.url}",
+        configuration = TourApiErrorDecoder.class
 )
 public interface TourApiClient {
 
