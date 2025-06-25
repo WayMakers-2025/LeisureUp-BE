@@ -12,6 +12,7 @@ spring:
       staging:
         - common-secret
         - staging-secret
+        - init-categories
       prod:
         - common-secret
         - prod-secret
