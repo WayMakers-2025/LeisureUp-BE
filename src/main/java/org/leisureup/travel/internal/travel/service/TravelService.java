@@ -156,4 +156,35 @@ public class TravelService {
 
         return "성공적으로 삭제되었습니다.";
     }
+
+    @Transactional
+    public ApiResponse<String> updateTravel(Long travelId, CreateTravelRequest updateTravelRequest, Long memberId) {
+        try {
+            Travel travel = this.findTravel(travelId, memberId);
+
+            travel.updateTravelInfo(
+                updateTravelRequest.getTravelName(),
+                updateTravelRequest.getTravelDescription(),
+                updateTravelRequest.getTravelDate()
+            );
+
+            if (updateTravelRequest.getItems() != null && !updateTravelRequest.getItems().isEmpty()) {
+                for (ItemRequest itemRequest : updateTravelRequest.getItems()) {
+                    // 해당 locationId를 가진 기존 item 찾기
+                    travel.getItems().stream()
+                        .filter(item -> item.getLocationId().equals(itemRequest.getLocationId()))
+                        .findFirst()
+                        .ifPresent(item -> {
+                            // position 업데이트
+                            item.updatePosition(itemRequest.getPosition());
+                        });
+                }
+            }
+            travelRepository.save(travel);
+            
+            return ApiResponse.success(200, "여행 정보가 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            return ApiResponse.failure(500, "여행 수정 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
 }
