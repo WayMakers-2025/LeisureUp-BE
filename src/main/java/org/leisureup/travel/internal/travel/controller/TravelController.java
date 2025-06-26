@@ -68,4 +68,10 @@ public class TravelController {
         Long memberId = authHolder.getMemberId();
         return travelService.createTravel(createTravelRequest, memberId);
     }
+
+    @DeleteMapping("/travels/{travelId}/{itemId}")
+    public ApiResponse<String> deleteItem(@PathVariable Long travelId, @PathVariable Long itemId) {
+        Long memberId = authHolder.getMemberId();
+        return ApiResponse.success(200, travelService.deleteItem(travelId, itemId, memberId));
+    }
 }

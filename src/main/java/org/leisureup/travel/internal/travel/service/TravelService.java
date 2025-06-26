@@ -137,4 +137,23 @@ public class TravelService {
         return items;
     }
 
+    @Transactional
+    public String deleteItem(Long travelId, Long itemId, Long memberId) {
+        Travel travel = this.findTravel(travelId, memberId);
+
+        Item itemToDelete = travel.getItems().stream()
+                .filter(item -> item.getItemId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new NotFound("해당 여행에 존재하지 않습니다."));
+
+        int deletedPosition = itemToDelete.getPosition();
+
+        itemRepository.delete(itemToDelete);
+        travel.getItems().stream()
+                .filter(item -> !item.getItemId().equals(itemId))
+                .filter(item -> item.getPosition() > deletedPosition)
+                .forEach(item -> item.updatePosition(item.getPosition() - 1));
+
+        return "성공적으로 삭제되었습니다.";
+    }
 }
