@@ -137,4 +137,54 @@ public class TravelService {
         return items;
     }
 
+    @Transactional
+    public String deleteItem(Long travelId, Long itemId, Long memberId) {
+        Travel travel = this.findTravel(travelId, memberId);
+
+        Item itemToDelete = travel.getItems().stream()
+                .filter(item -> item.getItemId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new NotFound("해당 여행에 존재하지 않습니다."));
+
+        int deletedPosition = itemToDelete.getPosition();
+
+        itemRepository.delete(itemToDelete);
+        travel.getItems().stream()
+                .filter(item -> !item.getItemId().equals(itemId))
+                .filter(item -> item.getPosition() > deletedPosition)
+                .forEach(item -> item.updatePosition(item.getPosition() - 1));
+
+        return "성공적으로 삭제되었습니다.";
+    }
+
+    @Transactional
+    public ApiResponse<String> updateTravel(Long travelId, CreateTravelRequest updateTravelRequest, Long memberId) {
+        try {
+            Travel travel = this.findTravel(travelId, memberId);
+
+            travel.updateTravelInfo(
+                updateTravelRequest.getTravelName(),
+                updateTravelRequest.getTravelDescription(),
+                updateTravelRequest.getTravelDate()
+            );
+
+            if (updateTravelRequest.getItems() != null && !updateTravelRequest.getItems().isEmpty()) {
+                for (ItemRequest itemRequest : updateTravelRequest.getItems()) {
+                    // 해당 locationId를 가진 기존 item 찾기
+                    travel.getItems().stream()
+                        .filter(item -> item.getLocationId().equals(itemRequest.getLocationId()))
+                        .findFirst()
+                        .ifPresent(item -> {
+                            // position 업데이트
+                            item.updatePosition(itemRequest.getPosition());
+                        });
+                }
+            }
+            travelRepository.save(travel);
+            
+            return ApiResponse.success(200, "여행 정보가 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            return ApiResponse.failure(500, "여행 수정 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
 }

@@ -29,4 +29,8 @@ public class Item {
                 .travel(travel)
                 .build();
     }
+
+    public void updatePosition(int newPosition) {
+        this.position = newPosition;
+    }
 }

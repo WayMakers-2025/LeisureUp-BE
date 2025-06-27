@@ -32,4 +32,9 @@ public class Travel {
     @OrderBy("position")
     private List<Item> items = new ArrayList<>();
 
+    public void updateTravelInfo(String travelName, String travelDescription, LocalDate travelDate) {
+        this.travelName = travelName;
+        this.travelDescription = travelDescription;
+        this.travelDate = travelDate;
+    }
 }
