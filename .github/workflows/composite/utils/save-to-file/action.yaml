@@ -23,6 +23,7 @@ runs:
       shell: bash
       run: |
         if [ -f "${{ inputs.file_dir }}/${{ inputs.file_name }}" ]; then
+          echo "${{ inputs.file_dir }}/${{ inputs.file_name }} already exists" 
           exit 1
         fi
 
@@ -34,4 +35,6 @@ runs:
     - name: Save context to destination
       shell: bash
       run: |
-        echo "${{ inputs.context }}" > "${{ inputs.file_dir }}/${{ inputs.file_name }}"
+        cat <<'EOF' > "${{ inputs.file_dir }}/${{ inputs.file_name }}"
+        ${{ inputs.context }}
+        EOF

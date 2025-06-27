@@ -16,6 +16,8 @@ jobs:
     uses: ./.github/workflows/run-test.yaml
     with:
       comment-test-result: false
+    secrets:
+      common-test-secret: ${{ secrets.COMMON_TEST_SECRET }}
 
   push-image:
     needs: run-test-for-validation
