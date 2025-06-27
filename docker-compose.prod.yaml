@@ -1,0 +1,30 @@
+name: prod-compose
+
+services:
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+
+    restart: on-failure
+    networks:
+      - LeisureUpBE-net
+
+  application:
+    container_name: application
+    image: waymakers/leisureupbe:${IMAGE_TAG}
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"
+
+    depends_on:
+      - redis
+    networks:
+      - LeisureUpBE-net
+
+networks:
+  LeisureUpBE-net: { }

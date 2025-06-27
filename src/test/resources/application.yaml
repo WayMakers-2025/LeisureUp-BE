@@ -1,3 +1,41 @@
 spring:
-  application:
-    name: LeisureUp-BE
+  application.name: LeisureUp-BE
+  threads.virtual.enabled: true
+
+  profiles:
+    default: test
+    group:
+      test:
+        - common-test-secret
+
+  datasource:
+    url: jdbc:h2:mem:test
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        globally_quoted_identifiers: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+
+feign:
+  tour-api:
+    url: http://apis.data.go.kr/B551011/KorService2
+  openid:
+    google: https://openidconnect.googleapis.com
+    kakao: https://kapi.kakao.com
+
+logging:
+  #  level:
+  #    org.hibernate.SQL: debug
+  #    org.springframework.transaction: trace
+  pattern:
+    dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul

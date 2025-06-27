@@ -1,3 +1,11 @@
+### Dev or Secret Stuffs ###
+
+.local/
+src/main/resources/application-common-secret.yaml
+src/main/resources/application-prod-secret.yaml
+src/main/resources/application-staging-secret.yaml
+src/test/resources/application-common-test-secret.yaml
+
 HELP.md
 .gradle
 build/
