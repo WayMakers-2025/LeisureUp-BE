@@ -1,4 +1,4 @@
-package org.leisureup.info.recommend.internal.dto;
+package org.leisureup.info.recommend.dto;
 
 import org.springframework.lang.*;
 

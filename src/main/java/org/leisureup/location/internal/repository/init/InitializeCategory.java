@@ -49,19 +49,19 @@ class CategoryInitializer {
         List<Category> all = new ArrayList<>(100);
 
         List<CatEarth> earths = Arrays.stream(Earth.values())
-                .map(e -> CatEarth.of(e.getName(), e.getCode(), e.getRecommendCode()))
+                .map(Earth::toEntity)
                 .toList();
 
         List<CatWater> waters = Arrays.stream(Water.values())
-                .map(e -> CatWater.of(e.getName(), e.getCode(), e.getRecommendCode()))
+                .map(Water::toEntity)
                 .toList();
 
         List<CatSky> skies = Arrays.stream(Sky.values())
-                .map(e -> CatSky.of(e.getName(), e.getCode(), e.getRecommendCode()))
+                .map(Sky::toEntity)
                 .toList();
 
         List<CatOther> others = Arrays.stream(Other.values())
-                .map(e -> CatOther.of(e.getName(), e.getCode(), e.getRecommendCode()))
+                .map(Other::toEntity)
                 .toList();
 
         all.addAll(earths);

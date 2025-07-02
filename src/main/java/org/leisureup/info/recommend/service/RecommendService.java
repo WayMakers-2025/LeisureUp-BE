@@ -1,11 +1,11 @@
-package org.leisureup.info.recommend.internal.service;
+package org.leisureup.info.recommend.service;
 
 import java.util.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
-import org.leisureup.info.recommend.internal.dto.*;
-import org.leisureup.info.recommend.internal.dto.response.*;
-import org.leisureup.info.recommend.internal.dto.response.LocationInfo.*;
+import org.leisureup.info.recommend.dto.*;
+import org.leisureup.info.recommend.dto.response.*;
+import org.leisureup.info.recommend.dto.response.LocationInfo.*;
 import org.leisureup.location.spi.*;
 import org.leisureup.member.spi.*;
 import org.springframework.stereotype.*;

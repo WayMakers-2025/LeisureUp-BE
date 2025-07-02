@@ -3,6 +3,7 @@ package org.leisureup.location.internal.repository.init;
 import static org.leisureup.location.internal.repository.init.Utils.*;
 
 import lombok.*;
+import org.leisureup.location.internal.domain.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -24,4 +25,7 @@ public enum Sky {
 
     final String name, code, recommendCode;
 
+    public CatSky toEntity() {
+        return CatSky.of(name, code, recommendCode);
+    }
 }

@@ -1,11 +1,11 @@
-package org.leisureup.info.recommend.internal.controller;
+package org.leisureup.info.recommend.controller;
 
 import java.util.*;
 import lombok.*;
 import org.leisureup.global.*;
 import org.leisureup.global.response.*;
-import org.leisureup.info.recommend.internal.dto.response.*;
-import org.leisureup.info.recommend.internal.service.*;
+import org.leisureup.info.recommend.dto.response.*;
+import org.leisureup.info.recommend.service.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
