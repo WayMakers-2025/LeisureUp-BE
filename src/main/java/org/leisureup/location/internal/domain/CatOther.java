@@ -22,12 +22,26 @@ public class CatOther extends Category {
         super(name, categoryCode, recommendationCode);
     }
 
+    private CatOther(
+            String name, String categoryCode, String recommendationCode,
+            AdditionalCategoryInfo additionalInfo
+    ) {
+        super(name, categoryCode, recommendationCode, additionalInfo);
+    }
+
     public static CatOther of(String name, String code) {
         return new CatOther(name, code);
     }
 
     public static CatOther of(String name, String code, String recommendationCode) {
         return new CatOther(name, code, recommendationCode);
+    }
+
+    public static CatOther of(
+            String name, String code, String recommendationCode,
+            AdditionalCategoryInfo additionalInfo
+    ) {
+        return new CatOther(name, code, recommendationCode, additionalInfo);
     }
 
     @Override

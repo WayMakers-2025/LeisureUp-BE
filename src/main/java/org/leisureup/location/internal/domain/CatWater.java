@@ -22,12 +22,26 @@ public class CatWater extends Category {
         super(name, categoryCode, recommendationCode);
     }
 
+    private CatWater(
+            String name, String categoryCode, String recommendationCode,
+            AdditionalCategoryInfo additionalInfo
+    ) {
+        super(name, categoryCode, recommendationCode, additionalInfo);
+    }
+
     public static CatWater of(String name, String categoryCode) {
         return new CatWater(name, categoryCode);
     }
 
     public static CatWater of(String name, String categoryCode, String recommendCode) {
         return new CatWater(name, categoryCode, recommendCode);
+    }
+
+    public static CatWater of(
+            String name, String categoryCode, String recommendationCode,
+            AdditionalCategoryInfo additionalInfo
+    ) {
+        return new CatWater(name, categoryCode, recommendationCode, additionalInfo);
     }
 
     @Override
