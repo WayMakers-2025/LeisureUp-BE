@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import lombok.*;
 import org.leisureup.info.category.dto.response.*;
+import org.leisureup.info.category.dto.response.GetCategoryResponse.*;
 import org.leisureup.location.spi.*;
 import org.springframework.stereotype.*;
 
@@ -31,6 +32,16 @@ public class CategoryService {
         );
 
         return GetAllCategoriesResponse.of(earths, waters, skies);
+    }
+
+    /**
+     * 한 카테고리의 자세한 정보를 조회한다.
+     */
+    public GetCategoryResponse getCategory(Long categoryId) {
+
+        var resp = categorySpi.getCategoryDetail(categoryId);
+
+        return CategoryServiceUtil.toResponse(resp);
     }
 }
 
@@ -66,5 +77,34 @@ class CategoryServiceUtil {
                 .filter(filter)
                 .map(CategoryServiceUtil::toResponse)
                 .toList();
+    }
+
+    static GetCategoryResponse toResponse(DetailedCategoryInfo detailedInfo) {
+        Long id = detailedInfo.id();
+        String name = detailedInfo.name();
+        String code = detailedInfo.categoryCode();
+        Kind kind = resolveKind(detailedInfo.category());
+        String thumbnailUrl = detailedInfo.thumbnailUrl();
+        String notification = detailedInfo.notification();
+        String description = detailedInfo.description();
+
+        return new GetCategoryResponse(
+                id, emptyIfNull(name), emptyIfNull(code),
+                kind, emptyIfNull(thumbnailUrl),
+                emptyIfNull(notification), emptyIfNull(description)
+        );
+    }
+
+    private static Kind resolveKind(Cat category) {
+        return switch (category) {
+            case EARTH -> Kind.EARTH;
+            case WATER -> Kind.WATER;
+            case SKY -> Kind.SKY;
+            default -> Kind.OTHER;
+        };
+    }
+
+    private static String emptyIfNull(String s) {
+        return s == null ? "" : s;
     }
 }

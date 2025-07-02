@@ -1,5 +1,7 @@
 package org.leisureup.info.category.controller;
 
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.leisureup.global.response.*;
 import org.leisureup.info.category.dto.response.*;
@@ -16,6 +18,15 @@ public class CategoryController {
     @GetMapping
     public ApiResponse<GetAllCategoriesResponse> getAllCategories() {
         var resp = categoryService.getAllCategories();
+        return ApiResponse.success(200, resp);
+    }
+
+    @GetMapping("/{categoryId}")
+    public ApiResponse<GetCategoryResponse> getCategory(
+            @Valid @Positive @NotNull
+            @PathVariable Long categoryId
+    ) {
+        var resp = categoryService.getCategory(categoryId);
         return ApiResponse.success(200, resp);
     }
 }
