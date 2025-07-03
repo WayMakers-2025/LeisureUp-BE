@@ -37,6 +37,16 @@ public class MemberController {
         return ApiResponse.success(200, resp);
     }
 
+    @PatchMapping   // 멤버 정보 수정 (현재 닉네임 변경만)
+    public ApiResponse<?> updateMember(
+            @Valid @RequestBody UpdateMemberRequest req
+    ) {
+        Long memberId = authHolder.getMemberId();
+        memberService.updateMember(memberId, req);
+
+        return ApiResponse.success(204, null);
+    }
+
 
     @PostMapping("/interest")       // 니즈 수집 질문 응답 저장
     public ApiResponse<?> saveInterest(

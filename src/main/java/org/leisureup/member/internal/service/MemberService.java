@@ -34,6 +34,20 @@ public class MemberService {
     }
 
     /**
+     * 사용자 정보를 수정한다.
+     * <p>
+     * 현재 {@code nickname} 만 변경 가능.
+     */
+    @Transactional
+    public void updateMember(Long memberId, UpdateMemberRequest req) {
+        Member find = memberRepo.findById(memberId)
+                .orElseThrow(() -> new NotFound("Member not found"));
+
+        String newNickname = req.nickname();
+        find.changeNickname(newNickname);
+    }
+
+    /**
      * 사용자 니즈 수집 질문을 저장한다.
      * <p>
      * 이전에 응답했으면 수정해 저장한다.
