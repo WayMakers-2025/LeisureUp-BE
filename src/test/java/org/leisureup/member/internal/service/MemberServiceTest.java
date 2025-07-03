@@ -95,6 +95,12 @@ class MemberServiceTest extends IntegrationTestSupport {
         assertThat(interestRepo.findById(testMemberId))
                 .isPresent().get()
                 .hasNoNullFieldsOrProperties();
+
+        // 저장된 후에는 질문 응답 여부가 true 이다.
+        var resp = service.getMember(testMemberId);
+
+        assertThat(resp).isNotNull().hasNoNullFieldsOrProperties();
+        assertThat(resp.hasAnswered()).isTrue();
     }
 
     @Test

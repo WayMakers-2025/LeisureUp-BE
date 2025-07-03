@@ -28,7 +28,9 @@ public class MemberService {
         Member find = memberRepo.findById(memberId)
                 .orElseThrow(() -> new NotFound("Member not found"));
 
-        return GetMemberResponse.of(find);
+        boolean hasAnswered = interestRepo.existsById(memberId);
+
+        return GetMemberResponse.of(find, hasAnswered);
     }
 
     /**
