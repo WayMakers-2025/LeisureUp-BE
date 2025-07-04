@@ -66,6 +66,8 @@ feign:
   openid:
     google: https://openidconnect.googleapis.com
     kakao: https://kapi.kakao.com
+  weather:
+    warning: http://apis.data.go.kr/1360000/WthrWrnInfoService
 
 logging:
   level:
