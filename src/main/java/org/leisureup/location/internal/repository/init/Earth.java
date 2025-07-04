@@ -3,6 +3,7 @@ package org.leisureup.location.internal.repository.init;
 import static org.leisureup.location.internal.repository.init.Utils.*;
 
 import lombok.*;
+import org.leisureup.location.internal.domain.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -65,4 +66,8 @@ public enum Earth {
     );
 
     final String name, code, recommendCode;
+
+    public CatEarth toEntity() {
+        return CatEarth.of(name, code, recommendCode);
+    }
 }

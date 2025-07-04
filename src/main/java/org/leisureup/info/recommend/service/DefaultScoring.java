@@ -1,4 +1,4 @@
-package org.leisureup.info.recommend.internal.service;
+package org.leisureup.info.recommend.service;
 
 import lombok.extern.slf4j.*;
 

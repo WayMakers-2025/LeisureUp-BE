@@ -1,4 +1,4 @@
-package org.leisureup.info.recommend.internal.dto.response;
+package org.leisureup.info.recommend.dto.response;
 
 public record LocationInfo(
         Long id,

@@ -22,12 +22,26 @@ public class CatSky extends Category {
         super(name, categoryCode, recommendationCode);
     }
 
+    private CatSky(
+            String name, String categoryCode, String recommendationCode,
+            AdditionalCategoryInfo additionalInfo
+    ) {
+        super(name, categoryCode, recommendationCode, additionalInfo);
+    }
+
     public static CatSky of(String name, String categoryCode) {
         return new CatSky(name, categoryCode);
     }
 
     public static CatSky of(String name, String categoryCode, String recommendationCode) {
         return new CatSky(name, categoryCode, recommendationCode);
+    }
+
+    public static CatSky of(
+            String name, String categoryCode, String recommendationCode,
+            AdditionalCategoryInfo additionalInfo
+    ) {
+        return new CatSky(name, categoryCode, recommendationCode, additionalInfo);
     }
 
     @Override
