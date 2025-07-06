@@ -32,17 +32,10 @@ public class TourApiResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Body {
-        private Object items;
+        private Items items;
         private int numOfRows;
         private int pageNo;
         private int totalCount;
-        
-        public Items getItemsAsObject() {
-            if (items instanceof Items) {
-                return (Items) items;
-            }
-            return null;
-        }
     }
 
     @Getter

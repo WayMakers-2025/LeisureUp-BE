@@ -17,7 +17,6 @@ public class MapController {
             @RequestParam double y,
             @RequestParam(defaultValue = "1000") int radius,
             @RequestParam String category) {
-        // x는 경도(longitude), y는 위도(latitude)로 전달
         return ApiResponse.success(
                 200,
                 mapService.searchCategory(x, y, radius, category)

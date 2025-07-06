@@ -1,10 +1,8 @@
 package org.leisureup.map.internal.service;
 
 import org.leisureup.map.internal.dto.TourApiResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "tourApiLocalClient", url = "http://apis.data.go.kr")
