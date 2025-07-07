@@ -13,9 +13,13 @@ spring:
         - common-secret
         - staging-secret
         - init-categories
+        - file-logger
+        - discord-error-logger
       prod:
         - common-secret
         - prod-secret
+        - file-logger
+        - discord-error-logger
 
   datasource:
     url: ${db.url}
