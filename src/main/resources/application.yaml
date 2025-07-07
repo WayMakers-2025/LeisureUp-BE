@@ -72,9 +72,21 @@ feign:
 mdc-key:
   request-id: request-id
 
+logback-config:
+  # noinspection SpringBootApplicationYaml
+  log-directory: ./logs
+  # noinspection SpringBootApplicationYaml
+  discord-webhook: ${discord.webhook-url}
+
 logging:
   level:
     org.hibernate.SQL: debug
   pattern:
     level: '[RID:%10X{${mdc-key.request-id}}] %5p'
     dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      total-size-cap: 2GB
+      max-history: 7
+      clean-history-on-start: true
