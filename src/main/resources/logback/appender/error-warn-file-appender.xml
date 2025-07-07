@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <included>
+  <include resource="logback/base.xml"/>
+  <property name="ERROR_WARN_LOG_FILE" value="error-warn"/>
+  <property name="ERROR_WARN_FILE_PATH" value="${LOG_DIR:-./logs}/${ERROR_WARN_LOG_FILE}"/>
+
   <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="ERROR_WARN_FILE">
     <append>true</append>
     <encoder>
@@ -30,10 +34,5 @@
       </totalSizeCap>
     </rollingPolicy>
   </appender>
-
-  <include resource="logback/base.xml"/>
-  <property name="ERROR_WARN_FILE_PATH" value="${LOG_DIR:-./logs}/${ERROR_WARN_LOG_FILE}"/>
-
-  <property name="ERROR_WARN_LOG_FILE" value="error-warn"/>
 
 </included>

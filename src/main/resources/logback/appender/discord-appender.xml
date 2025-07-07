@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <included>
+  <include resource="logback/base.xml"/>
+
+  <springProperty name="DISCORD_WEBHOOK_URL" scope="context" source="logback-config.discord-webhook"/>
+
   <appender class="com.github.napstr.logback.DiscordAppender" name="DISCORD">
     <avatarUrl>http://i.imgur.com/UoiA3OQ.png</avatarUrl>
     <layout class="ch.qos.logback.classic.PatternLayout">
@@ -13,10 +17,5 @@
     <username>[!!!ERROR!!!]</username>
     <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
   </appender>
-
-  <include resource="logback/base.xml"/>
-
-  <springProperty name="DISCORD_WEBHOOK_URL" scope="context"
-    source="logback-config.discord-webhook"/>
 
 </included>
