@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<included>
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="ERROR_WARN_FILE">
+    <append>true</append>
+    <encoder>
+      <charset>${FILE_LOG_CHARSET}</charset>
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+    </encoder>
+
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>WARN</level>
+    </filter>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <cleanHistoryOnStart>
+        ${LOGBACK_ROLLINGPOLICY_CLEAN_HISTORY_ON_START:-false}
+      </cleanHistoryOnStart>
+      <fileNamePattern>
+        ${LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN:-${ERROR_WARN_FILE_PATH}.%d{yyyy-MM-dd}.%i.log}
+      </fileNamePattern>
+      <maxFileSize>
+        ${LOGBACK_ROLLINGPOLICY_MAX_FILE_SIZE:-10MB}
+      </maxFileSize>
+      <maxHistory>
+        ${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-7}
+      </maxHistory>
+      <totalSizeCap>
+        ${LOGBACK_ROLLINGPOLICY_TOTAL_SIZE_CAP:-0}
+      </totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
+  <include resource="logback/base.xml"/>
+  <property name="ERROR_WARN_FILE_PATH" value="${LOG_DIR:-./logs}/${ERROR_WARN_LOG_FILE}"/>
+
+  <property name="ERROR_WARN_LOG_FILE" value="error-warn"/>
+
+</included>
