@@ -14,10 +14,7 @@ import org.leisureup.travel.internal.travel.repository.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,7 +32,15 @@ public class TravelService {
         if (travels.isEmpty()){
             throw new NotFound("생성된 여행이 없습니다.");
         }
-        return GetAllTravelResponse.fromTravel(travels);
+        Map<Long, String> representImageMap = new HashMap<>();
+        for (Travel travel : travels) {
+            List<Long> itemIdList = itemRepository.findByTravel(travel).stream()
+                    .map(Item::getItemId)
+                    .collect(Collectors.toList());
+            String representImage = locationQueryPort.getRepresentImage(itemIdList);
+            representImageMap.put(travel.getTravelId(), representImage);
+        }
+        return GetAllTravelResponse.fromTravel(travels,representImageMap);
     }
 
     @Transactional(readOnly = true)
@@ -46,7 +51,7 @@ public class TravelService {
         Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
 
         // 필요한 장소 목록들 가져온 후 ID : Resp mapping
-        var resp = locationQueryPort.getLocationListById(
+        List<LocationResponse> resp = locationQueryPort.getLocationListById(
                 new ArrayList<>(itemMap.keySet())
         );
         Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);

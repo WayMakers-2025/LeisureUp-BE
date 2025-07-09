@@ -98,6 +98,11 @@ public class LocationQueryAdapter implements LocationQueryPort {
                 .map(LocationUtils::toRecord)
                 .toList();
     }
+
+    @Override
+    public String getRepresentImage(List<Long> locationId) {
+        return "";
+    }
 }
 
 class LocationUtils {
