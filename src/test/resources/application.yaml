@@ -35,9 +35,13 @@ feign:
   weather:
     warning: http://apis.data.go.kr/1360000/WthrWrnInfoService
 
+mdc-key:
+  request-id: request-id
+
 logging:
   #  level:
   #    org.hibernate.SQL: debug
   #    org.springframework.transaction: trace
   pattern:
     dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul
+    level: '[RID:%10X{${mdc-key.request-id}}] %5p'

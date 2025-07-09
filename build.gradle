@@ -22,6 +22,7 @@ configurations {
 repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -40,6 +41,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
 
     compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.github.napstr:logback-discord-appender:1.0.0'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
