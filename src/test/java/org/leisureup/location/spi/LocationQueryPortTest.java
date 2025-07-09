@@ -19,7 +19,7 @@ class LocationQueryPortTest extends IntegrationTestSupport {
     private static final Random random = new Random();
     private static final List<Long> testIds = LongStream.rangeClosed(1, 10)
             .boxed().toList();
-    private static Long exsitingCategoryId;
+    private static Long existingCategoryId;
     @Autowired
     LocationQueryPort port;
     @Autowired
@@ -44,7 +44,7 @@ class LocationQueryPortTest extends IntegrationTestSupport {
     void setUp() {
 
         Category sampleCat = CatOther.of("sample", "1234");
-        exsitingCategoryId = categoryRepo.save(sampleCat)
+        existingCategoryId = categoryRepo.save(sampleCat)
                 .getId();
 
         List<Location> locations = testIds.stream()
@@ -70,6 +70,14 @@ class LocationQueryPortTest extends IntegrationTestSupport {
         assertThat(resp).isNotNull().hasSize(testIds.size());
         for (var single : resp) {
             assertThat(single).hasNoNullFieldsOrProperties();
+        }
+
+        // 주어진 ID 순서대로 제공된다.
+        for (int i = 0; i < testIds.size(); i++) {
+            Long givenId = testIds.get(i);
+            Long respId = resp.get(i).locationId();
+
+            assertThat(respId).isEqualTo(givenId);
         }
     }
 
@@ -107,7 +115,7 @@ class LocationQueryPortTest extends IntegrationTestSupport {
 
         int max = testIds.size() / 2;
         List<LocationResponse> resp = port.getAnyLocationsOnCategory(max,
-                List.of(exsitingCategoryId)
+                List.of(existingCategoryId)
         );
 
         assertThat(resp).isNotNull();

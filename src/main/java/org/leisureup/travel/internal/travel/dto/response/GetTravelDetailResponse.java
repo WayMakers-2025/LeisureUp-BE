@@ -14,7 +14,8 @@ public class GetTravelDetailResponse {
     private Long travelId;
     private String travelName;
     private String travelDescription;
-    private LocalDate travelDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private List<LocationResponseDetail> locations;
 
     public static GetTravelDetailResponse fromEntity(Travel travel, List<LocationResponseDetail> locations) {
@@ -23,7 +24,8 @@ public class GetTravelDetailResponse {
                 .travelId(travel.getTravelId())
                 .travelName(travel.getTravelName())
                 .travelDescription(travel.getTravelDescription())
-                .travelDate(travel.getTravelDate())
+                .startDate(travel.getStartDate())
+                .endDate(travel.getEndDate())
                 .locations(locations)
                 .build();
     }

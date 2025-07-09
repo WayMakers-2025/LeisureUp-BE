@@ -2,6 +2,7 @@ package org.leisureup.location.spi.internal;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 import java.util.stream.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
@@ -53,8 +54,12 @@ public class LocationQueryAdapter implements LocationQueryPort {
             throw new NotFound(msg);
         }
 
-        return locations.stream()
+        Map<Long, LocationResponse> unorderedResp = locations.stream()
                 .map(LocationUtils::toRecord)
+                .collect(Collectors.toMap(LocationResponse::locationId, Function.identity()));
+
+        return locationIds.stream()
+                .map(unorderedResp::get)
                 .toList();
     }
 
@@ -97,6 +102,19 @@ public class LocationQueryAdapter implements LocationQueryPort {
         return locations.stream()
                 .map(LocationUtils::toRecord)
                 .toList();
+    }
+
+    @Override
+    public String getRepresentImage(List<Long> locationId) {
+        List<LocationResponse> locations = this.getLocationListById(locationId);
+
+        return locations.stream()
+                .map(LocationResponse::description)
+                .filter(Objects::nonNull)
+                .map(LocationUtils::getFirstAvailableThumbnail)
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElse("");
     }
 }
 
@@ -170,5 +188,11 @@ class LocationUtils {
             case CatSky.TYPE -> Cat.SKY;
             default -> Cat.ETC;
         };
+    }
+
+    static String getFirstAvailableThumbnail(Desc desc) {
+        return desc == null ? "" :
+                Optional.ofNullable(desc.largeThumbnail())
+                        .orElse(desc.smallThumbnail());
     }
 }

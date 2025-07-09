@@ -14,10 +14,7 @@ import org.leisureup.travel.internal.travel.repository.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,7 +32,15 @@ public class TravelService {
         if (travels.isEmpty()){
             throw new NotFound("생성된 여행이 없습니다.");
         }
-        return GetAllTravelResponse.fromTravel(travels);
+        Map<Long, String> representImageMap = new HashMap<>();
+        for (Travel travel : travels) {
+            List<Long> itemIdList = itemRepository.findByTravel(travel).stream()
+                    .map(Item::getItemId)
+                    .collect(Collectors.toList());
+            String representImage = locationQueryPort.getRepresentImage(itemIdList);
+            representImageMap.put(travel.getTravelId(), representImage);
+        }
+        return GetAllTravelResponse.fromTravel(travels,representImageMap);
     }
 
     @Transactional(readOnly = true)
@@ -46,7 +51,7 @@ public class TravelService {
         Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
 
         // 필요한 장소 목록들 가져온 후 ID : Resp mapping
-        var resp = locationQueryPort.getLocationListById(
+        List<LocationResponse> resp = locationQueryPort.getLocationListById(
                 new ArrayList<>(itemMap.keySet())
         );
         Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
@@ -74,7 +79,7 @@ public class TravelService {
         Travel travel = this.findTravel(travelId, memberId);
 
         int position = travel.getItems().size();
-        Item newItem = Item.buildItem(locationId, position, travel);
+        Item newItem = Item.addItem(locationId, position, travel);
         itemRepository.save(newItem);
         
         return "성공적으로 아이템이 추가되었습니다.";
@@ -130,7 +135,7 @@ public class TravelService {
             // position이 null이면 인덱스 기반으로 자동 할당
             int position = itemRequest.getPosition() != null ? itemRequest.getPosition() : i;
             
-            Item item = Item.buildItem(itemRequest.getLocationId(), position, travel);
+            Item item = Item.buildItem(itemRequest, position, travel);
             items.add(item);
         }
         
@@ -161,12 +166,7 @@ public class TravelService {
     public ApiResponse<String> updateTravel(Long travelId, CreateTravelRequest updateTravelRequest, Long memberId) {
         try {
             Travel travel = this.findTravel(travelId, memberId);
-
-            travel.updateTravelInfo(
-                updateTravelRequest.getTravelName(),
-                updateTravelRequest.getTravelDescription(),
-                updateTravelRequest.getTravelDate()
-            );
+            travel.updateTravelInfo(updateTravelRequest);
 
             if (updateTravelRequest.getItems() != null && !updateTravelRequest.getItems().isEmpty()) {
                 for (ItemRequest itemRequest : updateTravelRequest.getItems()) {

@@ -9,6 +9,7 @@ import org.leisureup.travel.internal.travel.domain.Travel;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,16 +22,22 @@ public class GetAllTravelResponse {
 
     private String travelDescription;
 
-    private LocalDate travelDate;
+    private LocalDate startDate;
 
-    public static List<GetAllTravelResponse> fromTravel(List<Travel> travels) {
+    private LocalDate endDate;
+
+    private String representImage;
+
+    public static List<GetAllTravelResponse> fromTravel(List<Travel> travels, Map<Long, String> representImageMap) {
         List<GetAllTravelResponse> dtos = new ArrayList<>();
         for (Travel t : travels) {
             GetAllTravelResponse build = GetAllTravelResponse.builder()
                     .travelId(t.getTravelId())
                     .travelName(t.getTravelName())
                     .travelDescription(t.getTravelDescription())
-                    .travelDate(t.getTravelDate())
+                    .startDate(t.getStartDate())
+                    .endDate(t.getEndDate())
+                    .representImage(representImageMap.get(t.getTravelId()))
                     .build();
             dtos.add(build);
         }
