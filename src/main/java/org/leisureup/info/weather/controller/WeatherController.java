@@ -2,6 +2,7 @@ package org.leisureup.info.weather.controller;
 
 import lombok.*;
 import org.leisureup.global.response.*;
+import org.leisureup.info.weather.dto.response.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ public class WeatherController {
     private final WeatherInformService weatherInformService;
 
     @GetMapping("/warning")
-    public ApiResponse<?> getWeatherWarning() {
+    public ApiResponse<WarningResponse> getWeatherWarning() {
 
         var resp = weatherInformService.getWeatherWarning();
 
