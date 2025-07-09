@@ -6,13 +6,15 @@ import org.leisureup.map.internal.dto.*;
 import org.leisureup.map.internal.service.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class MapController {
     private final MapService mapService;
 
     @GetMapping("/map/category")
-    public ApiResponse<Object> searchCategory(
+    public ApiResponse<List<MapResponse>> searchCategory(
             @RequestParam double x,
             @RequestParam double y,
             @RequestParam(defaultValue = "1000") int radius,
