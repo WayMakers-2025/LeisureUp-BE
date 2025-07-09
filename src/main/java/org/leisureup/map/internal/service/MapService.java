@@ -28,18 +28,19 @@ public class MapService {
             
             try {
                 TourApiResponse tourApi = placeSearchService.getTourApi(x, y, radius, contentTypeId);
-                TourApiResponse.Body body = tourApi.getResponse().getBody();
-                
-                // 데이터가 없으면 404 에러 발생
-                if (body == null || body.getItems() == null || 
-                    body.getItems().getItem() == null || 
-                    body.getItems().getItem().isEmpty()) {
-                    throw new NotFound("해당 조건에 맞는 관광정보가 없습니다.");
-                }
                 return MapResponse.fromTourAPI(tourApi,category);
             } catch (Exception e) {
                 throw new NotFound("해당 조건에 맞는 관광정보가 없습니다.");
             }
+        }
+    }
+
+    public Object search(String query) {
+        try{
+            TourApiResponse locationBySearch = placeSearchService.getLocationBySearch(query);
+            return MapResponse.fromTourAPI(locationBySearch, query);
+        } catch (Exception e) {
+            throw new NotFound("검색 결과가 없습니다.");
         }
     }
 }

@@ -40,17 +40,6 @@ public class PlaceSearchService {
     }
 
     public TourApiResponse getTourApi(double x, double y, int radius, Integer contentTypeId) {
-        System.out.println("real 로?");
-        
-        // URL 구성해서 출력
-        String url = String.format(
-            "http://apis.data.go.kr/B551011/KorService2/locationBasedList2?" +
-            "MobileOS=%s&MobileApp=%s&serviceKey=%s&mapX=%f&mapY=%f&radius=%d" +
-            "&_type=%s&arrange=C&contentTypeId=%d&numOfRows=10&pageNo=1",
-            mobileOS, mobileApp, serviceKey, x, y, radius, _type, contentTypeId
-        );
-        System.out.println("TourAPI URL: " + url);
-        
         return tourApiLocalClient.searchByCategory(
                 mobileOS,
                 mobileApp,
@@ -62,6 +51,12 @@ public class PlaceSearchService {
                 "C",
                 contentTypeId,
                 10,1
+        );
+    }
+
+    public TourApiResponse getLocationBySearch(String keyword) {
+        return tourApiLocalClient.search(
+                mobileOS, mobileApp, serviceKey, _type, keyword
         );
     }
 }

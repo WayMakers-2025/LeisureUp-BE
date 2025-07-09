@@ -24,4 +24,13 @@ public class MapController {
                 mapService.searchCategory(x, y, radius, category)
         );
     }
+
+    @GetMapping("/map/search")
+    public ApiResponse<Object> search(
+            @RequestParam String query) {
+        return ApiResponse.success(
+                200,
+                mapService.search(query)
+        );
+    }
 }
