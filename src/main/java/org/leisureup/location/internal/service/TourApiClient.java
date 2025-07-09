@@ -1,5 +1,6 @@
 package org.leisureup.location.internal.service;
 
+import org.leisureup.global.response.external.tourapi.*;
 import org.leisureup.location.internal.dto.api.*;
 import org.springframework.cloud.openfeign.*;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(
         name = "tourApiClient",
         url = "${feign.tour-api.url}",
-        configuration = TourApiErrorDecoder.class
+        configuration = DefaultTourApiErrorDecoder.class
 )
 public interface TourApiClient {
 
