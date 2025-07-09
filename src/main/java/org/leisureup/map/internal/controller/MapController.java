@@ -33,7 +33,7 @@ public class MapController {
         );
     }
 
-    @GetMapping("/map/leisure/location-base")
+    @GetMapping("/map/leisure")
     public ApiResponse<MultiPageResponse<?>>
     searchLeisureOnLocation(
             @Valid @ParameterObject
