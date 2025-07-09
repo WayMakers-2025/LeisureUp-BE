@@ -79,7 +79,7 @@ public class TravelService {
         Travel travel = this.findTravel(travelId, memberId);
 
         int position = travel.getItems().size();
-        Item newItem = Item.buildItem(locationId, position, travel);
+        Item newItem = Item.addItem(locationId, position, travel);
         itemRepository.save(newItem);
         
         return "성공적으로 아이템이 추가되었습니다.";
@@ -135,7 +135,7 @@ public class TravelService {
             // position이 null이면 인덱스 기반으로 자동 할당
             int position = itemRequest.getPosition() != null ? itemRequest.getPosition() : i;
             
-            Item item = Item.buildItem(itemRequest.getLocationId(), position, travel);
+            Item item = Item.buildItem(itemRequest, position, travel);
             items.add(item);
         }
         
@@ -166,12 +166,7 @@ public class TravelService {
     public ApiResponse<String> updateTravel(Long travelId, CreateTravelRequest updateTravelRequest, Long memberId) {
         try {
             Travel travel = this.findTravel(travelId, memberId);
-
-            travel.updateTravelInfo(
-                updateTravelRequest.getTravelName(),
-                updateTravelRequest.getTravelDescription(),
-                updateTravelRequest.getTravelDate()
-            );
+            travel.updateTravelInfo(updateTravelRequest);
 
             if (updateTravelRequest.getItems() != null && !updateTravelRequest.getItems().isEmpty()) {
                 for (ItemRequest itemRequest : updateTravelRequest.getItems()) {

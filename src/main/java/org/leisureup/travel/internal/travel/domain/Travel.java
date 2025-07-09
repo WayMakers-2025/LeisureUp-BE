@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,7 +24,9 @@ public class Travel {
 
     private String travelDescription;
 
-    private LocalDate travelDate;
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 
     private Long memberId;
 
@@ -32,9 +35,10 @@ public class Travel {
     @OrderBy("position")
     private List<Item> items = new ArrayList<>();
 
-    public void updateTravelInfo(String travelName, String travelDescription, LocalDate travelDate) {
-        this.travelName = travelName;
-        this.travelDescription = travelDescription;
-        this.travelDate = travelDate;
+    public void updateTravelInfo(CreateTravelRequest createTravelRequest) {
+        this.travelName = createTravelRequest.getTravelName();
+        this.travelDescription = createTravelRequest.getTravelDescription();
+        this.startDate = createTravelRequest.getStartDate();
+        this.endDate = createTravelRequest.getEndDate();
     }
 }

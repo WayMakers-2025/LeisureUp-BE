@@ -14,14 +14,16 @@ import java.util.List;
 public class CreateTravelRequest {
     private String travelName;
     private String travelDescription;
-    private LocalDate travelDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private List<ItemRequest> items;
     
     public Travel toEntity(Long memberId) {
         return Travel.builder()
                 .travelName(travelName)
                 .travelDescription(travelDescription)
-                .travelDate(travelDate)
+                .startDate(startDate)
+                .endDate(endDate)
                 .memberId(memberId)
                 .build();
     }

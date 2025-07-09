@@ -22,7 +22,9 @@ public class GetAllTravelResponse {
 
     private String travelDescription;
 
-    private LocalDate travelDate;
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 
     private String representImage;
 
@@ -33,7 +35,8 @@ public class GetAllTravelResponse {
                     .travelId(t.getTravelId())
                     .travelName(t.getTravelName())
                     .travelDescription(t.getTravelDescription())
-                    .travelDate(t.getTravelDate())
+                    .startDate(t.getStartDate())
+                    .endDate(t.getEndDate())
                     .representImage(representImageMap.get(t.getTravelId()))
                     .build();
             dtos.add(build);
