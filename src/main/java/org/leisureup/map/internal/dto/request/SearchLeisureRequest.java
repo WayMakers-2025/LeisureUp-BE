@@ -41,8 +41,8 @@ public class SearchLeisureRequest {
         DIST, TITLE, CREATION, MODIFICATION
     }
 
-    public CordRelatedInfo getCordRelatedInfo() {
-        return new CordRelatedInfo(x, y, radius);
+    public CordInfo getCordRelatedInfo() {
+        return new CordInfo(x, y, radius);
     }
 
     public PagingInfo getPagingInfo() {

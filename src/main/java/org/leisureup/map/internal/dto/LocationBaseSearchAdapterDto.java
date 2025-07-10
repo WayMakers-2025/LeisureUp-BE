@@ -23,7 +23,7 @@ public class LocationBaseSearchAdapterDto {
     }
 
     public LocationBaseSearchAdapterDto(
-            CordRelatedInfo cordInfo, PagingInfo pagingInfo
+            CordInfo cordInfo, PagingInfo pagingInfo
     ) {
         this.x = cordInfo.x();
         this.y = cordInfo.y();

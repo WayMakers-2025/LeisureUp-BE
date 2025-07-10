@@ -31,7 +31,7 @@ class LeisureSearchServiceTest {
             filter2 = LeisureFilter.Sledding,
             filter3 = LeisureFilter.Tracking;
     static JsonNode baseInfoNode;
-    static CordRelatedInfo cordInfo;
+    static CordInfo cordInfo;
     static PagingInfo pagingInfo;
     @Value("${tourApi.key}")
     String apiKeyForTest;
@@ -57,7 +57,7 @@ class LeisureSearchServiceTest {
         int pageNo = baseInfoNode.get("pageNo").asInt();
         int numOfRows = baseInfoNode.get("numOfRows").asInt();
 
-        cordInfo = new CordRelatedInfo(mapX, mapY, radius);
+        cordInfo = new CordInfo(mapX, mapY, radius);
         pagingInfo = new PagingInfo(pageNo, numOfRows, Sort.DIST);
     }
 

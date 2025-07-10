@@ -51,7 +51,7 @@ public class MapController {
             SearchLeisureRequest req
     ) {
 
-        CordRelatedInfo cordInfo = req.getCordRelatedInfo();
+        CordInfo cordInfo = req.getCordRelatedInfo();
         PagingInfo pagingInfo = req.getPagingInfo();
         Set<LeisureFilter> filters = req.getFilters();
 

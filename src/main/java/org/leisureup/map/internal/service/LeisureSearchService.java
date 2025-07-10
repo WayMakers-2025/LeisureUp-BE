@@ -19,7 +19,7 @@ public class LeisureSearchService {
     private final TourApiSearchService apiSearchService;
 
     public MultiPageResponse<SearchLeisureResponse> searchAnyLeisure(
-            CordRelatedInfo cordInfo, PagingInfo pagingInfo
+            CordInfo cordInfo, PagingInfo pagingInfo
     ) {
 
         Map<String, PageResponse<SearchLeisureResponse>> resp = Map.of(
@@ -31,7 +31,7 @@ public class LeisureSearchService {
     }
 
     public MultiPageResponse<SearchLeisureResponse> searchLeisureWithFilters(
-            CordRelatedInfo cordInfo, PagingInfo pagingInfo,
+            CordInfo cordInfo, PagingInfo pagingInfo,
             Set<LeisureFilter> filters
     ) {
 

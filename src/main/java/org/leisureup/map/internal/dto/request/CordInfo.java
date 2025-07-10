@@ -1,6 +1,6 @@
 package org.leisureup.map.internal.dto.request;
 
-public record CordRelatedInfo(
+public record CordInfo(
         double x, double y, int radius
 ) {
 

@@ -6,8 +6,7 @@ import org.leisureup.map.internal.dto.api.*;
 public record SearchLeisureResponse(
         Long contentId,
         String title,
-        CoordinateInfo coordinateInfo,
-        MajorInfo majorInfo,
+        LocationInfo locationInfo,
         MinorInfo minorInfo
 ) {
 
@@ -15,16 +14,10 @@ public record SearchLeisureResponse(
         Long contentId = apiResp.contentId();
         String title = apiResp.title();
 
-        var cord = CoordinateInfo.of(
-                apiResp.mapX(),
-                apiResp.mapY(),
-                apiResp.dist()
-        );
-
-        var major = MajorInfo.of(
-                apiResp.tel(),
-                apiResp.firstImage(),
-                apiResp.firstImage2()
+        var locationInfo = LocationInfo.of(
+                apiResp.mapX(), apiResp.mapY(), apiResp.dist(),
+                apiResp.address(), apiResp.detailedAddress(),
+                apiResp.zipcode()
         );
 
         var minor = MinorInfo.of(
@@ -33,49 +26,45 @@ public record SearchLeisureResponse(
                 apiResp.createdTime(), apiResp.modifiedTime()
         );
 
-        return new SearchLeisureResponse(contentId, title, cord, major, minor);
+        return new SearchLeisureResponse(contentId, title, locationInfo, minor);
     }
 
     private static String emptyIfNull(String s) {
         return s == null ? "" : s;
     }
 
-    public record CoordinateInfo(
-            double x, double y, double dist
+    public record LocationInfo(
+            double gpsX, double gpsY, double dist,
+            String briefAddress, String detailedAddress,
+            String zipcode
     ) {
 
-        public static CoordinateInfo of(double x, double y, double dist) {
-            return new CoordinateInfo(x, y, dist);
-        }
-    }
-
-    public record MajorInfo(
-            String telephone,
-            String largeThumbnail,
-            String smallThumbnail
-    ) {
-
-        public static MajorInfo of(String tel, String th1, String th2) {
-            return new MajorInfo(
-                    emptyIfNull(tel), emptyIfNull(th1), emptyIfNull(th2)
+        public static LocationInfo of(
+                double mapX, double mapY, double dist,
+                String briefAddress, String detailedAddress, String zipcode
+        ) {
+            return new LocationInfo(
+                    mapX, mapY, dist,
+                    emptyIfNull(briefAddress), emptyIfNull(detailedAddress),
+                    emptyIfNull(zipcode)
             );
         }
     }
 
     public record MinorInfo(
-            String briefAddress,
-            String detailedAddress,
-            String zipcode,
+            String telephone,
+            String largeThumbnail,
+            String smallThumbnail,
             LocalDateTime createdAt,
             LocalDateTime modifiedAt
     ) {
 
         public static MinorInfo of(
-                String add1, String add2, String zip,
+                String telephone, String largeTh, String smallTh,
                 LocalDateTime createdAt, LocalDateTime modifiedAt
         ) {
             return new MinorInfo(
-                    emptyIfNull(add1), emptyIfNull(add2), emptyIfNull(zip),
+                    emptyIfNull(telephone), emptyIfNull(largeTh), emptyIfNull(smallTh),
                     createdAt, modifiedAt
             );
         }

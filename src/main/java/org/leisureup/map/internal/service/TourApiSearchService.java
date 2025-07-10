@@ -37,7 +37,7 @@ public class TourApiSearchService {
     }
 
     public PageResponse<SearchLeisureResponse> searchAnyLeisure(
-            CordRelatedInfo cordInfo, PagingInfo pagingInfo
+            CordInfo cordInfo, PagingInfo pagingInfo
     ) {
 
         var reqDto = TourApiSearchServiceUtils.buildReqAdapterDto(cordInfo, pagingInfo);
@@ -55,7 +55,7 @@ public class TourApiSearchService {
 
     @Async
     public CompletableFuture<PageResponse<SearchLeisureResponse>> searchLeisure(
-            CordRelatedInfo cordInfo, PagingInfo pagingInfo,
+            CordInfo cordInfo, PagingInfo pagingInfo,
             LeisureFilter filter
     ) {
 
@@ -101,13 +101,13 @@ public class TourApiSearchService {
 class TourApiSearchServiceUtils {
 
     static LocationBaseSearchAdapterDto buildReqAdapterDto(
-            CordRelatedInfo cordInfo, PagingInfo pagingInfo
+            CordInfo cordInfo, PagingInfo pagingInfo
     ) {
         return new LocationBaseSearchAdapterDto(cordInfo, pagingInfo);
     }
 
     static LocationBaseSearchAdapterDto buildReqAdapterDto(
-            CordRelatedInfo cordInfo, PagingInfo pagingInfo, LeisureFilter filter
+            CordInfo cordInfo, PagingInfo pagingInfo, LeisureFilter filter
     ) {
         if (filter == null) {
             throw new IllegalArgumentException("LeisureFilter cannot be null");
