@@ -1,0 +1,101 @@
+{
+  "response": {
+    "header": {
+      "resultCode": "0000",
+      "resultMsg": "OK"
+    },
+    "body": {
+      "items": {
+        "item": [
+          {
+            "addr1": "서울특별시 광진구 광나루로 441",
+            "addr2": "(능동)",
+            "zipcode": "04991",
+            "areacode": "1",
+            "cat1": "A03",
+            "cat2": "A0302",
+            "cat3": "A03021400",
+            "contentid": "131727",
+            "contenttypeid": "28",
+            "createdtime": "20031216090000",
+            "dist": "9036.474634271031",
+            "firstimage": "http://tong.visitkorea.or.kr/cms/resource/73/688373_image2_1.jpg",
+            "firstimage2": "http://tong.visitkorea.or.kr/cms/resource/73/688373_image3_1.jpg",
+            "cpyrhtDivCd": "Type3",
+            "mapx": "127.0792846475",
+            "mapy": "37.5459390073",
+            "mlevel": "6",
+            "modifiedtime": "20241010201232",
+            "sigungucode": "6",
+            "tel": "",
+            "title": "어린이회관 눈썰매장",
+            "lDongRegnCd": "11",
+            "lDongSignguCd": "215",
+            "lclsSystm1": "LS",
+            "lclsSystm2": "LS01",
+            "lclsSystm3": "LS011000"
+          },
+          {
+            "addr1": "서울특별시 광진구 강변북로 139",
+            "addr2": "(자양동)",
+            "zipcode": "05097",
+            "areacode": "1",
+            "cat1": "A03",
+            "cat2": "A0302",
+            "cat3": "A03021400",
+            "contentid": "1148818",
+            "contenttypeid": "28",
+            "createdtime": "20101220215729",
+            "dist": "9289.664233491721",
+            "firstimage": "http://tong.visitkorea.or.kr/cms/resource/95/1985295_image2_1.jpg",
+            "firstimage2": "http://tong.visitkorea.or.kr/cms/resource/95/1985295_image3_1.jpg",
+            "cpyrhtDivCd": "Type3",
+            "mapx": "127.0739744904",
+            "mapy": "37.5293380619",
+            "mlevel": "6",
+            "modifiedtime": "20241018172819",
+            "sigungucode": "6",
+            "tel": "",
+            "title": "한강공원 뚝섬 눈썰매장",
+            "lDongRegnCd": "11",
+            "lDongSignguCd": "215",
+            "lclsSystm1": "LS",
+            "lclsSystm2": "LS01",
+            "lclsSystm3": "LS011000"
+          },
+          {
+            "addr1": "경기도 과천시 막계동",
+            "addr2": "(막계동)",
+            "zipcode": "13829",
+            "areacode": "31",
+            "cat1": "A03",
+            "cat2": "A0302",
+            "cat3": "A03021400",
+            "contentid": "131433",
+            "contenttypeid": "28",
+            "createdtime": "20040119090000",
+            "dist": "15123.456405735724",
+            "firstimage": "http://tong.visitkorea.or.kr/cms/resource/68/1861968_image2_1.jpg",
+            "firstimage2": "http://tong.visitkorea.or.kr/cms/resource/68/1861968_image3_1.jpg",
+            "cpyrhtDivCd": "Type3",
+            "mapx": "127.0170406660",
+            "mapy": "37.4352174086",
+            "mlevel": "6",
+            "modifiedtime": "20240902092547",
+            "sigungucode": "3",
+            "tel": "",
+            "title": "서울랜드 눈썰매장",
+            "lDongRegnCd": "41",
+            "lDongSignguCd": "290",
+            "lclsSystm1": "LS",
+            "lclsSystm2": "LS01",
+            "lclsSystm3": "LS011000"
+          }
+        ]
+      },
+      "numOfRows": 3,
+      "pageNo": 1,
+      "totalCount": 3
+    }
+  }
+}
