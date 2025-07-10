@@ -33,7 +33,7 @@ public record MultiPageResponse<T>(
 
         if (map != null) {
             for (var pageResponse : map.values()) {
-                sum += pageResponse.numOfTotalElements();
+                sum += pageResponse.numOfElements();
             }
         }
 
