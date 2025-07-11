@@ -10,19 +10,19 @@ import org.springframework.stereotype.*;
 
 @Slf4j
 @Component
-public class RequestIdHandler implements ServletRequestListener {
+public class RequestIdConfigurer implements ServletRequestListener {
 
     private static final int ID_LENGTH = 8;
     private final String ridKeyOnMdc;
 
-    public RequestIdHandler(
+    public RequestIdConfigurer(
             @Value("${mdc-key.request-id}")
             String ridKeyOnMdc
     ) {
         this.ridKeyOnMdc = ridKeyOnMdc;
     }
 
-    private static String genRandomId() {
+    public static String genRandomId() {
         try {
             String uuid = UUID.randomUUID().toString()
                     .replaceAll("-", "")
