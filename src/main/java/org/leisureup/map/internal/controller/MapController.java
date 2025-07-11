@@ -1,10 +1,9 @@
 package org.leisureup.map.internal.controller;
 
-import java.util.List;
 import jakarta.validation.*;
+import java.util.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
-import org.leisureup.global.exception.*;
 import org.leisureup.global.response.*;
 import org.leisureup.map.internal.dto.*;
 import org.leisureup.map.internal.dto.request.*;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class MapController {
 
     private final MapService mapService;
+    private final LeisureSearchService leisureSearchService;
 
     @GetMapping("/map/category")
     public ApiResponse<List<MapResponse>> searchCategory(
@@ -34,7 +34,7 @@ public class MapController {
                 mapService.searchCategory(x, y, radius, category)
         );
     }
-  
+
     @GetMapping("/map/search")
     public ApiResponse<Object> search(
             @RequestParam String query) {
@@ -43,18 +43,22 @@ public class MapController {
                 mapService.search(query)
         );
     }
-  
+
     @GetMapping("/map/leisure")
     public ApiResponse<MultiPageResponse<?>>
     searchLeisureOnLocation(
             @Valid @ParameterObject
-            SearchLeisureOnLocationRequest req
+            SearchLeisureRequest req
     ) {
 
-        log.info("Request : {}", req.toString());
+        CordRelatedInfo cordInfo = req.getCordRelatedInfo();
+        PagingInfo pagingInfo = req.getPagingInfo();
+        Set<LeisureFilter> filters = req.getFilters();
 
-        throw new NotImplemented(
-                "/map/leisure/location-base has not been implemented yet"
-          );
+        var resp = filters == null || filters.isEmpty() ?
+                leisureSearchService.searchAnyLeisure(cordInfo, pagingInfo) :
+                leisureSearchService.searchLeisureWithFilters(cordInfo, pagingInfo, filters);
+
+        return ApiResponse.success(200, resp);
     }
 }
