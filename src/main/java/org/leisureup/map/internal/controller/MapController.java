@@ -45,7 +45,7 @@ public class MapController {
     }
 
     @GetMapping("/map/leisure")     // 레저 장소를 검색
-    public ApiResponse<MultiPageResponse<?>>
+    public ApiResponse<MultiPageResponse<SearchLeisureResponse>>
     searchLeisureOnLocation(
             @Valid @ParameterObject
             SearchLeisureRequest req

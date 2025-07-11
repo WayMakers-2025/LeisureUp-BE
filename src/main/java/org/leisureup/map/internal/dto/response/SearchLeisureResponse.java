@@ -22,8 +22,8 @@ public record SearchLeisureResponse(
         );
 
         var minor = MinorInfo.of(
-                apiResp.address(), apiResp.detailedAddress(),
-                apiResp.zipcode(),
+                apiResp.tel(),
+                apiResp.firstImage(), apiResp.firstImage2(),
                 apiResp.createdTime(), apiResp.modifiedTime()
         );
 
