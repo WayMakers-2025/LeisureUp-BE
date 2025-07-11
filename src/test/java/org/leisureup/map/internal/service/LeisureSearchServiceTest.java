@@ -69,11 +69,11 @@ class LeisureSearchServiceTest {
 
         int givenElements = resp.numOfGivenElements();
 
-        var elementMap = resp.elements();
+        var pageRespMap = resp.pageResponses();
 
         int sum = 0;
-        for (String key : elementMap.keySet()) {
-            var singlePageResp = elementMap.get(key);
+        for (String key : pageRespMap.keySet()) {
+            var singlePageResp = pageRespMap.get(key);
 
             assertThat(singlePageResp).isNotNull();
             assertThat(singlePageResp.pageNo()).isEqualTo(pagingInfo.pageNo());
@@ -123,8 +123,8 @@ class LeisureSearchServiceTest {
         // 기본 검색에 대한 응답이 맞는지 확인
         assertThat(resp.numOfPageResponse()).isEqualTo(1);
 
-        var elementMap = resp.elements();
-        assertThat(elementMap).hasSize(1)
+        var pageRespMap = resp.pageResponses();
+        assertThat(pageRespMap).hasSize(1)
                 .containsKey(LeisureSearchService.FILTER_NAME_ON_ANY_SEARCH);
 
     }
@@ -145,8 +145,8 @@ class LeisureSearchServiceTest {
         // 요청에 넣은 필터 개수대로 페이징 응답이 구성되었는지 확인
         assertThat(resp.numOfPageResponse()).isEqualTo(3);
 
-        var elementMap = resp.elements();
-        assertThat(elementMap).hasSize(filters.size())
+        var pageRespMap = resp.pageResponses();
+        assertThat(pageRespMap).hasSize(filters.size())
                 .containsKey(filter1.name())
                 .containsKey(filter2.name())
                 .containsKey(filter3.name());

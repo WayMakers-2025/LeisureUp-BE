@@ -6,7 +6,7 @@ public record MultiPageResponse<T>(
         int pageNo, int pageSize,
         int numOfPageResponse,
         int numOfGivenElements,
-        Map<String, PageResponse<T>> elements
+        Map<String, PageResponse<T>> pageResponses
 ) {
 
     public static <T> MultiPageResponse<T> of(
