@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Interest {
+public class Interest extends BaseTimeEntity {
 
     @Id
     private Long memberId;

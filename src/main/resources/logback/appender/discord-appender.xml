@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<included>
+  <include resource="logback/base.xml"/>
+
+  <springProperty name="DISCORD_WEBHOOK_URL" scope="context" source="logback-config.discord-webhook"/>
+
+  <appender class="com.github.napstr.logback.DiscordAppender" name="DISCORD">
+    <avatarUrl>http://i.imgur.com/UoiA3OQ.png</avatarUrl>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>### 에러가 발생했어요%n- 발생 시각 : `%d{yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul}`%n- Request ID :
+        `${LOG_LEVEL_PATTERN}`%n- 레벨 : `[%-5level]`%n- 로거 : `%logger{36}`%n- 메시지 : %msg%n- 전체 로그 :
+        %n```${FILE_LOG_PATTERN}```
+      </pattern>
+    </layout>
+    <tts>false</tts>
+    <username>[!!!ERROR!!!]</username>
+    <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
+  </appender>
+
+</included>

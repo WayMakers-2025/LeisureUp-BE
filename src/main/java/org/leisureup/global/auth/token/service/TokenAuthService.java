@@ -75,6 +75,8 @@ public class TokenAuthService {
         String at = atProvider.create(memberId);
         String rt = rtProvider.create(memberId);
 
+        refreshTokenRepo.save(RefreshToken.of(memberId, rt));
+
         return Tokens.of(at, rt);
     }
 }

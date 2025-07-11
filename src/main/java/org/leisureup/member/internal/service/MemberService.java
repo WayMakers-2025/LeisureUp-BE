@@ -28,7 +28,23 @@ public class MemberService {
         Member find = memberRepo.findById(memberId)
                 .orElseThrow(() -> new NotFound("Member not found"));
 
-        return GetMemberResponse.of(find);
+        boolean hasAnswered = interestRepo.existsById(memberId);
+
+        return GetMemberResponse.of(find, hasAnswered);
+    }
+
+    /**
+     * 사용자 정보를 수정한다.
+     * <p>
+     * 현재 {@code nickname} 만 변경 가능.
+     */
+    @Transactional
+    public void updateMember(Long memberId, UpdateMemberRequest req) {
+        Member find = memberRepo.findById(memberId)
+                .orElseThrow(() -> new NotFound("Member not found"));
+
+        String newNickname = req.nickname();
+        find.changeNickname(newNickname);
     }
 
     /**

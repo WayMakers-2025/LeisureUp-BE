@@ -23,4 +23,8 @@ public class Member extends BaseTimeEntity {
     public static Member of(String nickname, String email) {
         return new Member(nickname, email);
     }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

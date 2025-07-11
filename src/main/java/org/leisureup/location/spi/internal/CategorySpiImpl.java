@@ -2,6 +2,7 @@ package org.leisureup.location.spi.internal;
 
 import java.util.*;
 import lombok.*;
+import org.leisureup.global.exception.*;
 import org.leisureup.location.internal.domain.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.spi.*;
@@ -18,6 +19,15 @@ public class CategorySpiImpl implements CategorySpi {
         return categoryRepo.findAll().stream()
                 .map(CategorySpiUtil::toRecord)
                 .toList();
+    }
+
+    @Override
+    public DetailedCategoryInfo getCategoryDetail(Long categoryId) {
+
+        Category find = categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new NotFound("Category not found"));
+
+        return CategorySpiUtil.toDetailedRecord(find);
     }
 }
 
@@ -42,12 +52,42 @@ class CategorySpiUtil {
         return new CategoryInfo(id, name, cat, recommendCode);
     }
 
-    static Cat resolveCategoryType(Category category) {
+    static DetailedCategoryInfo toDetailedRecord(Category category) {
+        CategoryInfo basicInfo = toRecord(category);
+
+        Long id = basicInfo.id();
+        String name = basicInfo.name();
+        Cat cat = basicInfo.category();
+        String recommendCode = basicInfo.recommendingCode();
+
+        String categoryCode = category.getCategoryCode();
+
+        String thumbnail = "", notification = "", description = "";
+        AdditionalCategoryInfo additionalInfo = category.getAdditionalInfo();
+
+        if (additionalInfo != null) {
+            thumbnail = additionalInfo.getThumbnailUrl();
+            notification = additionalInfo.getNotification();
+            description = additionalInfo.getDescription();
+        }
+
+        return new DetailedCategoryInfo(
+                id, emptyIfNull(categoryCode), name, cat,
+                emptyIfNull(thumbnail), emptyIfNull(notification),
+                emptyIfNull(description), recommendCode
+        );
+    }
+
+    private static Cat resolveCategoryType(Category category) {
         return switch (category.getCategoryType()) {
             case "EARTH" -> Cat.EARTH;
             case "WATER" -> Cat.WATER;
             case "SKY" -> Cat.SKY;
             default -> Cat.ETC;
         };
+    }
+
+    private static String emptyIfNull(String s) {
+        return s == null ? "" : s;
     }
 }

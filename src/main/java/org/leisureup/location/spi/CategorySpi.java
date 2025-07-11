@@ -9,4 +9,8 @@ public interface CategorySpi {
      */
     List<CategoryInfo> getAllCategories();
 
+    /**
+     * 특정 카테고리의 세부 정보를 조회
+     */
+    DetailedCategoryInfo getCategoryDetail(Long categoryId);
 }

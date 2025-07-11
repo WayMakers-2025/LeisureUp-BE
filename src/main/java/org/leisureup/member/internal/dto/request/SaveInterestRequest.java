@@ -1,15 +1,44 @@
 package org.leisureup.member.internal.dto.request;
 
-import jakarta.validation.constraints.*;
 import lombok.*;
+import org.leisureup.global.validation.*;
 
 public record SaveInterestRequest(
-        @NotNull AgeRange ageRange,
-        @NotNull LeisureUsual leisureUsual,
-        @NotNull PreferredStyle preferredStyle,
-        @NotNull Intensity intensity,
-        @NotNull Theme theme,
-        @NotNull AlongWith alongWith
+        @ValidEnum(
+                target = AgeRange.class,
+                message = "ageRange 을 매칭할 수 없습니다."
+        )
+        AgeRange ageRange,
+
+        @ValidEnum(
+                target = LeisureUsual.class,
+                message = "leisureUsual 을 매칭할 수 없습니다."
+        )
+        LeisureUsual leisureUsual,
+
+        @ValidEnum(
+                target = PreferredStyle.class,
+                message = "preferredStyle 을 매칭할 수 없습니다."
+        )
+        PreferredStyle preferredStyle,
+
+        @ValidEnum(
+                target = Intensity.class,
+                message = "intensity 을 매칭할 수 없습니다."
+        )
+        Intensity intensity,
+
+        @ValidEnum(
+                target = Theme.class,
+                message = "theme 을 매칭할 수 없습니다."
+        )
+        Theme theme,
+
+        @ValidEnum(
+                target = AlongWith.class,
+                message = "alongWith 을 매칭할 수 없습니다."
+        )
+        AlongWith alongWith
 ) implements CodePresentable {
 
     @Override

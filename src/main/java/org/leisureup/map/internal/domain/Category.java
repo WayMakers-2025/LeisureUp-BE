@@ -12,11 +12,23 @@ import java.util.Optional;
 @AllArgsConstructor
 @Getter
 public enum Category {
-    restaurant("FD6"),
-    hotel("AD5"),
-    hospital("HP8");
+    restaurant("FD6",39),
+    hotel("AD5",32),
+    hospital("HP8",null);
 
+    /**
+     * 관광지 12
+     * 문화시설 14
+     * 행사/공연/축제 15
+     * 여행코스 25
+     * 레포츠 28
+     * 숙박 32
+     * 쇼핑 38
+     * 음식점 39
+     */
     private String kakaoCategory;
+
+    private Integer tourContentTypeId;
 
     public static String toKakaoCategory(String name) {
         try {

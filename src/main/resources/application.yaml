@@ -13,9 +13,13 @@ spring:
         - common-secret
         - staging-secret
         - init-categories
+        - file-logger
+        - discord-error-logger
       prod:
         - common-secret
         - prod-secret
+        - file-logger
+        - discord-error-logger
 
   datasource:
     url: ${db.url}
@@ -66,9 +70,27 @@ feign:
   openid:
     google: https://openidconnect.googleapis.com
     kakao: https://kapi.kakao.com
+  weather:
+    warning: http://apis.data.go.kr/1360000/WthrWrnInfoService
+
+mdc-key:
+  request-id: request-id
+
+logback-config:
+  # noinspection SpringBootApplicationYaml
+  log-directory: ./logs
+  # noinspection SpringBootApplicationYaml
+  discord-webhook: ${discord.webhook-url}
 
 logging:
   level:
     org.hibernate.SQL: debug
   pattern:
+    level: '[RID:%10X{${mdc-key.request-id}}] %5p'
     dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      total-size-cap: 2GB
+      max-history: 7
+      clean-history-on-start: true

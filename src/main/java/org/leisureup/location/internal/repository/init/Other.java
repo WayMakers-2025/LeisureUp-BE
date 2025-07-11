@@ -1,6 +1,7 @@
 package org.leisureup.location.internal.repository.init;
 
 import lombok.*;
+import org.leisureup.location.internal.domain.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -14,4 +15,7 @@ public enum Other {
 
     final String name, code, recommendCode;
 
+    public CatOther toEntity() {
+        return CatOther.of(name, code, recommendCode);
+    }
 }

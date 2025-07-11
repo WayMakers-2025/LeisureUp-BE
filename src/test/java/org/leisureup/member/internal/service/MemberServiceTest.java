@@ -84,6 +84,20 @@ class MemberServiceTest extends IntegrationTestSupport {
     }
 
     @Test
+    @DisplayName("사용자는 자신의 정보를 수정할 수 있다.")
+    void updateMember() {
+
+        String newNickname = "newNickname";
+        var req = new UpdateMemberRequest(newNickname);
+
+        service.updateMember(testMemberId, req);
+
+        var mem = memberRepo.findById(testMemberId);
+        assertThat(mem).isPresent().get()
+                .extracting(Member::getNickname).isEqualTo(newNickname);
+    }
+
+    @Test
     @DisplayName("니즈 수집 질문을 저장한다.")
     void saveInterest() {
 
@@ -95,6 +109,12 @@ class MemberServiceTest extends IntegrationTestSupport {
         assertThat(interestRepo.findById(testMemberId))
                 .isPresent().get()
                 .hasNoNullFieldsOrProperties();
+
+        // 저장된 후에는 질문 응답 여부가 true 이다.
+        var resp = service.getMember(testMemberId);
+
+        assertThat(resp).isNotNull().hasNoNullFieldsOrProperties();
+        assertThat(resp.hasAnswered()).isTrue();
     }
 
     @Test
