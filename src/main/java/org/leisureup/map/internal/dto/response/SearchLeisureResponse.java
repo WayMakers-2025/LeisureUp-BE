@@ -1,5 +1,6 @@
 package org.leisureup.map.internal.dto.response;
 
+import io.swagger.v3.oas.annotations.media.*;
 import java.time.*;
 import org.leisureup.map.internal.dto.api.*;
 
@@ -33,6 +34,7 @@ public record SearchLeisureResponse(
         return s == null ? "" : s;
     }
 
+    @Schema(name = "LocationInfoOnSearchLeisure")
     public record LocationInfo(
             double gpsX, double gpsY, double dist,
             String briefAddress, String detailedAddress,
