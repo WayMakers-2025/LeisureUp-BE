@@ -10,8 +10,10 @@ import org.leisureup.member.internal.dto.request.*;
 import org.leisureup.member.internal.dto.response.*;
 import org.leisureup.member.internal.service.*;
 import org.springframework.data.domain.*;
+import org.springframework.validation.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @JwtAuthRequired
 @RestController
 @RequestMapping("/member")
@@ -62,8 +64,10 @@ public class MemberController {
 
     @GetMapping("/picks")       // 찜 목록 조회
     public ApiResponse<PageResponse<PickLocation>> getPickLocations(
+            @PositiveOrZero(message = "page 는 0 보다 크거나 같아야 합니다.")
             @RequestParam(value = "page", defaultValue = "0")
             int page,
+            @Positive(message = "size 는 0 보다 커야합니다.")
             @RequestParam(value = "size", defaultValue = "10")
             int size
     ) {
@@ -88,7 +92,8 @@ public class MemberController {
 
     @DeleteMapping("/picks/{locationId}")       // 찜 장소 삭제
     public ApiResponse<?> deletePickLocation(
-            @Valid @Positive @NotNull
+            @NotNull(message = "locationId 는 필수입니다.")
+            @Positive(message = "locationId 는 0 보다 커야합니다.")
             @PathVariable Long locationId
     ) {
         Long memberId = authHolder.getMemberId();
