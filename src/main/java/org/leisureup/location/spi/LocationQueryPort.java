@@ -37,4 +37,5 @@ public interface LocationQueryPort {
             int maxElements, List<Long> categoryIds
     );
 
+    String getRepresentImage(List<Long> locationId);
 }

@@ -1,21 +1,17 @@
 package org.leisureup.travel.internal.travel.service;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.leisureup.global.JwtAuthIfPossible;
-import org.leisureup.global.exception.NotFound;
-import org.leisureup.travel.internal.travel.domain.Travel;
-import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
-import org.leisureup.travel.internal.travel.repository.TravelRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import static org.assertj.core.api.Assertions.*;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import java.util.*;
+import org.junit.jupiter.api.*;
+import org.leisureup.global.*;
+import org.leisureup.global.exception.*;
+import org.leisureup.travel.internal.travel.domain.*;
+import org.leisureup.travel.internal.travel.dto.response.*;
+import org.leisureup.travel.internal.travel.repository.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.*;
+import org.springframework.transaction.annotation.*;
 
 @SpringBootTest
 @Transactional
@@ -35,14 +31,14 @@ class TravelServiceTest {
         Travel travel1 = Travel.builder()
                 .travelName("제주도 여행")
                 .travelDescription("제주도 3박 4일 여행")
-                .travelDate(LocalDate.now())
+                // .travelDate(LocalDate.now())
                 .memberId(1L)
                 .build();
 
         Travel travel2 = Travel.builder()
                 .travelName("부산 여행")
                 .travelDescription("부산 2박 3일 여행")
-                .travelDate(LocalDate.now().plusDays(1))
+                // .travelDate(LocalDate.now().plusDays(1))
                 .memberId(1L)
                 .build();
 

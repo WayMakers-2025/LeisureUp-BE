@@ -21,6 +21,9 @@ services:
     environment:
       - "SPRING_PROFILES_ACTIVE=staging"
 
+    volumes:
+      - ./logs:/LeisureUp-BE/logs
+
     depends_on:
       - redis
     networks:

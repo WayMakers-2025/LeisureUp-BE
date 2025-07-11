@@ -1,5 +1,6 @@
 package org.leisureup.map.internal.controller;
 
+import java.util.List;
 import jakarta.validation.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
@@ -13,6 +14,7 @@ import org.springdoc.core.annotations.*;
 import org.springframework.validation.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
+
 @Slf4j
 @Validated
 @RestController
@@ -21,8 +23,8 @@ public class MapController {
 
     private final MapService mapService;
 
-    @GetMapping("/map/search")
-    public ApiResponse<KakaoPlaceResponse> searchCategory(
+    @GetMapping("/map/category")
+    public ApiResponse<List<MapResponse>> searchCategory(
             @RequestParam double x,
             @RequestParam double y,
             @RequestParam(defaultValue = "1000") int radius,
@@ -32,7 +34,16 @@ public class MapController {
                 mapService.searchCategory(x, y, radius, category)
         );
     }
-
+  
+    @GetMapping("/map/search")
+    public ApiResponse<Object> search(
+            @RequestParam String query) {
+        return ApiResponse.success(
+                200,
+                mapService.search(query)
+        );
+    }
+  
     @GetMapping("/map/leisure")
     public ApiResponse<MultiPageResponse<?>>
     searchLeisureOnLocation(
@@ -44,6 +55,6 @@ public class MapController {
 
         throw new NotImplemented(
                 "/map/leisure/location-base has not been implemented yet"
-        );
+          );
     }
 }

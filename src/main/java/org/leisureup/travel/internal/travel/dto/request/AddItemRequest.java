@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AddItemRequest {
     private Long locationId;
+
 }
