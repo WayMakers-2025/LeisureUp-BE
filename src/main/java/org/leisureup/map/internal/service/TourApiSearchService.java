@@ -36,10 +36,14 @@ public class TourApiSearchService {
         this.rspType = responseType;
     }
 
+    /**
+     * 기본 검색 진행
+     */
     public PageResponse<SearchLeisureResponse> searchAnyLeisure(
             CordInfo cordInfo, PagingInfo pagingInfo
     ) {
 
+        // 요청에서 adapter DTO 구성 & 요청
         var reqDto = TourApiSearchServiceUtils.buildReqAdapterDto(cordInfo, pagingInfo);
         var resp = this.sendSearchRequest(reqDto);
 
@@ -47,12 +51,18 @@ public class TourApiSearchService {
             throw TourApiSearchServiceUtils.buildExMsg(resp);
         }
 
+        // TourApi 형식 결과를 SearchLeisureResponse 로 mapping 및 페이징 반환
         return TourApiSearchServiceUtils.buildPageResponseOn(
                 pagingInfo.pageSize(), resp,
                 SearchLeisureResponse::of
         );
     }
 
+    /**
+     * 레저 필터 검색 진행
+     * <p>
+     * {@link #searchAnyLeisure} 와 로직은 동일
+     */
     @Async
     public CompletableFuture<PageResponse<SearchLeisureResponse>> searchLeisure(
             CordInfo cordInfo, PagingInfo pagingInfo,

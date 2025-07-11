@@ -117,8 +117,10 @@ class LeisureSearchServiceTest {
 
         var resp = service.searchAnyLeisure(cordInfo, pagingInfo);
 
+        // 응답이 예상되로 잘 페이징 처리 되었는지 확인
         assertBasicPageResp(resp);
 
+        // 기본 검색에 대한 응답이 맞는지 확인
         assertThat(resp.numOfPageResponse()).isEqualTo(1);
 
         var elementMap = resp.elements();
@@ -137,8 +139,10 @@ class LeisureSearchServiceTest {
 
         var resp = service.searchLeisureWithFilters(cordInfo, pagingInfo, filters);
 
+        // 응답이 예상되로 잘 페이징 처리 되었는지 확인
         assertBasicPageResp(resp);
 
+        // 요청에 넣은 필터 개수대로 페이징 응답이 구성되었는지 확인
         assertThat(resp.numOfPageResponse()).isEqualTo(3);
 
         var elementMap = resp.elements();

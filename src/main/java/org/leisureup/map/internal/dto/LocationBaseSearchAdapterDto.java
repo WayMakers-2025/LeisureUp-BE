@@ -3,7 +3,11 @@ package org.leisureup.map.internal.dto;
 import lombok.*;
 import org.leisureup.map.internal.dto.request.*;
 import org.leisureup.map.internal.dto.request.SearchLeisureRequest.*;
+import org.leisureup.map.internal.service.*;
 
+/**
+ * {@link TourApiSearchService} 에서 요청과 관련된 정보를 교환하기 위한 Util DTO
+ */
 @Getter
 public class LocationBaseSearchAdapterDto {
 
