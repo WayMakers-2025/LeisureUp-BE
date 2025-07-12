@@ -1,6 +1,8 @@
 package org.leisureup.global.response;
 
 import lombok.extern.slf4j.*;
+import org.slf4j.*;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.*;
 import org.springframework.http.*;
 import org.springframework.http.converter.*;
@@ -12,6 +14,15 @@ import org.springframework.web.servlet.mvc.method.annotation.*;
 @Slf4j
 @RestControllerAdvice(basePackages = "org.leisureup")
 public class ResponseWrapper implements ResponseBodyAdvice<Object> {
+
+    private final String ridKeyOnMdc;
+
+    public ResponseWrapper(
+            @Value("${mdc-key.request-id}")
+            String ridKeyOnMdc
+    ) {
+        this.ridKeyOnMdc = ridKeyOnMdc;
+    }
 
     @Override
     public boolean supports(
@@ -31,6 +42,7 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
 
         if (body instanceof ApiResponse<?> api) {
             int code = api.getCode();
+            api.setRequestId(getRequestId());
             HttpStatusCode httpStatusCode = HttpStatus.valueOf(code);
             response.setStatusCode(httpStatusCode);
         } else {
@@ -41,5 +53,9 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
         }
 
         return body;
+    }
+
+    private String getRequestId() {
+        return MDC.get(ridKeyOnMdc);
     }
 }
