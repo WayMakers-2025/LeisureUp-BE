@@ -7,10 +7,18 @@ import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.service.WeatherWarningContentSupplierUtils.*;
 import org.springframework.stereotype.*;
 
+/**
+ * 기상 특보 정보를 파싱, 정제해 제공해주는 {@code component}
+ */
 @Slf4j
 @Component
 public class WeatherWarningContentSupplier {
 
+    /**
+     * 특보 내용을 파싱, {@link SingleWeatherWarning} 로 정제해 제공
+     *
+     * @param singleContent {@code o 풍랑주의보 : 남해동부바깥먼바다, 제주도남쪽바깥먼바다, 제주도남동쪽안쪽먼바다, 제주도남서쪽안쪽먼바다}
+     */
     public SingleWeatherWarning parseSingleContent(String singleContent) {
 
         String[] split = singleContent.split(" : ");
@@ -24,6 +32,11 @@ public class WeatherWarningContentSupplier {
         );
     }
 
+    /**
+     * 특보 지역 내용을 파싱해 제공
+     * @param regions {@code 남해동부바깥먼바다, 제주도남쪽바깥먼바다, 제주도남동쪽안쪽먼바다, 제주도남서쪽안쪽먼바다}
+     * @return {@code 남해동부바깥먼바다}, {@code 제주도남쪽바깥먼바다} {@code ...} 로 이루어진 {@code List}
+     */
     private List<String> parseRegions(String regions) {
 
         List<String> regionList = new ArrayList<>();
@@ -52,6 +65,10 @@ public class WeatherWarningContentSupplier {
         return regionList;
     }
 
+    /**
+     * 특보 종류에 따른 주의사항을 제공
+     * @param parsedWarningType {@code o 풍랑주의보}, {@code o 호우경보} 등
+     */
     private List<String> getRecommendationsOnType(String parsedWarningType) {
 
         if (parsedWarningType == null) {

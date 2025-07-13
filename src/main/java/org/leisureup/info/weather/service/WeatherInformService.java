@@ -17,13 +17,19 @@ public class WeatherInformService {
     private final WeatherWarningApiClient warningApiClient;
     private final WeatherWarningContentSupplier contentParser;
 
+    /**
+     * 현재 발효된 기상 특보 내용을 조회
+     */
     public WeatherWarningResponse getWeatherWarning() {
+
+        // 특보 내용을 조회
         RawWeatherWaringContent rawContent = WeatherInformUtils.toRawContent(
                 warningApiClient.getWeatherWarning()
         );
 
         List<SingleWeatherWarning> parsedWarnings;
 
+        // 발효된 특보별 주의사항, 발효 지역을 추출
         try {
             String allContents = rawContent.content();
 

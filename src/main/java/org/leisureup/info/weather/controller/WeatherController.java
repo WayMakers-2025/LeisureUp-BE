@@ -13,7 +13,7 @@ public class WeatherController {
 
     private final WeatherInformService weatherInformService;
 
-    @GetMapping("/warning")
+    @GetMapping("/warning")     // 기상 특보 현황 조회
     public ApiResponse<WeatherWarningResponse> getWeatherWarning() {
 
         var resp = weatherInformService.getWeatherWarning();
