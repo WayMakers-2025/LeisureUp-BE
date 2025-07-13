@@ -14,7 +14,7 @@ public class WeatherController {
     private final WeatherInformService weatherInformService;
 
     @GetMapping("/warning")
-    public ApiResponse<WarningResponse> getWeatherWarning() {
+    public ApiResponse<WeatherWarningResponse> getWeatherWarning() {
 
         var resp = weatherInformService.getWeatherWarning();
 
