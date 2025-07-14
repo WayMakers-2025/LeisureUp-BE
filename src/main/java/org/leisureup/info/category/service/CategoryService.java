@@ -67,7 +67,9 @@ class CategoryServiceUtil {
     }
 
     private static CategoryInfoResponse toResponse(CategoryInfo cat) {
-        return new CategoryInfoResponse(cat.id(), cat.name());
+        return new CategoryInfoResponse(
+                cat.id(), cat.name(), cat.thumbnailUrl()
+        );
     }
 
     static List<CategoryInfoResponse> toResponse(
