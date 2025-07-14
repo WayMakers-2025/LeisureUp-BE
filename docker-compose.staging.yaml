@@ -28,6 +28,8 @@ services:
       - redis
     networks:
       - LeisureUpBE-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   LeisureUpBE-net: { }
