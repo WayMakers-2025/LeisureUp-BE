@@ -16,17 +16,22 @@ public class GetTravelDetailResponse {
     private String travelDescription;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String representImage;
     private List<LocationResponseDetail> locations;
+    private List<WeatherResponse> weather;
 
-    public static GetTravelDetailResponse fromEntity(Travel travel, List<LocationResponseDetail> locations) {
-
+    public static GetTravelDetailResponse fromEntity(Travel travel, String representImage,
+                                                     List<LocationResponseDetail> locations,
+                                                     List<WeatherResponse> weatherResponse) {
         return GetTravelDetailResponse.builder()
                 .travelId(travel.getTravelId())
                 .travelName(travel.getTravelName())
                 .travelDescription(travel.getTravelDescription())
                 .startDate(travel.getStartDate())
                 .endDate(travel.getEndDate())
+                .representImage(representImage)
                 .locations(locations)
+                .weather(weatherResponse)
                 .build();
     }
 }

@@ -5,15 +5,20 @@ import org.leisureup.global.exception.*;
 import org.leisureup.global.response.*;
 import org.leisureup.location.spi.*;
 import org.leisureup.travel.internal.travel.domain.*;
+import org.leisureup.travel.internal.travel.dto.TemperatureApiResponse;
+import org.leisureup.travel.internal.travel.dto.WeatherApiResponse;
 import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
 import org.leisureup.travel.internal.travel.dto.request.ItemRequest;
 import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
 import org.leisureup.travel.internal.travel.dto.response.GetTravelDetailResponse;
 import org.leisureup.travel.internal.travel.dto.response.LocationResponseDetail;
+import org.leisureup.travel.internal.travel.dto.response.WeatherResponse;
 import org.leisureup.travel.internal.travel.repository.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,6 +30,7 @@ public class TravelService {
     private final TravelRepository travelRepository;
     private final ItemRepository itemRepository;
     private final LocationQueryPort locationQueryPort;
+    private final TemperatureService temperatureService;
 
     @Transactional(readOnly = true)
     public List<GetAllTravelResponse> getAllTravel(Long memberId){
@@ -47,6 +53,11 @@ public class TravelService {
     public GetTravelDetailResponse getTravelDetail(Long travelId, Long memberId) {
         Travel travel = this.findTravel(travelId, memberId);
 
+        List<Item> items = travel.getItems();
+        List<Long> itemIdList = items.stream().map(Item::getItemId).toList();
+        // 대표 이미지 불러
+        String representImage = locationQueryPort.getRepresentImage(itemIdList);
+
         // ID : Item mapping
         Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
 
@@ -56,17 +67,29 @@ public class TravelService {
         );
         Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
 
+
+//
         // 응답 만들기
         List<LocationResponseDetail> detailList = new ArrayList<>();
         for (Long id : locationInfoMap.keySet()) {
             var info = locationInfoMap.get(id);
             var item = itemMap.get(id);
-            var detail = new LocationResponseDetail(info, item.getPosition());
+            var detail = new LocationResponseDetail(info, item.getPosition(), item.getStartTime(), item.getEndTime());
             detailList.add(detail);
         }
         detailList.sort(Comparator.comparing(LocationResponseDetail::getPosition));
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String formattedDate = now.format(formatter) + "0600";
 
-        return GetTravelDetailResponse.fromEntity(travel, detailList);
+        RegionCode representRegion = locationQueryPort.getRepresentRegion(itemIdList);
+
+        TemperatureApiResponse temperature = temperatureService.getTemperature(representRegion.getRegId(), formattedDate);
+        WeatherApiResponse weatherDetail = temperatureService.getWeatherDetail(representRegion.getRegId(), formattedDate);
+
+        List<WeatherResponse> weatherResponse = WeatherResponse.fromApi(now, temperature, weatherDetail);
+
+        return GetTravelDetailResponse.fromEntity(travel, representImage, detailList, weatherResponse);
     }
 
     private static <K, V> Map<K, V> listToMap(List<V> list, Function<V, K> keyMapper) {
