@@ -5,9 +5,11 @@ public record GetCategoryResponse(
         String name,
         String categoryCode,
         Kind kind,
-        String thumbnailUrl,
-        String notification,
-        String description
+        String description,
+        String target,
+        String requiredGear,
+        String warning,
+        String thumbnailUrl
 ) {
 
     public enum Kind {

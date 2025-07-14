@@ -62,19 +62,22 @@ class CategorySpiUtil {
 
         String categoryCode = category.getCategoryCode();
 
-        String thumbnail = "", notification = "", description = "";
+        String briefInfo = "", target = "", requiredGear = "", warning = "", thumbnail = "";
         AdditionalCategoryInfo additionalInfo = category.getAdditionalInfo();
 
         if (additionalInfo != null) {
+            briefInfo = additionalInfo.getBriefInfo();
+            target = additionalInfo.getCategoryTarget();
+            requiredGear = additionalInfo.getRequiredGear();
+            warning = additionalInfo.getWarning();
             thumbnail = additionalInfo.getThumbnailUrl();
-            notification = additionalInfo.getNotification();
-            description = additionalInfo.getDescription();
         }
 
         return new DetailedCategoryInfo(
                 id, emptyIfNull(categoryCode), name, cat,
-                emptyIfNull(thumbnail), emptyIfNull(notification),
-                emptyIfNull(description), recommendCode
+                emptyIfNull(briefInfo), emptyIfNull(target),
+                emptyIfNull(requiredGear), emptyIfNull(warning),
+                emptyIfNull(thumbnail), recommendCode
         );
     }
 

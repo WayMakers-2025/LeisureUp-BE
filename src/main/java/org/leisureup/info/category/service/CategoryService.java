@@ -84,14 +84,18 @@ class CategoryServiceUtil {
         String name = detailedInfo.name();
         String code = detailedInfo.categoryCode();
         Kind kind = resolveKind(detailedInfo.category());
+
+        String description = detailedInfo.briefInfo();
+        String target = detailedInfo.target();
+        String requiredGear = detailedInfo.requiredGear();
+        String notification = detailedInfo.warning();
         String thumbnailUrl = detailedInfo.thumbnailUrl();
-        String notification = detailedInfo.notification();
-        String description = detailedInfo.description();
 
         return new GetCategoryResponse(
-                id, emptyIfNull(name), emptyIfNull(code),
-                kind, emptyIfNull(thumbnailUrl),
-                emptyIfNull(notification), emptyIfNull(description)
+                id, emptyIfNull(name), emptyIfNull(code), kind,
+                emptyIfNull(description), emptyIfNull(target),
+                emptyIfNull(requiredGear), emptyIfNull(notification),
+                emptyIfNull(thumbnailUrl)
         );
     }
 
