@@ -1,4 +1,4 @@
-package org.leisureup.location.internal.service;
+package org.leisureup.global.response.external;
 
 import feign.*;
 import feign.codec.*;
@@ -6,12 +6,19 @@ import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
 
 @Slf4j
-@SuppressWarnings("DuplicatedCode")
-public class TourApiErrorDecoder implements ErrorDecoder {
+public class DefaultFeignErrorDecoder implements ErrorDecoder {
 
-    private static final String MSG_PREFIX = """
-            TourApi 요청에 문제가 발생했습니다.
-            """.trim();
+    private final String messagePrefix;
+    private static final String DEFAULT_MSG_PREFIX
+            = "외부 API 통신 중 문제가 발생했습니다.";
+
+    public DefaultFeignErrorDecoder() {
+        messagePrefix = DEFAULT_MSG_PREFIX;
+    }
+
+    public DefaultFeignErrorDecoder(String messagePrefix) {
+        this.messagePrefix = messagePrefix;
+    }
 
     @Override
     public Exception decode(String methodKey, Response response) {
@@ -20,7 +27,7 @@ public class TourApiErrorDecoder implements ErrorDecoder {
         String reason = response.reason();
 
         String msg = String.format(
-                "%s -- [%d:%s]", MSG_PREFIX, status, reason
+                "%s -- [%d:%s]", messagePrefix, status, reason
         );
 
         CustomException ex;
