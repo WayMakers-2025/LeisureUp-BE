@@ -55,20 +55,18 @@ public class TravelService {
 
         List<Item> items = travel.getItems();
         List<Long> itemIdList = items.stream().map(Item::getItemId).toList();
-        // 대표 이미지 불러
+        // 대표 이미지 불러오기
         String representImage = locationQueryPort.getRepresentImage(itemIdList);
 
         // ID : Item mapping
-        Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
+        java.util.Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
 
         // 필요한 장소 목록들 가져온 후 ID : Resp mapping
         List<LocationResponse> resp = locationQueryPort.getLocationListById(
                 new ArrayList<>(itemMap.keySet())
         );
-        Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
+        java.util.Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
 
-
-//
         // 응답 만들기
         List<LocationResponseDetail> detailList = new ArrayList<>();
         for (Long id : locationInfoMap.keySet()) {
@@ -77,24 +75,36 @@ public class TravelService {
             var detail = new LocationResponseDetail(info, item.getPosition(), item.getStartTime(), item.getEndTime());
             detailList.add(detail);
         }
-        detailList.sort(Comparator.comparing(LocationResponseDetail::getPosition));
-        LocalDate now = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        String formattedDate = now.format(formatter) + "0600";
+        detailList.sort(java.util.Comparator.comparing(LocationResponseDetail::getPosition));
 
-        RegionCode representRegion = locationQueryPort.getRepresentRegion(itemIdList);
-
-        TemperatureApiResponse temperature = temperatureService.getTemperature(representRegion.getRegId(), formattedDate);
-        WeatherApiResponse weatherDetail = temperatureService.getWeatherDetail(representRegion.getRegId(), formattedDate);
-
-        List<WeatherResponse> weatherResponse = WeatherResponse.fromApi(now, temperature, weatherDetail);
-
-        return GetTravelDetailResponse.fromEntity(travel, representImage, detailList, weatherResponse);
+        return GetTravelDetailResponse.fromEntity(travel, representImage, detailList);
     }
 
     private static <K, V> Map<K, V> listToMap(List<V> list, Function<V, K> keyMapper) {
         return list.stream()
                 .collect(Collectors.toMap(keyMapper, Function.identity()));
+    }
+
+    public List<WeatherResponse> getTravelWeather(Long travelId, Long memberId){
+        // 여행 조회 및 멤버 검증
+        Travel travel = this.findTravel(travelId, memberId);
+        List<Item> items = travel.getItems();
+        List<Long> itemIdList = items.stream().map(Item::getItemId).toList();
+
+        // 대표 지역 코드 조회
+        RegionCode representRegion = locationQueryPort.getRepresentRegion(itemIdList);
+
+        // 오늘 날짜 포맷팅
+        LocalDate now = LocalDate.now();
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd");
+        String formattedDate = now.format(formatter) + "0600";
+
+        // 온도/날씨 API 호출
+        TemperatureApiResponse temperature = temperatureService.getTemperature(representRegion.getRegId(), formattedDate);
+        WeatherApiResponse weatherDetail = temperatureService.getWeatherDetail(representRegion.getRegId(), formattedDate);
+
+        // WeatherResponse 변환
+        return WeatherResponse.fromApi(now, temperature, weatherDetail);
     }
 
     @Transactional

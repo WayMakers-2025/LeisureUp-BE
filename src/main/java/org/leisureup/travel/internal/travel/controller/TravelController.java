@@ -8,6 +8,7 @@ import org.leisureup.travel.internal.travel.dto.request.AddItemRequest;
 import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
 import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
 import org.leisureup.travel.internal.travel.dto.response.GetTravelDetailResponse;
+import org.leisureup.travel.internal.travel.dto.response.WeatherResponse;
 import org.leisureup.travel.internal.travel.service.TravelService;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +47,14 @@ public class TravelController {
                 travelService.getTravelDetail(travelId,memberId)
         );
     }
-
+    @GetMapping("/travels/{travelId}/weather")
+    public ApiResponse<List<WeatherResponse>> getTravelWeather(@PathVariable Long travelId){
+        Long memberId = authHolder.getMemberId();
+        return ApiResponse.success(
+                200,
+                travelService.getTravelWeather(travelId, memberId)
+        );
+    }
     /**
      * 여행에 Item 하나 추가
      */

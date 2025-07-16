@@ -18,11 +18,9 @@ public class GetTravelDetailResponse {
     private LocalDate endDate;
     private String representImage;
     private List<LocationResponseDetail> locations;
-    private List<WeatherResponse> weather;
 
     public static GetTravelDetailResponse fromEntity(Travel travel, String representImage,
-                                                     List<LocationResponseDetail> locations,
-                                                     List<WeatherResponse> weatherResponse) {
+                                                     List<LocationResponseDetail> locations) {
         return GetTravelDetailResponse.builder()
                 .travelId(travel.getTravelId())
                 .travelName(travel.getTravelName())
@@ -31,7 +29,6 @@ public class GetTravelDetailResponse {
                 .endDate(travel.getEndDate())
                 .representImage(representImage)
                 .locations(locations)
-                .weather(weatherResponse)
                 .build();
     }
 }
