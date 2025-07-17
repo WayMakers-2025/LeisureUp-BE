@@ -17,8 +17,8 @@ public class RecommendController {
     private final RecommendService recommendService;
 
     @JwtAuthIfPossible
-    @GetMapping("/member")  // 사용자 질문 응답 기반 장소 추천
-    public ApiResponse<List<LocationInfo>> recommendOnMember() {
+    @GetMapping("/member")  // 사용자 질문 응답 기반 레조 (카테고리) 종류를 추천
+    public ApiResponse<List<CategoryRecommendation>> recommendOnMember() {
 
         Long memberId = authHolder.getMemberId();
 
@@ -29,8 +29,8 @@ public class RecommendController {
         );
     }
 
-    @GetMapping("/season")  // 계절에 맞는 레저 (카테고리) 종류를 추천
-    public ApiResponse<List<RecommendOnSeason>> recommendOnSeason() {
+    @GetMapping("/season")  // 계절에 맞는 레저 장소를 추천
+    public ApiResponse<List<LocationRecommendation>> recommendOnSeason() {
 
         var resp = recommendService.recommendOnSeason();
 
