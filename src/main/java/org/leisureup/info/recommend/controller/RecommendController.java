@@ -28,4 +28,12 @@ public class RecommendController {
                         recommendService.recommendOnMember(memberId)
         );
     }
+
+    @GetMapping("/season")  // 계절에 맞는 레저 (카테고리) 종류를 추천
+    public ApiResponse<List<RecommendOnSeason>> recommendOnSeason() {
+
+        var resp = recommendService.recommendOnSeason();
+
+        return ApiResponse.success(200, resp);
+    }
 }

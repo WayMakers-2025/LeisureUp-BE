@@ -1,9 +1,11 @@
 package org.leisureup.location.spi.internal;
 
 import java.util.*;
+import java.util.stream.*;
 import lombok.*;
 import org.leisureup.global.exception.*;
 import org.leisureup.location.internal.domain.*;
+import org.leisureup.location.internal.domain.AdditionalCategoryInfo.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.spi.*;
 import org.springframework.stereotype.*;
@@ -49,7 +51,24 @@ class CategorySpiUtil {
             recommendCode = code;
         }
 
-        return new CategoryInfo(id, name, cat, recommendCode);
+        AdditionalCategoryInfo additionalInfo = category.getAdditionalInfo();
+        String thumbnailUrl = additionalInfo != null ?
+                additionalInfo.getThumbnailUrl() : "";
+        Set<Season> suitableSeasons;
+
+        if (additionalInfo != null && additionalInfo.getSuitableSeasons() != null) {
+            suitableSeasons = additionalInfo.getSuitableSeasons()
+                    .stream().map(CategorySpiUtil::resolveSuitableSeason)
+                    .collect(Collectors.toSet());
+        } else {
+            suitableSeasons = Collections.emptySet();
+        }
+
+        return new CategoryInfo(
+                id, name, emptyIfNull(thumbnailUrl),
+                cat, recommendCode,
+                suitableSeasons
+        );
     }
 
     static DetailedCategoryInfo toDetailedRecord(Category category) {
@@ -62,19 +81,22 @@ class CategorySpiUtil {
 
         String categoryCode = category.getCategoryCode();
 
-        String thumbnail = "", notification = "", description = "";
+        String briefInfo = "", target = "", requiredGear = "", warning = "", thumbnail = "";
         AdditionalCategoryInfo additionalInfo = category.getAdditionalInfo();
 
         if (additionalInfo != null) {
+            briefInfo = additionalInfo.getBriefInfo();
+            target = additionalInfo.getCategoryTarget();
+            requiredGear = additionalInfo.getRequiredGear();
+            warning = additionalInfo.getWarning();
             thumbnail = additionalInfo.getThumbnailUrl();
-            notification = additionalInfo.getNotification();
-            description = additionalInfo.getDescription();
         }
 
         return new DetailedCategoryInfo(
                 id, emptyIfNull(categoryCode), name, cat,
-                emptyIfNull(thumbnail), emptyIfNull(notification),
-                emptyIfNull(description), recommendCode
+                emptyIfNull(briefInfo), emptyIfNull(target),
+                emptyIfNull(requiredGear), emptyIfNull(warning),
+                emptyIfNull(thumbnail), recommendCode
         );
     }
 
@@ -84,6 +106,16 @@ class CategorySpiUtil {
             case "WATER" -> Cat.WATER;
             case "SKY" -> Cat.SKY;
             default -> Cat.ETC;
+        };
+    }
+
+    private static Season resolveSuitableSeason(SuitableSeason suitableSeason) {
+        return switch (suitableSeason) {
+            case SPRING -> Season.SPRING;
+            case SUMMER -> Season.SUMMER;
+            case AUTUMN -> Season.AUTUMN;
+            case WINTER -> Season.WINTER;
+            default -> Season.ANY;
         };
     }
 
