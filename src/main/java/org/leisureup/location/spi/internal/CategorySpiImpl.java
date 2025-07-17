@@ -1,6 +1,7 @@
 package org.leisureup.location.spi.internal;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.*;
 import lombok.*;
 import org.leisureup.global.exception.*;
@@ -8,6 +9,7 @@ import org.leisureup.location.internal.domain.*;
 import org.leisureup.location.internal.domain.AdditionalCategoryInfo.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.spi.*;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
 @Component
@@ -31,9 +33,29 @@ public class CategorySpiImpl implements CategorySpi {
 
         return CategorySpiUtil.toDetailedRecord(find);
     }
+
+    @Override
+    public List<CategoryInfo> getAnyCategories(int maxElements) {
+
+        long cnt = categoryRepo.count();
+
+        if (cnt == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Category> categories = categoryRepo.findAllBy(
+                CategorySpiUtil.randomPageRequest(maxElements, cnt)
+        );
+
+        return categories.stream()
+                .map(CategorySpiUtil::toRecord)
+                .toList();
+    }
 }
 
 class CategorySpiUtil {
+
+    private static final Random RAND = ThreadLocalRandom.current();
 
     static CategoryInfo toRecord(Category category) {
         Long id = category.getId();
@@ -121,5 +143,17 @@ class CategorySpiUtil {
 
     private static String emptyIfNull(String s) {
         return s == null ? "" : s;
+    }
+
+    static Pageable randomPageRequest(
+            int pageSize, long totalElements
+    ) {
+        int total = totalElements > Integer.MAX_VALUE ?
+                Integer.MAX_VALUE : (int) totalElements;
+
+        int totalPages = Math.ceilDiv(total, pageSize);
+        int randomPage = RAND.nextInt(totalPages);
+
+        return PageRequest.of(randomPage, pageSize);
     }
 }
