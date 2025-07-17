@@ -1,6 +1,7 @@
 package org.leisureup.location.spi.internal;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 import lombok.*;
 import org.leisureup.global.exception.*;
@@ -20,6 +21,24 @@ public class CategorySpiImpl implements CategorySpi {
     public List<CategoryInfo> getAllCategories() {
         return categoryRepo.findAll().stream()
                 .map(CategorySpiUtil::toRecord)
+                .toList();
+    }
+
+    @Override
+    public List<CategoryInfo> getCategoryList(List<Long> categoryIds) {
+
+        List<Category> categories = categoryRepo.findAllByCategoryId(categoryIds);
+
+        if (categories.size() != categoryIds.size()) {
+            throw SpiUtils.throwNotFoundWithMissingIds(categoryIds, categories, Category::getId);
+        }
+
+        Map<Long, CategoryInfo> unorderedResp = categories.stream()
+                .map(CategorySpiUtil::toRecord)
+                .collect(Collectors.toMap(CategoryInfo::id, Function.identity()));
+
+        return categoryIds.stream()
+                .map(unorderedResp::get)
                 .toList();
     }
 
