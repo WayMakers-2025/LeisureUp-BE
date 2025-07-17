@@ -23,7 +23,7 @@ class CategoryServiceTest extends IntegrationTestSupport {
     private static CategoryInfo gen(Long id, Cat cat) {
         String name = String.format("Cat:%d", id);
         return new CategoryInfo(
-                id, name, "",
+                id, name, "", name,
                 cat, name, Set.of(Season.ANY)
         );
     }

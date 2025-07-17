@@ -57,6 +57,7 @@ class CategorySpiUtil {
     static CategoryInfo toRecord(Category category) {
         Long id = category.getId();
         String name = category.getName();
+        String categoryCode = category.getCategoryCode();
         String recommendCode = "";
         Cat cat = resolveCategoryType(category);
 
@@ -85,7 +86,7 @@ class CategorySpiUtil {
 
         return new CategoryInfo(
                 id, name, emptyIfNull(thumbnailUrl),
-                cat, recommendCode,
+                categoryCode, cat, recommendCode,
                 suitableSeasons
         );
     }
