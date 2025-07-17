@@ -43,12 +43,13 @@ public class PrioritizingService {
     ) {
         Long id = category.id();
         String name = category.name();
+        String thumbnailUrl = category.thumbnailUrl();
 
         String code1 = memberCode.code();
         String code2 = category.recommendingCode();
 
         return new PrioritizedCategoryInfo(
-                id, name, scoring.score(code1, code2)
+                id, name, thumbnailUrl, scoring.score(code1, code2)
         );
     }
 }

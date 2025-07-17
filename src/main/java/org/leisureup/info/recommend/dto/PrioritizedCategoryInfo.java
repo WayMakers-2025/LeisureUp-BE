@@ -8,6 +8,7 @@ import org.springframework.lang.*;
 public record PrioritizedCategoryInfo(
         Long categoryId,
         String name,
+        String thumbnailUrl,
         double score
 ) implements Comparable<PrioritizedCategoryInfo> {
 
