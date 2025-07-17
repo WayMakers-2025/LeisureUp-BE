@@ -53,11 +53,13 @@ public class MapController {
 
         CordInfo cordInfo = req.getCordRelatedInfo();
         PagingInfo pagingInfo = req.getPagingInfo();
-        Set<LeisureFilter> filters = req.getFilters();
+        Set<Long> filters = req.getFilters();
 
         var resp = filters == null || filters.isEmpty() ?
                 leisureSearchService.searchAnyLeisure(cordInfo, pagingInfo) :
-                leisureSearchService.searchLeisureWithFilters(cordInfo, pagingInfo, filters);
+                leisureSearchService.searchLeisureWithFilters(
+                        cordInfo, pagingInfo, filters.stream().toList()
+                );
 
         return ApiResponse.success(200, resp);
     }

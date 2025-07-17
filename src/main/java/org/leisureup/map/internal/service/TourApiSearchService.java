@@ -66,10 +66,12 @@ public class TourApiSearchService {
     @Async
     public CompletableFuture<PageResponse<SearchLeisureResponse>> searchLeisure(
             CordInfo cordInfo, PagingInfo pagingInfo,
-            LeisureFilter filter
+            String categoryCode
     ) {
 
-        var reqDto = TourApiSearchServiceUtils.buildReqAdapterDto(cordInfo, pagingInfo, filter);
+        var reqDto = TourApiSearchServiceUtils.buildReqAdapterDto(
+                cordInfo, pagingInfo, categoryCode
+        );
         var resp = this.sendSearchRequest(reqDto);
 
         if (resp == null || !resp.isSuccess()) {
@@ -117,14 +119,14 @@ class TourApiSearchServiceUtils {
     }
 
     static LocationBaseSearchAdapterDto buildReqAdapterDto(
-            CordInfo cordInfo, PagingInfo pagingInfo, LeisureFilter filter
+            CordInfo cordInfo, PagingInfo pagingInfo, String categoryCode
     ) {
-        if (filter == null) {
-            throw new IllegalArgumentException("LeisureFilter cannot be null");
+        if (categoryCode == null || categoryCode.isEmpty()) {
+            throw new IllegalArgumentException("Category code cannot be null or empty");
         }
 
         var dto = new LocationBaseSearchAdapterDto(cordInfo, pagingInfo);
-        dto.setCategory(filter.getFullCode());
+        dto.setCategory(categoryCode);
 
         return dto;
     }

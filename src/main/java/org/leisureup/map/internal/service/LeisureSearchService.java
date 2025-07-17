@@ -7,6 +7,7 @@ import java.util.stream.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.location.spi.*;
 import org.leisureup.map.internal.dto.request.*;
 import org.leisureup.map.internal.dto.response.*;
 import org.springframework.stereotype.*;
@@ -20,6 +21,7 @@ public class LeisureSearchService {
 
     public static final String FILTER_NAME_ON_ANY_SEARCH = "default";
     private final TourApiSearchService apiSearchService;
+    private final CategorySpi categorySpi;
 
     /**
      * 레저 종류 필터링 없이 기본 검색을 진행
@@ -43,15 +45,19 @@ public class LeisureSearchService {
      */
     public MultiPageResponse<SearchLeisureResponse> searchLeisureWithFilters(
             CordInfo cordInfo, PagingInfo pagingInfo,
-            Set<LeisureFilter> filters
+            List<Long> searchingLeisureIds
     ) {
 
-        // 주어진 레저 필터별 비동기 API 호출 진행
+        // 검색할 레저 종류 정보를 가져옴.
+        List<CategoryInfo> targetCategories = categorySpi.getCategoryList(searchingLeisureIds);
+
+        // 레저 종류별 비동기 API 호출 진행
         Map<String, CompletableFuture<PageResponse<SearchLeisureResponse>>> futureResponses
-                = filters.stream().collect(Collectors.toMap(
-                Enum::name,
-                f -> apiSearchService.searchLeisure(cordInfo, pagingInfo, f)
-        ));
+                = targetCategories.stream().collect(Collectors.toMap(
+                CategoryInfo::name,
+                ci -> apiSearchService.searchLeisure(
+                        cordInfo, pagingInfo, ci.categoryCode()
+                )));
 
         // 비동기로 호출 API 결과를 조합
         // 어느 한 API 라도 실패시 exception 반환
