@@ -75,6 +75,7 @@ feign:
 
 mdc-key:
   request-id: request-id
+  trace-id: trace-id
 
 logback-config:
   # noinspection SpringBootApplicationYaml
@@ -86,7 +87,7 @@ logging:
   level:
     org.hibernate.SQL: debug
   pattern:
-    level: '[RID:%10X{${mdc-key.request-id}}] %5p'
+    level: '[RID:%10X{${mdc-key.request-id}}] [TID:%10X{${mdc-key.trace-id}}] %5p'
     dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul
   logback:
     rollingpolicy:

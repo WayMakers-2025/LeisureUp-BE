@@ -37,6 +37,7 @@ feign:
 
 mdc-key:
   request-id: request-id
+  trace-id: trace-id
 
 logging:
   #  level:
@@ -44,4 +45,4 @@ logging:
   #    org.springframework.transaction: trace
   pattern:
     dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul
-    level: '[RID:%10X{${mdc-key.request-id}}] %5p'
+    level: '[RID:%10X{${mdc-key.request-id}}] [TID:%10X{${mdc-key.trace-id}}] %5p'
