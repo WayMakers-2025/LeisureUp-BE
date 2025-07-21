@@ -1,6 +1,6 @@
 package org.leisureup.info.recommend.dto.response;
 
-public record LocationInfo(
+public record LocationRecommendation(
         Long id,
         String name,
         String largeThumbnail,

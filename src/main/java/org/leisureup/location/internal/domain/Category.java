@@ -62,7 +62,7 @@ public abstract class Category {
             AdditionalCategoryInfo additionalInfo
     ) {
         this(name, categoryCode, recommendationCode);
-        this.additionalInfo = additionalInfo;
+        this.additionalInfo = AdditionalCategoryInfo.of(additionalInfo);
     }
 
     public abstract String getCategoryType();

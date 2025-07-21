@@ -6,7 +6,7 @@ public record MultiPageResponse<T>(
         int pageNo, int pageSize,
         int numOfPageResponse,
         int numOfGivenElements,
-        Map<String, PageResponse<T>> elements
+        Map<String, PageResponse<T>> pageResponses
 ) {
 
     public static <T> MultiPageResponse<T> of(
@@ -33,7 +33,7 @@ public record MultiPageResponse<T>(
 
         if (map != null) {
             for (var pageResponse : map.values()) {
-                sum += pageResponse.numOfTotalElements();
+                sum += pageResponse.numOfElements();
             }
         }
 

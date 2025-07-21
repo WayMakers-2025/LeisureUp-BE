@@ -5,9 +5,11 @@ public record DetailedCategoryInfo(
         String categoryCode,
         String name,
         Cat category,
+        String briefInfo,
+        String target,
+        String requiredGear,
+        String warning,
         String thumbnailUrl,
-        String notification,
-        String description,
         String recommendingCode
 ) {
 

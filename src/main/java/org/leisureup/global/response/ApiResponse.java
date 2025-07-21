@@ -3,13 +3,16 @@ package org.leisureup.global.response;
 import lombok.*;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ApiResponse<T> {
 
     private final boolean success;
     private final int code;
     private final T data;
     private final String message;
+
+    @Setter(AccessLevel.PUBLIC)
+    private String requestId;
 
     public static <T> ApiResponse<T> success(int code, T data) {
         return new ApiResponse<>(true, code, data, null);
