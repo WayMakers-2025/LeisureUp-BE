@@ -1,9 +1,6 @@
 package org.leisureup.info.recommend.dto.response;
 
-import io.swagger.v3.oas.annotations.media.*;
-
-@Schema(name = "LocationInfoOnRecommend")
-public record LocationInfo(
+public record LocationRecommendation(
         Long id,
         String name,
         String largeThumbnail,
