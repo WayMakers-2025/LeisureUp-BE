@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public interface TourApiClient {
 
     @GetMapping("/detailCommon2")
-    GetCommonInfoResponse getCommonInfo(
+    TourApiResponse<CommonInfo> getCommonInfo(
             @RequestParam("contentId") Long contentId,
             @RequestParam("serviceKey") String key,
             @RequestParam(value = "MobileApp") String app,

@@ -56,4 +56,8 @@ public record Body<I>(
 
         return List.copyOf(items.item());
     }
+
+    public boolean isEmpty() {
+        return numOfRows == 0;
+    }
 }

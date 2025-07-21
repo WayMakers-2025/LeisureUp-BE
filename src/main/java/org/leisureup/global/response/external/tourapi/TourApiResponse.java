@@ -37,4 +37,8 @@ public record TourApiResponse<I>(
     public List<I> getItems() {
         return response.body().getItems();
     }
+
+    public boolean isEmpty() {
+        return response.body().isEmpty();
+    }
 }
