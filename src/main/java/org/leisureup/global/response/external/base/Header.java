@@ -1,4 +1,4 @@
-package org.leisureup.global.response.external.tourapi;
+package org.leisureup.global.response.external.base;
 
 public record Header(
         String resultCode,

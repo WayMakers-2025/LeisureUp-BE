@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import org.leisureup.global.exception.*;
-import org.leisureup.global.response.external.tourapi.*;
+import org.leisureup.global.response.external.base.*;
 import org.leisureup.global.response.external.tourapi.TourApiResponse;
 import org.leisureup.map.internal.dto.*;
 import org.leisureup.map.internal.dto.api.*;

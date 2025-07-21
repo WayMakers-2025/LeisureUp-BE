@@ -3,6 +3,7 @@ package org.leisureup.global.response.external.tourapi;
 import java.util.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.response.external.*;
+import org.leisureup.global.response.external.base.*;
 
 @Slf4j
 public record TourApiResponse<I>(
