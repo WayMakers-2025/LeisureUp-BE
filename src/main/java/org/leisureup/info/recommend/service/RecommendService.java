@@ -6,7 +6,7 @@ import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.info.recommend.dto.*;
 import org.leisureup.info.recommend.dto.response.*;
-import org.leisureup.info.recommend.dto.response.LocationInfo.*;
+import org.leisureup.info.recommend.dto.response.LocationRecommendation.*;
 import org.leisureup.location.spi.*;
 import org.leisureup.member.spi.*;
 import org.springframework.stereotype.*;
@@ -16,37 +16,45 @@ import org.springframework.stereotype.*;
 @RequiredArgsConstructor
 public class RecommendService {
 
+    /**
+     * 사용자가 관심있는 카테고리를 추려낼 최대 개수
+     */
+    private static final int DEFAULT_RECOMMENDING_CATEGORY_SIZE = 10;
+
+    /**
+     * 장소 추천으로 제공할 최대 장소 개수
+     */
     private static final int DEFAULT_RECOMMENDING_SIZE = 50;
-    private static final int DEFAULT_RECOMMENDING_CATEGORY_SIZE = 5;
+
     private final MemberSpi memberSpi;
     private final CategorySpi categorySpi;
     private final LocationQueryPort locationQueryPort;
     private final PrioritizingService prioritizingService;
 
     /**
-     * 로그인 하지 않은 사용자에게 장소를 추천
+     * 로그인 하지 않은 사용자에게 임의의 카테고리 (레저 종류) 목록을 추천
      */
-    public List<LocationInfo> recommendOnAnonymous() {
+    public List<CategoryRecommendation> recommendOnAnonymous() {
 
-        List<LocationResponse> locations
-                = locationQueryPort.getAnyLocations(DEFAULT_RECOMMENDING_SIZE);
+        List<CategoryInfo> categories
+                = categorySpi.getAnyCategories(DEFAULT_RECOMMENDING_CATEGORY_SIZE);
 
-        return locations.stream()
+        return categories.stream()
                 .map(RecommendServiceUtil::toResponse)
                 .toList();
     }
 
 
     /**
-     * 로그인한 사용자에게 장소를 추천
+     * 로그인한 사용자에게 카테고리 (레저 종류) 목록을 추천
      */
-    public List<LocationInfo> recommendOnMember(
+    public List<CategoryRecommendation> recommendOnMember(
             Long memberId
     ) {
 
         Optional<InterestCode> optional = memberSpi.getInterest(memberId);
 
-        // 질문 응답을 한지 않았으면 그냥 평이한 장소 추천
+        // 질문 응답을 한지 않았으면 그냥 평이한 카테고리 추천
         if (optional.isEmpty()) {
             return this.recommendOnAnonymous();
         }
@@ -54,31 +62,31 @@ public class RecommendService {
         // 모든 카테고리 중
         List<CategoryInfo> allCategories = categorySpi.getAllCategories();
 
-        // 사용자가 관심있는 카테고리 ID 만 끌어낸다.
-        List<Long> categoriesInInterest = prioritizingService.prioritize(
+        // 사용자가 관심있는 카테고리만 끌어내 반환한다.
+        return prioritizingService.prioritize(
                         optional.get(), allCategories,
                         DEFAULT_RECOMMENDING_CATEGORY_SIZE
-                ).stream().map(PrioritizedCategoryInfo::categoryId)
-                .toList();
-
-        // 정보 조회해 반환한다.
-        return locationQueryPort.getAnyLocationsOnCategory(
-                        DEFAULT_RECOMMENDING_SIZE, categoriesInInterest
-                ).stream().map(RecommendServiceUtil::toResponse)
+                ).stream()
+                .map(RecommendServiceUtil::toResponse)
                 .toList();
     }
 
     /**
-     * 계절에 따른 레저 (카테고리) 목록을 추천
+     * 계절에 맞는 여행 장소 목록을 추천
      */
-    public List<RecommendOnSeason> recommendOnSeason() {
+    public List<LocationRecommendation> recommendOnSeason() {
 
         // 모든 카테고리를 가져온다.
-        List<CategoryInfo> allCategories = categorySpi.getAllCategories();
-
-        // 카테고리 중 임의의 계절에 어올리거나 현재 계절에 맞는 카테고리만 filter 한다.
-        return allCategories.stream()
+        // 카테고리 중 현재 계절에 적합한 카테고리만 filter, ID 만 가져온다.
+        List<Long> seasonCategoryIds = categorySpi.getAllCategories().stream()
                 .filter(RecommendServiceUtil::filterOnCurrentSeason)
+                .map(CategoryInfo::id)
+                .toList();
+
+        // 카테고리에 속한 임의의 장소를 반환한다.
+        return locationQueryPort.getAnyLocationsOnCategory(
+                        DEFAULT_RECOMMENDING_SIZE, seasonCategoryIds
+                ).stream()
                 .map(RecommendServiceUtil::toResponse)
                 .toList();
     }
@@ -87,7 +95,7 @@ public class RecommendService {
 
 class RecommendServiceUtil {
 
-    static LocationInfo toResponse(LocationResponse location) {
+    static LocationRecommendation toResponse(LocationResponse location) {
         Long id = location.locationId();
         String name = location.title();
         var desc = location.description();
@@ -99,7 +107,7 @@ class RecommendServiceUtil {
             th2 = desc.smallThumbnail();
         }
 
-        return new LocationInfo(
+        return new LocationRecommendation(
                 id, name, emptyIfNull(th1), emptyIfNull(th2), category
         );
     }
@@ -128,9 +136,17 @@ class RecommendServiceUtil {
         return seasons.contains(Season.ANY) || seasons.contains(getCurrentSeason());
     }
 
-    static RecommendOnSeason toResponse(CategoryInfo categoryInfo) {
-        return new RecommendOnSeason(
+    static CategoryRecommendation toResponse(CategoryInfo categoryInfo) {
+        return new CategoryRecommendation(
                 categoryInfo.id(), categoryInfo.name(),
+                categoryInfo.thumbnailUrl()
+        );
+    }
+
+    static CategoryRecommendation toResponse(PrioritizedCategoryInfo categoryInfo) {
+        return new CategoryRecommendation(
+                categoryInfo.categoryId(),
+                categoryInfo.name(),
                 categoryInfo.thumbnailUrl()
         );
     }

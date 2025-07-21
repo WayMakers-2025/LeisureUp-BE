@@ -2,7 +2,7 @@ package org.leisureup.info.weather.dto.response;
 
 import java.time.*;
 
-public record WarningResponse(
+public record RawWeatherWaringContent(
         String content,
         String preWarnedContent,
         LocalDateTime announcedAt,

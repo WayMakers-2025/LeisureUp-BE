@@ -9,10 +9,12 @@ spring:
         - common-secret
         - local-secret
         - init-categories
+        - init-region-codes
       staging:
         - common-secret
         - staging-secret
         - init-categories
+        - init-region-codes
         - file-logger
         - discord-error-logger
       prod:

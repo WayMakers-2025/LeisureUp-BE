@@ -29,7 +29,7 @@ class InitializeCategory {
             initializer.init();
             log.info("Categories has been initialized");
         } catch (Exception e) {
-            log.info("Failed to initialize categories due to {}", e.getMessage(), e);
+            log.warn("Failed to initialize categories due to {}", e.getMessage(), e);
         }
 
     }

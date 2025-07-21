@@ -88,7 +88,7 @@ class CategorySpiTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("카테고리가 없을땐 에러가 발생한다.")
+    @DisplayName("조회할 카테고리가 없을땐 에러가 발생한다.")
     void testNotFound() {
         assertThatThrownBy(() -> categorySpi.getCategoryDetail(nonExistingId))
                 .isInstanceOf(NotFound.class);
@@ -98,5 +98,18 @@ class CategorySpiTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> categorySpi.getCategoryList(ids))
                 .isInstanceOf(NotFound.class)
                 .hasMessageContaining(String.valueOf(nonExistingId));
+    }
+
+    @Test
+    @DisplayName("랜덤한 카테고리를 제공받을 수 있다.")
+    void getAnyCategories() {
+
+        int max = 3;    // id1, 2, 3 --> max 3
+        List<CategoryInfo> resp = categorySpi.getAnyCategories(max);
+
+        assertThat(resp).isNotNull();
+        for (var one : resp) {
+            assertThat(one).hasNoNullFieldsOrProperties();
+        }
     }
 }

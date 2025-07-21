@@ -18,4 +18,11 @@ public interface CategorySpi {
      * 특정 카테고리의 세부 정보를 조회
      */
     DetailedCategoryInfo getCategoryDetail(Long categoryId);
+
+    /**
+     * 최대 {@code maxElements} 만큼의 카테고리를 조회
+     * <p>
+     * 조회되는 카테고리는 랜덤하게 변할 수 있음.
+     */
+    List<CategoryInfo> getAnyCategories(int maxElements);
 }
