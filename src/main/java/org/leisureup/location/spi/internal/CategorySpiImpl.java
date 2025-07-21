@@ -1,6 +1,7 @@
 package org.leisureup.location.spi.internal;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 import lombok.*;
@@ -22,6 +23,24 @@ public class CategorySpiImpl implements CategorySpi {
     public List<CategoryInfo> getAllCategories() {
         return categoryRepo.findAll().stream()
                 .map(CategorySpiUtil::toRecord)
+                .toList();
+    }
+
+    @Override
+    public List<CategoryInfo> getCategoryList(List<Long> categoryIds) {
+
+        List<Category> categories = categoryRepo.findAllByCategoryId(categoryIds);
+
+        if (categories.size() != categoryIds.size()) {
+            throw SpiUtils.throwNotFoundWithMissingIds(categoryIds, categories, Category::getId);
+        }
+
+        Map<Long, CategoryInfo> unorderedResp = categories.stream()
+                .map(CategorySpiUtil::toRecord)
+                .collect(Collectors.toMap(CategoryInfo::id, Function.identity()));
+
+        return categoryIds.stream()
+                .map(unorderedResp::get)
                 .toList();
     }
 
@@ -60,6 +79,7 @@ class CategorySpiUtil {
     static CategoryInfo toRecord(Category category) {
         Long id = category.getId();
         String name = category.getName();
+        String categoryCode = category.getCategoryCode();
         String recommendCode = "";
         Cat cat = resolveCategoryType(category);
 
@@ -88,7 +108,7 @@ class CategorySpiUtil {
 
         return new CategoryInfo(
                 id, name, emptyIfNull(thumbnailUrl),
-                cat, recommendCode,
+                categoryCode, cat, recommendCode,
                 suitableSeasons
         );
     }

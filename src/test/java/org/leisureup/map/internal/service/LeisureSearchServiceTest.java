@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.*;
 import com.github.tomakehurst.wiremock.*;
 import java.util.*;
 import org.junit.jupiter.api.*;
+import org.leisureup.location.internal.domain.*;
+import org.leisureup.location.internal.repository.*;
 import org.leisureup.map.internal.dto.request.*;
 import org.leisureup.map.internal.dto.request.SearchLeisureRequest.*;
 import org.leisureup.map.internal.dto.response.*;
@@ -27,9 +29,10 @@ class LeisureSearchServiceTest {
             = "mock-server-response/tour-api/location-base-search";
     static final String BASE_INFO_FILE
             = "base-info.json";
-    static final LeisureFilter filter1 = LeisureFilter.Skate,
-            filter2 = LeisureFilter.Sledding,
-            filter3 = LeisureFilter.Tracking;
+    static final String catCode1 = "A03021300",
+            catCode2 = "A03021400",
+            catCode3 = "A03022700";
+    static Long excitingCategoryId1, excitingCategoryId2, excitingCategoryId3;
     static JsonNode baseInfoNode;
     static CordInfo cordInfo;
     static PagingInfo pagingInfo;
@@ -45,6 +48,8 @@ class LeisureSearchServiceTest {
     WireMockServer wireMockServer;
     @Autowired
     LeisureSearchService service;
+    @Autowired
+    CategoryRepository categoryRepo;
 
     @BeforeAll
     static void prepare() {
@@ -94,19 +99,27 @@ class LeisureSearchServiceTest {
     void setup() {
         wireMockServer.start();
 
-        String case1 = filter1.getFullCode();
-        String case2 = filter2.getFullCode();
-        String case3 = filter3.getFullCode();
+        String case1 = catCode1;
+        String case2 = catCode2;
+        String case3 = catCode3;
         String case4 = "any-search.json";
 
         stubMockServer(case1 + ".json", case1);
         stubMockServer(case2 + ".json", case2);
         stubMockServer(case3 + ".json", case3);
         stubMockServer(case4, null);
+
+        excitingCategoryId1 = categoryRepo.save(CatOther.of(catCode1, catCode1))
+                .getId();
+        excitingCategoryId2 = categoryRepo.save(CatOther.of(catCode2, catCode2))
+                .getId();
+        excitingCategoryId3 = categoryRepo.save(CatOther.of(catCode3, catCode3))
+                .getId();
     }
 
     @AfterEach
     void tearDown() {
+        categoryRepo.deleteAll();
         wireMockServer.resetAll();
         wireMockServer.stop();
     }
@@ -133,8 +146,9 @@ class LeisureSearchServiceTest {
     @DisplayName("다수의 레저 종류 필터링으로 검색할 수 있다.")
     void searchLeisureWithFilters() {
 
-        Set<LeisureFilter> filters = Set.of(
-                filter1, filter2, filter3
+        List<Long> filters = List.of(
+                excitingCategoryId1, excitingCategoryId2,
+                excitingCategoryId3
         );
 
         var resp = service.searchLeisureWithFilters(cordInfo, pagingInfo, filters);
@@ -147,9 +161,9 @@ class LeisureSearchServiceTest {
 
         var pageRespMap = resp.pageResponses();
         assertThat(pageRespMap).hasSize(filters.size())
-                .containsKey(filter1.name())
-                .containsKey(filter2.name())
-                .containsKey(filter3.name());
+                .containsKey(catCode1)
+                .containsKey(catCode2)
+                .containsKey(catCode3);
     }
 
     private void stubMockServer(

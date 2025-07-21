@@ -26,7 +26,7 @@ class PrioritizingServiceTest extends IntegrationTestSupport {
     private static CategoryInfo gen(long id) {
         return new CategoryInfo(
                 id, String.valueOf(id), String.valueOf(id),
-                Cat.ETC, randomCode(CODE_LEN),
+                String.valueOf(id), Cat.ETC, randomCode(CODE_LEN),
                 Set.of(Season.ANY)
         );
     }

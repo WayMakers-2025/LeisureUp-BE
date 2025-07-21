@@ -35,23 +35,7 @@ public class LocationQueryAdapter implements LocationQueryPort {
         List<Location> locations = locationRepo.findAllByLocationIds(locationIds);
 
         if (locations.size() != locationIds.size()) {
-
-            Set<Long> searchedIds = locations.stream()
-                    .map(Location::getId)
-                    .collect(Collectors.toSet());
-
-            List<Long> missingIds = locationIds.stream()
-                    .filter(i -> !searchedIds.contains(i))
-                    .toList();
-
-            String msg = String.format(
-                    "ID [%s] 에 해당하는 장소를 찾을 수 없습니다.",
-                    missingIds.stream()
-                            .map(Object::toString)
-                            .collect(Collectors.joining(", "))
-            );
-
-            throw new NotFound(msg);
+            throw SpiUtils.throwNotFoundWithMissingIds(locationIds, locations, Location::getId);
         }
 
         Map<Long, LocationResponse> unorderedResp = locations.stream()

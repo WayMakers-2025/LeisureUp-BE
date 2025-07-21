@@ -68,10 +68,36 @@ class CategorySpiTest extends IntegrationTestSupport {
     }
 
     @Test
+    @DisplayName("ID 목록을 통해 카테고리 정보를 조회할 수 있다.")
+    void getCategoryList() {
+
+        List<Long> ids = List.of(id1, id2, id3);
+
+        var resp = categorySpi.getCategoryList(ids);
+
+        assertThat(resp).isNotNull().hasSize(ids.size());
+
+        // 주어진 ID 순서대로 제공된다.
+        for (int i = 0; i < ids.size(); i++) {
+            Long givenId = ids.get(i);
+            Long respId = resp.get(i).id();
+
+            assertThat(givenId).isEqualTo(respId);
+        }
+
+    }
+
+    @Test
     @DisplayName("조회할 카테고리가 없을땐 에러가 발생한다.")
     void testNotFound() {
         assertThatThrownBy(() -> categorySpi.getCategoryDetail(nonExistingId))
                 .isInstanceOf(NotFound.class);
+
+        List<Long> ids = List.of(id1, id2, id3, nonExistingId);
+
+        assertThatThrownBy(() -> categorySpi.getCategoryList(ids))
+                .isInstanceOf(NotFound.class)
+                .hasMessageContaining(String.valueOf(nonExistingId));
     }
 
     @Test

@@ -24,7 +24,7 @@ public class SearchLeisureRequest {
     private int radius = 1_000;
 
     @Size(max = 5, message = "필터링은 최대 5 개 까지 가능합니다.")
-    private Set<LeisureFilter> filters;
+    private Set<Long> filters;
 
     @Min(value = 1, message = "page 는 1 보다 커야합니다.")
     @Schema(defaultValue = "1")

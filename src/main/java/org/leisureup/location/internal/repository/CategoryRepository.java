@@ -9,5 +9,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Optional<Category> findByCategoryCode(String categoryCode);
 
+    @Query("""
+            select c from Category c
+            where c.id in :categoryIds
+            """)
+    List<Category> findAllByCategoryId(List<Long> categoryIds);
+           
     List<Category> findAllBy(Pageable pageable);
 }

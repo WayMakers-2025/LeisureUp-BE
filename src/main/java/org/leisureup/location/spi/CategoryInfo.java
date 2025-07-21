@@ -6,6 +6,7 @@ public record CategoryInfo(
         Long id,
         String name,
         String thumbnailUrl,
+        String categoryCode,
         Cat category,
         String recommendingCode,
         Set<Season> suitableSeasons
