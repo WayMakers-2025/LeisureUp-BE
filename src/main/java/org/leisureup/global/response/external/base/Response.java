@@ -9,10 +9,6 @@ public record Response<I>(
         return header != null && body != null;
     }
 
-    public boolean isSuccess() {
-        return nonNull() && header.isSuccess() && body.isValid();
-    }
-
     public boolean isSuccess(String successCode) {
         return nonNull() && header.isSuccess(successCode) && body.isValid();
     }
