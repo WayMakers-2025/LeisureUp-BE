@@ -20,6 +20,7 @@ public class MemberService {
     private final InterestRepository interestRepo;
     private final PickRepository pickRepo;
     private final LocationQueryPort locationQueryPort;
+    private final LocationFetchSpi locationFetchSpi;
 
     /**
      * 사용자 정보를 조회한다.
@@ -101,7 +102,10 @@ public class MemberService {
 
         Long locationId = req.locationId();
 
-        if (locationQueryPort.notExists(locationId)) {
+        if (
+                locationQueryPort.notExists(locationId) ||
+                !locationFetchSpi.fetchIfLocationExists(locationId)
+        ) {
             throw new NotFound("Location not found");
         }
 
