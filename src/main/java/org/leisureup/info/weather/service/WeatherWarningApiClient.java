@@ -24,7 +24,7 @@ public class WeatherWarningApiClient {
     }
 
     public Warning getWeatherWarning() {
-        var resp = weatherWarningApi.getWeatherWarning(key, rspType);
+        var resp = weatherWarningApi.getWeatherWarning(key, rspType, 1);
 
         if (resp == null || !resp.isSuccess()) {
             throw new WeatherWarningApiException("API 통신 중 문제가 발생했습니다.");

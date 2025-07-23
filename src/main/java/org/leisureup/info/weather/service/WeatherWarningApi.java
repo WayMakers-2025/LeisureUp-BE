@@ -18,6 +18,7 @@ public interface WeatherWarningApi {
     @GetMapping("/getPwnStatus")
     WeatherApiResponse<Warning> getWeatherWarning(
             @RequestParam("serviceKey") String key,
-            @RequestParam("dataType") String rspType
+            @RequestParam("dataType") String rspType,
+            @RequestParam int numOfRows
     );
 }
