@@ -35,7 +35,7 @@ public class MapService {
         }
     }
 
-    public Object search(String query) {
+    public List<MapResponse> search(String query) {
         try{
             TourApiResponse locationBySearch = placeSearchService.getLocationBySearch(query);
             return MapResponse.fromTourAPI(locationBySearch, query);

@@ -36,7 +36,7 @@ public class MapController {
     }
 
     @GetMapping("/map/search")
-    public ApiResponse<Object> search(
+    public ApiResponse<List<MapResponse>> search(
             @RequestParam String query) {
         return ApiResponse.success(
                 200,
