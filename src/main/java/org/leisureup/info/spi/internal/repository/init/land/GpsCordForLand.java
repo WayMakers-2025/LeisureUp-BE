@@ -12,7 +12,7 @@ public enum GpsCordForLand {
     // 지역별 최소 10 개
 
     // 서울, 인천, 경기도
-    Seoul_01(126.789923, 37.559863, L_01),
+    Seoul_01(37.559863, 126.789923, L_01),
     Seoul_02(37.514575, 127.0495556, L_01),
     Seoul_03(37.52736667, 127.1258639, L_01),
     Seoul_04(37.63695556, 127.0277194, L_01),
@@ -291,7 +291,7 @@ public enum GpsCordForLand {
 
     ;
 
-    final double x, y;
+    final double y, x;
     final LandCode landCode;
 
     public Position bindPositionTo(RegionCode regionCode) {
