@@ -1,4 +1,4 @@
-package org.leisureup.global.response.external.tourapi;
+package org.leisureup.global.response.external.base;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.deser.*;
 import java.io.*;
 import java.util.*;
 
-public class TourApiItemsDeserializer<I>
+public class DefaultItemsDeserializer<I>
         extends JsonDeserializer<Items<I>> implements ContextualDeserializer {
 
     private JavaType genericItemType;
@@ -56,7 +56,7 @@ public class TourApiItemsDeserializer<I>
     ) {
         JavaType wrapperType = property.getType(); // Items<I>
         JavaType genericItemType = wrapperType.containedType(0); // I
-        TourApiItemsDeserializer<?> deserializer = new TourApiItemsDeserializer<>();
+        DefaultItemsDeserializer<?> deserializer = new DefaultItemsDeserializer<>();
         deserializer.genericItemType = genericItemType;
         return deserializer;
     }

@@ -1,9 +1,11 @@
-package org.leisureup.global.response.external.tourapi;
+package org.leisureup.global.response.external.base;
 
+import com.fasterxml.jackson.annotation.*;
 import java.util.*;
 import lombok.extern.slf4j.*;
 
 @Slf4j
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record Body<I>(
         int numOfRows,
         int pageNo,
@@ -53,5 +55,9 @@ public record Body<I>(
         }
 
         return List.copyOf(items.item());
+    }
+
+    public boolean isEmpty() {
+        return numOfRows == 0;
     }
 }

@@ -10,7 +10,6 @@ import org.leisureup.location.internal.service.*;
 /**
  * 공통정보 응답 class
  *
- * @see GetCommonInfoResponse
  * @see TourApiClient#getCommonInfo
  */
 @JsonNaming(LowerCaseStrategy.class)

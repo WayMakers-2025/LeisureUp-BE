@@ -1,6 +1,7 @@
 package org.leisureup.location.internal.service;
 
 import org.leisureup.global.exception.*;
+import org.leisureup.global.response.external.*;
 import org.leisureup.location.internal.dto.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -27,11 +28,11 @@ public class TourApiService {
         this.rspType = responseType;
     }
 
-    private static TourApiException buildExMsg(TourApiResponse<?> response) {
+    private static TourApiException buildExMsg(ExternalApiResponse<?> response) {
         String message = "API 통신 중 에러가 발생했습니다.";
 
         try {
-            message += " : " + response.getMessage();
+            message += " : " + response.getResultMessage();
         } catch (Exception ignored) {
             // 응답 메시지까지 못받았으면 그냥 반환한다.
         }
@@ -46,7 +47,7 @@ public class TourApiService {
      */
     public CommonInfo getCommonInfo(Long locationId) {
 
-        GetCommonInfoResponse rsp = apiClient.getCommonInfo(
+        var rsp = apiClient.getCommonInfo(
                 locationId, key, app, os, rspType
         );
 

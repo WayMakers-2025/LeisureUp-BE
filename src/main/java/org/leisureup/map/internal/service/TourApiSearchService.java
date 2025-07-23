@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.global.response.external.base.*;
 import org.leisureup.global.response.external.tourapi.*;
 import org.leisureup.global.response.external.tourapi.TourApiResponse;
 import org.leisureup.map.internal.dto.*;
@@ -147,7 +148,7 @@ class TourApiSearchServiceUtils {
             int pageSize, TourApiResponse<I> apiResponse,
             Function<I, R> respMapper
     ) {
-        Body<I> body = apiResponse.response().body();
+        Body<I> body = apiResponse.getResponse().body();
 
         int pageNo = body.pageNo();
         int numOfTotalElements = body.totalCount();
