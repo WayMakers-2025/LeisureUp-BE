@@ -18,10 +18,10 @@ import org.springframework.util.*;
 @SpringBootTest
 @AutoConfigureWireMock(port = 0)
 @TestPropertySource(properties = {
-        "feign.weather.forecast=http://localhost:${wiremock.server.port}",
+        "feign.weather.forecast.mid-term=http://localhost:${wiremock.server.port}",
         "weatherApi.forecast.mid-term.key=testing"
 })
-class WeatherForecastApiClientTest {
+class MidTermForecastApiClientTest {
 
     private static final String baseDir
             = "mock-server-response/weather/forecast";
@@ -38,7 +38,7 @@ class WeatherForecastApiClientTest {
     @Autowired
     WireMockServer wireMockServer;
     @Autowired
-    WeatherForecastApiClient forecastApiClient;
+    MidTermForecastApiClient forecastApiClient;
 
     private static byte[] supplyResponse(
             String resourceDir,

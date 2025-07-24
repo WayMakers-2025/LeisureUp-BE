@@ -18,7 +18,7 @@ public class WeatherInformService {
     private final WeatherWarningApiClient warningApiClient;
     private final WeatherWarningContentSupplier contentParser;
     private final InfoSpi infoSpi;
-    private final WeatherForecastApiClient forecastApiClient;
+    private final MidTermForecastApiClient midTermForecastApiClient;
 
     /**
      * 현재 발효된 기상 특보 내용을 조회
@@ -63,7 +63,7 @@ public class WeatherInformService {
             double x, double y
     ) {
         String region = infoSpi.getCodeOn(x, y, CodeType.WEATHER_LAND_FORECAST);
-        return forecastApiClient.forecastLand(region);
+        return midTermForecastApiClient.forecastLand(region);
     }
 
     /**
@@ -72,9 +72,8 @@ public class WeatherInformService {
     public MidTermTemperatureResponse getMidTermTemperatureForecast(
             double x, double y
     ) {
-
         String region = infoSpi.getCodeOn(x, y, CodeType.WEATHER_TEMPERATURE_FORECAST);
-        return forecastApiClient.forecastTemperature(region);
+        return midTermForecastApiClient.forecastTemperature(region);
     }
 }
 

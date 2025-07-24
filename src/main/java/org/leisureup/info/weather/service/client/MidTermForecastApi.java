@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Component
 @FeignClient(
-        name = "WeatherMidTermForecastApi",
-        url = "${feign.weather.forecast}",
+        name = "MidTermForecastApi",
+        url = "${feign.weather.forecast.mid-term}",
         configuration = DefaultFeignErrorDecoder.class
 )
 public interface MidTermForecastApi {
