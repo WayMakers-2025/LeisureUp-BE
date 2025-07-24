@@ -1,5 +1,7 @@
 package org.leisureup.location.spi;
 
+import org.leisureup.travel.internal.travel.domain.RegionCode;
+
 import java.util.*;
 
 public interface LocationQueryPort {
@@ -38,4 +40,6 @@ public interface LocationQueryPort {
     );
 
     String getRepresentImage(List<Long> locationId);
+
+    RegionCode getRepresentRegion(List<Long> locationId);
 }
