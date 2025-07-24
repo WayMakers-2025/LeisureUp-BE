@@ -1,4 +1,4 @@
-package org.leisureup.info.weather.service;
+package org.leisureup.info.weather.service.client;
 
 import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;

@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.matching.*;
 import java.nio.file.*;
 import java.util.*;
 import org.junit.jupiter.api.*;
+import org.leisureup.info.weather.service.client.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.cloud.contract.wiremock.*;

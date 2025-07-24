@@ -7,6 +7,7 @@ import org.leisureup.info.spi.*;
 import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.dto.response.*;
+import org.leisureup.info.weather.service.client.*;
 import org.springframework.stereotype.*;
 
 @Slf4j

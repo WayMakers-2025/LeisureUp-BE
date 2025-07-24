@@ -1,4 +1,4 @@
-package org.leisureup.info.weather.service;
+package org.leisureup.info.weather.service.client;
 
 import org.leisureup.global.response.external.*;
 import org.leisureup.global.response.external.weather.*;

@@ -1,4 +1,4 @@
-package org.leisureup.info.weather.service;
+package org.leisureup.info.weather.service.client;
 
 import java.time.*;
 import java.time.format.*;
