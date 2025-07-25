@@ -23,7 +23,12 @@ public class WeatherController {
         return ApiResponse.success(200, resp);
     }
 
-    // 중기 육상 예보를 조회 (강수량 & 기상 예측 포함)
+    /**
+     * 중기 육상 예보를 조회 (강수량 & 기상 예측 포함)
+     *
+     * @param x 경도 {@code (126.98161)}
+     * @param y 위도 {@code (37.568477)}
+     */
     @GetMapping("/forecasts/midterm/land")
     public ApiResponse<MidTermLandResponse> getMidTermLandForecast(
             @RequestParam double x, @RequestParam double y
@@ -34,7 +39,11 @@ public class WeatherController {
         return ApiResponse.success(200, resp);
     }
 
-    // 중기 기온 에보를 조회
+    /**
+     * 중기 기온 에보를 조회
+     * @param x 경도 {@code (126.98161)}
+     * @param y 위도 {@code (37.568477)}
+     */
     @GetMapping("/forecasts/midterm/temperature")
     public ApiResponse<MidTermTemperatureResponse> getMidTermTemperatureForecast(
             @RequestParam double x, @RequestParam double y

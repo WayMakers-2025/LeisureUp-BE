@@ -4,7 +4,6 @@ import java.time.*;
 import java.time.format.*;
 import java.util.*;
 import lombok.extern.slf4j.*;
-import org.leisureup.global.exception.*;
 import org.leisureup.global.response.external.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.dto.response.*;
@@ -83,30 +82,7 @@ class MidTermForecastApiClientUtils {
     }
 
     static void validateResp(ExternalApiResponse<?> resp) {
-
-        if (resp == null) {
-            throw new WeatherForecastApiException("API 통신 중 문제가 발생했습니다.");
-        }
-
-        String resultMsg = resp.getResultMessage();
-
-        if (!resp.isSuccess()) {
-            throw new WeatherForecastApiException(
-                    String.format(
-                            "API 통신 중 문제가 발생했습니다. : [%s]",
-                            resultMsg
-                    )
-            );
-        }
-
-        if (resp.isEmpty()) {
-            throw new WeatherForecastApiException(
-                    String.format(
-                            "API 통신에는 성공했으나 content 가 비어있습니다. : [%s]",
-                            resultMsg
-                    )
-            );
-        }
+        ForecastUtils.validateResp(resp);
     }
 
     static MidTermLandResponse buildRespWith(LocalDate today, LandMidForecast resp) {
