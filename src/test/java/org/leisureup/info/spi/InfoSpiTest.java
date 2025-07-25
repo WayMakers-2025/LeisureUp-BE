@@ -66,4 +66,49 @@ class InfoSpiTest extends IntegrationTestSupport {
 
         assertThat(regionCodeRepo.findByRegionCode(code)).isPresent();
     }
+
+    private static Stream<Arguments> serveData() {
+        return Stream.of(
+                Arguments.of(TestData.of(
+                        126.9382, 35.1515111111111, 60, 74
+                )),
+                Arguments.of(TestData.of(
+                        129.363544444444, 35.5796888888888, 103, 85
+                )),
+                Arguments.of(TestData.of(
+                        127.321388888888, 35.1481333333333, 67, 74
+                )),
+                Arguments.of(TestData.of(
+                        126.7604, 37.5591666666667, 56, 127
+                ))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("serveData")
+    @DisplayName("임의의 좌표를 람베르트 정각원추도법으로 변환할 수 있다.")
+    void convertGpsCord(TestData data) {
+
+        double x = data.x(), y = data.y();
+
+        var resp = spi.convertGpsCord(x, y);
+
+        assertThat(resp).isNotNull().hasNoNullFieldsOrProperties();
+        assertThat(resp).satisfies(
+                r -> assertThat(r.nx()).isEqualTo(data.nx()),
+                r -> assertThat(r.ny()).isEqualTo(data.ny()),
+                r -> assertThat(r.x()).isEqualTo(data.x()),
+                r -> assertThat(r.y()).isEqualTo(data.y())
+        );
+    }
+}
+
+record TestData(
+        double x, double y,
+        int nx, int ny
+) {
+
+    static TestData of(double x, double y, int nx, int ny) {
+        return new TestData(x, y, nx, ny);
+    }
 }
