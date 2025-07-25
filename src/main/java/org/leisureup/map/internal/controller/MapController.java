@@ -24,23 +24,27 @@ public class MapController {
     private final LeisureSearchService leisureSearchService;
 
     @GetMapping("/map/category")
-    public ApiResponse<List<MapResponse>> searchCategory(
+    public ApiResponse<MultiPageResponse<MapResponse>> searchCategory(
             @RequestParam double x,
             @RequestParam double y,
             @RequestParam(defaultValue = "1000") int radius,
-            @RequestParam String category) {
+            @RequestParam String category,
+            @RequestParam(defaultValue = "1") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize) {
         return ApiResponse.success(
                 200,
-                mapService.searchCategory(x, y, radius, category)
+                mapService.searchCategory(x, y, radius, category, pageNo, pageSize)
         );
     }
 
     @GetMapping("/map/search")
-    public ApiResponse<List<MapResponse>> search(
-            @RequestParam String query) {
+    public ApiResponse<MultiPageResponse<MapResponse>> search(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize) {
         return ApiResponse.success(
                 200,
-                mapService.search(query)
+                mapService.search(query, pageNo, pageSize)
         );
     }
 

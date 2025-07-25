@@ -17,7 +17,7 @@ public interface KakaoLocalClient {
             @RequestParam("y") String latitude,
             @RequestParam("radius") int radius,
             @RequestParam(value = "sort", defaultValue = "accuracy") String sort,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "page", defaultValue = "1") int page, // pageNo
+            @RequestParam(value = "size", defaultValue = "10") int size // pageSize
     );
 }
