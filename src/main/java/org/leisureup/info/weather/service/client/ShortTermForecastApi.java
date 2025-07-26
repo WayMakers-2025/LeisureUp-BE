@@ -1,6 +1,5 @@
 package org.leisureup.info.weather.service.client;
 
-import org.leisureup.global.response.external.*;
 import org.leisureup.global.response.external.weather.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.springframework.cloud.openfeign.*;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(
         name = "ShortTermForecastApi",
         url = "${feign.weather.forecast.short-term}",
-        configuration = DefaultFeignErrorDecoder.class
+        configuration = WeatherApiConfig.class
 )
 public interface ShortTermForecastApi {
 
