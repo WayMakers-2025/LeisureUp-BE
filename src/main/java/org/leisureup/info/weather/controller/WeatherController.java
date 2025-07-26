@@ -1,7 +1,9 @@
 package org.leisureup.info.weather.controller;
 
+import java.util.*;
 import lombok.*;
 import org.leisureup.global.response.*;
+import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.response.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.validation.annotation.*;
@@ -50,6 +52,25 @@ public class WeatherController {
     ) {
 
         var resp = weatherInformService.getMidTermTemperatureForecast(x, y);
+
+        return ApiResponse.success(200, resp);
+    }
+
+    /**
+     * 단기 예보를 조회
+     *
+     * @param x 경도 {@code (126.98161)}
+     * @param y 위도 {@code (37.568477)}
+     */
+    @GetMapping("/forecasts/short-term")
+    public ApiResponse<List<ShotTermForecastResponse>> getShortTermForecasts(
+            @RequestParam double x, @RequestParam double y
+    ) {
+
+        var resp = weatherInformService.getShortTermForecast(x, y).stream()
+                .map(ShortForecastInDayDto::toResponse)
+                .sorted(Comparator.comparing(ShotTermForecastResponse::forecastDate))
+                .toList();
 
         return ApiResponse.success(200, resp);
     }
