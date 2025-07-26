@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
+import org.leisureup.info.weather.dto.response.*;
 import org.springframework.stereotype.*;
 
 /**
@@ -37,7 +38,7 @@ public class ShortTermForecastComposer {
      * @param forecasts 임의의 단기 예보 정보들
      * @return 정형화된 단기 예보 정보들
      */
-    public List<ShortForecastInDayDto> composeForecasts(
+    public List<ShotTermForecastResponse> composeForecasts(
             List<ShortTermForecast> forecasts
     ) {
 
@@ -71,6 +72,9 @@ public class ShortTermForecastComposer {
             }
         }
 
-        return infos;
+        return infos.stream()
+                .map(ShortForecastInDayDto::toResponse)
+                .sorted(Comparator.comparing(ShotTermForecastResponse::forecastDate))
+                .toList();
     }
 }

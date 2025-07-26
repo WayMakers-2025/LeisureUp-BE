@@ -85,7 +85,7 @@ public class WeatherInformService {
     /**
      * 어느 위치의 단기 예보를 조회
      */
-    public List<ShortForecastInDayDto> getShortTermForecast(double x, double y) {
+    public List<ShotTermForecastResponse> getShortTermForecast(double x, double y) {
 
         // 요청에 사용할 좌표, 기준 시각 build
         var cordProjection = infoSpi.convertGpsCord(x, y);

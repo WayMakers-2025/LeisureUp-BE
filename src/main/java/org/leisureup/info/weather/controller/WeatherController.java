@@ -3,7 +3,6 @@ package org.leisureup.info.weather.controller;
 import java.util.*;
 import lombok.*;
 import org.leisureup.global.response.*;
-import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.response.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.validation.annotation.*;
@@ -67,10 +66,7 @@ public class WeatherController {
             @RequestParam double x, @RequestParam double y
     ) {
 
-        var resp = weatherInformService.getShortTermForecast(x, y).stream()
-                .map(ShortForecastInDayDto::toResponse)
-                .sorted(Comparator.comparing(ShotTermForecastResponse::forecastDate))
-                .toList();
+        var resp = weatherInformService.getShortTermForecast(x, y);
 
         return ApiResponse.success(200, resp);
     }
