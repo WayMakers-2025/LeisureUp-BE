@@ -9,6 +9,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.*;
 import org.junit.jupiter.params.provider.*;
 import org.leisureup.*;
+import org.leisureup.global.exception.*;
 import org.leisureup.info.spi.internal.domain.*;
 import org.leisureup.info.spi.internal.repository.*;
 import org.springframework.beans.factory.annotation.*;
@@ -100,6 +101,15 @@ class InfoSpiTest extends IntegrationTestSupport {
                 r -> assertThat(r.x()).isEqualTo(data.x()),
                 r -> assertThat(r.y()).isEqualTo(data.y())
         );
+    }
+
+    @Test
+    @DisplayName("대한민국을 벗어난 좌표를 변환할 때 에러가 발생한다.")
+    void testInvalidGpsCord() {
+
+        assertThatThrownBy(() -> spi.convertGpsCord(x, y))
+                .isInstanceOf(LambertProjectorException.class);
+
     }
 }
 

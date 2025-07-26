@@ -2,18 +2,24 @@ package org.leisureup.info.weather.service.client;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.*;
+import lombok.extern.slf4j.*;
 import org.leisureup.global.response.external.*;
+import org.leisureup.global.response.external.weather.*;
 import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 
+@Slf4j
 @Component
 public class ShortTermForecastApiClient {
 
     private final String key, rspType;
     private final ShortTermForecastApi shortTermForecastApi;
+
+    private static final int DEFAULT_RETRY_CNT = 3;
 
     public ShortTermForecastApiClient(
             ShortTermForecastApi shortTermForecastApi,
@@ -31,11 +37,7 @@ public class ShortTermForecastApiClient {
     public List<PagingRequestPlan> inspectPagingPlan(
             int nx, int ny, ShortTermBaseDateTimeInfo dateTimeInfo
     ) {
-        var resp = shortTermForecastApi.getShortTermForecast(
-                key, rspType,
-                dateTimeInfo.baseDate(), dateTimeInfo.baseTime(),
-                nx, ny, 1, 1
-        );
+        var resp = this.doRequestWithRetry(nx, ny, dateTimeInfo, 1, 1);
 
         ShortTermForecastApiClientUtils.validateResp(resp);
 
@@ -58,22 +60,58 @@ public class ShortTermForecastApiClient {
         int pageNo = pagingReq.pageNo();
         int pageSize = pagingReq.pageSize();
 
-        var resp = shortTermForecastApi.getShortTermForecast(
-                key, rspType,
-                dateTimeInfo.baseDate(), dateTimeInfo.baseTime(),
-                nx, ny, pageNo, pageSize
-        );
+        var resp = this.doRequestWithRetry(nx, ny, dateTimeInfo, pageNo, pageSize);
 
         ShortTermForecastApiClientUtils.validateResp(resp);
 
         return CompletableFuture.completedFuture(resp.getItems());
+    }
+
+    private WeatherApiResponse<ShortTermForecast> doRequestWithRetry(
+            int nx, int ny, ShortTermBaseDateTimeInfo dateTimeInfo,
+            int pageNo, int pageSize
+    ) {
+        WeatherApiResponse<ShortTermForecast> resp = null;
+
+        int attempts = 1;
+        for (; attempts <= DEFAULT_RETRY_CNT; attempts++) {
+            resp = shortTermForecastApi.getShortTermForecast(
+                    key, rspType,
+                    dateTimeInfo.baseDate(), dateTimeInfo.baseTime(),
+                    nx, ny, pageNo, pageSize
+            );
+
+            if (!ShortTermForecastApiClientUtils.shouldRetry(resp)) {
+                break;
+            }
+
+            log.warn("Retrying api call with attempts: [{}]", attempts);
+            resp = null;
+        }
+
+        if (resp == null) {
+            log.warn("Failed to fetch data with attempts: [{}]", attempts - 1);
+        }
+
+        return resp;
     }
 }
 
 
 class ShortTermForecastApiClientUtils {
 
-    private static final int DEFAULT_PAGING_SIZE = 200;
+    private static final int SINGLE_PAGE_SIZE_THRESHOLD = 500;
+    private static final int DEFAULT_PAGING_SIZE = 100;
+
+    static boolean shouldRetry(ExternalApiResponse<?> unvalidatedResp) {
+
+        if (unvalidatedResp == null) {
+            return true;
+        }
+
+        String resultMsg = unvalidatedResp.getResultMessage();
+        return "NO_DATA".equals(resultMsg);
+    }
 
     static void validateResp(ExternalApiResponse<?> resp) {
         ForecastUtils.validateResp(resp);
@@ -85,28 +123,16 @@ class ShortTermForecastApiClientUtils {
             throw new IllegalArgumentException("Total count must be greater than zero");
         }
 
-        if (totalCnt <= DEFAULT_PAGING_SIZE) {
+        if (totalCnt <= SINGLE_PAGE_SIZE_THRESHOLD) {
             return List.of(PagingRequestPlan.of(1, totalCnt));
         }
 
         int totalPages = Math.ceilDiv(totalCnt, DEFAULT_PAGING_SIZE);
-        List<PagingRequestPlan> result = new ArrayList<>(totalPages);
 
-        int remains = totalCnt;
-        for (int pageNo = 1; pageNo <= totalPages; pageNo++) {
-
-            int pageSize = Math.min(
-                    remains,
-                    DEFAULT_PAGING_SIZE
-            );
-
-            result.add(PagingRequestPlan.of(pageNo, pageSize));
-
-            // 이전에 전체 page 가 1 인 경우 처리했기 때문에
-            // 루프 속 remains 는 항상 0 보다 큼이 보장된다.
-            remains -= DEFAULT_PAGING_SIZE;
-        }
-
-        return result;
+        return IntStream.rangeClosed(1, totalPages)
+                .mapToObj(
+                        pno -> PagingRequestPlan.of(pno, DEFAULT_PAGING_SIZE)
+                )
+                .toList();
     }
 }

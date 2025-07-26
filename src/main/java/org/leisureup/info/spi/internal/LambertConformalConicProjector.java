@@ -2,11 +2,14 @@ package org.leisureup.info.spi.internal;
 
 import static java.lang.Math.*;
 
+import org.leisureup.global.exception.*;
 import org.leisureup.info.spi.*;
 import org.springframework.stereotype.*;
 
 @Component
 public class LambertConformalConicProjector {
+
+    private static final int NX = 149, NY = 253;
 
     private final Data data = Data.getInstance();
 
@@ -15,6 +18,13 @@ public class LambertConformalConicProjector {
         double[] projection = lamcProj(x, y);
         int nx = (int) (projection[0] + 1.5);
         int ny = (int) (projection[1] + 1.5);
+
+        if (nx < 1 || NX < nx || ny < 1 || NY < ny) {
+            throw new LambertProjectorException(
+                    400,
+                    "좌표 변환에 실패했습니다. 위경도가 한국에 속하는지 확인해 주세요."
+            );
+        }
 
         return new LambertProjectionCord(nx, ny, x, y);
     }
