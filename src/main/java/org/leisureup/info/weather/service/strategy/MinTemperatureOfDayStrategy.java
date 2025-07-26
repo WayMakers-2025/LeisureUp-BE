@@ -5,6 +5,9 @@ import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.stereotype.*;
 
+/**
+ * 일일 최저 기온 정보를 넣어주는 전략
+ */
 @Component
 public class MinTemperatureOfDayStrategy extends BaseStrategy {
 

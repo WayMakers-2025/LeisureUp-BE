@@ -5,6 +5,9 @@ import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.stereotype.*;
 
+/**
+ * 강수 확률 정보를 넣어주는 전략
+ */
 @Component
 public class RainProbabilityStrategy extends BaseStrategy {
 

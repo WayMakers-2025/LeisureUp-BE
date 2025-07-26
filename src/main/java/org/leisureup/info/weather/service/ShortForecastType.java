@@ -1,9 +1,10 @@
 package org.leisureup.info.weather.service;
 
-import lombok.extern.slf4j.*;
 import org.leisureup.info.weather.dto.api.ShortTermForecast.*;
 
-@Slf4j
+/**
+ * 우리 관심속에 있는 단기 예보 종류들
+ */
 public enum ShortForecastType {
 
     RAIN_PROBABILITY,           // 강수 확률 (%)

@@ -3,12 +3,13 @@ package org.leisureup.info.weather.service;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-import lombok.extern.slf4j.*;
 import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.springframework.stereotype.*;
 
-@Slf4j
+/**
+ * 단기 예보 정보를 조합해 응답으로 제공하는 {@code service}
+ */
 @Service
 public class ShortTermForecastComposer {
 
@@ -30,6 +31,12 @@ public class ShortTermForecastComposer {
                 .toList();
     }
 
+    /**
+     * API 의 단기 예보 정보를 날짜별로 묶고 정형화해 제공한다.
+     *
+     * @param forecasts 임의의 단기 예보 정보들
+     * @return 정형화된 단기 예보 정보들
+     */
     public List<ShortForecastInDayDto> composeForecasts(
             List<ShortTermForecast> forecasts
     ) {

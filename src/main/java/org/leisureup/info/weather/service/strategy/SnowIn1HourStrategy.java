@@ -5,6 +5,9 @@ import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.stereotype.*;
 
+/**
+ * 1 시간 동안 쌓이는 눈 정보를 넣어주는 전략
+ */
 @Component
 public class SnowIn1HourStrategy extends BaseStrategy {
 

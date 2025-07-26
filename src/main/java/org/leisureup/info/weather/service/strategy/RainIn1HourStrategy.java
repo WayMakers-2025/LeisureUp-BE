@@ -5,6 +5,9 @@ import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.stereotype.*;
 
+/**
+ * 1 시간 강수량 정보를 넣어주는 전략
+ */
 @Component
 public class RainIn1HourStrategy extends BaseStrategy {
 

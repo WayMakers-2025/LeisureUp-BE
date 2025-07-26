@@ -2,9 +2,15 @@ package org.leisureup.info.weather.service.strategy;
 
 import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
+import org.leisureup.info.weather.dto.api.ShortTermForecast.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.stereotype.*;
 
+/**
+ * 관심밖 정보들 처리하는 전략
+ *
+ * @see ShortForecastType#resolveType(Category)
+ */
 @Component
 public class OutOfInterestStrategy extends BaseStrategy {
 

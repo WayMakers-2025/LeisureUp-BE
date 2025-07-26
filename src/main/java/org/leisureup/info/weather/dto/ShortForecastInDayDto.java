@@ -4,11 +4,17 @@ import java.util.*;
 import lombok.*;
 import org.leisureup.info.weather.dto.response.*;
 
-@ToString
+/**
+ * 어느 날짜에 대한 단기 예보 정보를 담는 {@code DTO}
+ */
 public class ShortForecastInDayDto {
 
     @Getter
     private final String forecastDate;
+
+    /**
+     * 특정 시각 {@code (key)} 에 포함된 예보 정보들
+     */
     private final Map<String, ShortForecastInTimeDto> forecastOnTime;
 
     @Setter
@@ -38,6 +44,6 @@ public class ShortForecastInDayDto {
                 .sorted(Comparator.comparing(SingleShortTermForecast::time))
                 .toList();
 
-        return new ShotTermForecastResponse(this.forecastDate, data);
+        return new ShotTermForecastResponse(this.forecastDate, maxTemp, minTemp, data);
     }
 }

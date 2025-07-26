@@ -67,6 +67,11 @@ public class ShortTermForecastApiClient {
         return CompletableFuture.completedFuture(resp.getItems());
     }
 
+    /**
+     * 단기 예보 API 가 이상한 응답 {@code (NO_DATA)} 을 자주 보내서 구성한 재시도 로직
+     *
+     * @return 재시도 했음에도 올바른 데이터를 받지 못햇으면 {@code null}
+     */
     private WeatherApiResponse<ShortTermForecast> doRequestWithRetry(
             int nx, int ny, ShortTermBaseDateTimeInfo dateTimeInfo,
             int pageNo, int pageSize

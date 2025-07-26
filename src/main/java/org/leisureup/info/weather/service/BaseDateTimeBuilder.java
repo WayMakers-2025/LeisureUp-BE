@@ -6,6 +6,9 @@ import java.util.*;
 import org.leisureup.info.weather.dto.*;
 import org.springframework.stereotype.*;
 
+/**
+ * 단기 예보 API 의 기준 날짜, 시각을 제공하는 {@code component}
+ */
 @Component
 public class BaseDateTimeBuilder {
 

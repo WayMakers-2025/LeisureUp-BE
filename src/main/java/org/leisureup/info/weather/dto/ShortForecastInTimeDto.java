@@ -4,15 +4,20 @@ import static org.leisureup.info.weather.service.ShortForecastType.*;
 
 import java.util.*;
 import lombok.*;
-import lombok.extern.slf4j.*;
 import org.leisureup.info.weather.dto.response.*;
 import org.leisureup.info.weather.service.*;
 
-@Slf4j
-@Getter
+/**
+ * 어느 시각에 대한 담기 에보 정보를 담는 {@code DTO}
+ */
 public class ShortForecastInTimeDto {
 
+    @Getter
     private final String forecastTime;
+
+    /**
+     * 저장된 단기 예보 정보들
+     */
     private final Map<ShortForecastType, String> forecasts;
 
     public ShortForecastInTimeDto(String forecastTime) {
