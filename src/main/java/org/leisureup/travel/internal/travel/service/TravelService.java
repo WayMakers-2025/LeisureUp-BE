@@ -53,13 +53,13 @@ public class TravelService {
         String representImage = locationQueryPort.getRepresentImage(itemIdList);
 
         // ID : Item mapping
-        java.util.Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
+        Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
 
         // 필요한 장소 목록들 가져온 후 ID : Resp mapping
         List<LocationResponse> resp = locationQueryPort.getLocationListById(
                 new ArrayList<>(itemMap.keySet())
         );
-        java.util.Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
+        Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
 
         // 응답 만들기
         List<LocationResponseDetail> detailList = new ArrayList<>();

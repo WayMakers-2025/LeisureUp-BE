@@ -25,7 +25,7 @@ public class MapController {
     private final LeisureSearchService leisureSearchService;
 
     @GetMapping("/map/category")
-    public ApiResponse<MultiPageResponse<MapResponse>> searchCategory(
+    public ApiResponse<PageResponse<MapResponse>> searchCategory(
             @RequestParam double x,
             @RequestParam double y,
             @RequestParam(defaultValue = "1000") int radius,
@@ -39,7 +39,7 @@ public class MapController {
     }
 
     @GetMapping("/map/search")
-    public ApiResponse<MultiPageResponse<MapResponse>> search(
+    public ApiResponse<PageResponse<MapResponse>> search(
             @RequestParam String query,
             @RequestParam(defaultValue = "1") int pageNo,
             @RequestParam(defaultValue = "10") int pageSize) {

@@ -18,7 +18,7 @@ import java.util.Map;
 public class MapService {
     private final PlaceSearchService placeSearchService;
 
-    public MultiPageResponse<MapResponse> searchCategory(double x, double y, int radius, Category category, int pageNo, int pageSize) {
+    public PageResponse<MapResponse> searchCategory(double x, double y, int radius, Category category, int pageNo, int pageSize) {
         List<MapResponse> elements;
         int totalCount;
         
@@ -38,12 +38,10 @@ public class MapService {
             totalCount = tourApi.getResponse().getBody().getTotalCount();
         }
         
-        PageResponse<MapResponse> pageResp = PageResponse.of(pageNo, pageSize, totalCount, elements);
-        Map<String, PageResponse<MapResponse>> map = Map.of("default", pageResp);
-        return MultiPageResponse.of(pageNo, pageSize, map);
+        return PageResponse.of(pageNo, pageSize, totalCount, elements);
     }
 
-    public MultiPageResponse<MapResponse> search(String query, int pageNo, int pageSize) {
+    public PageResponse<MapResponse> search(String query, int pageNo, int pageSize) {
         List<MapResponse> elements;
         int totalCount;
         
@@ -51,8 +49,6 @@ public class MapService {
         elements = MapResponse.fromTourAPI(locationBySearch, query);
         totalCount = locationBySearch.getResponse().getBody().getTotalCount();
         
-        PageResponse<MapResponse> pageResp = PageResponse.of(pageNo, pageSize, totalCount, elements);
-        Map<String, PageResponse<MapResponse>> map = Map.of("default", pageResp);
-        return MultiPageResponse.of(pageNo, pageSize, map);
+        return PageResponse.of(pageNo, pageSize, totalCount, elements);
     }
 }
