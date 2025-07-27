@@ -5,6 +5,7 @@ import java.util.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.response.*;
+import org.leisureup.map.internal.domain.Category;
 import org.leisureup.map.internal.dto.*;
 import org.leisureup.map.internal.dto.request.*;
 import org.leisureup.map.internal.dto.response.*;
@@ -28,7 +29,7 @@ public class MapController {
             @RequestParam double x,
             @RequestParam double y,
             @RequestParam(defaultValue = "1000") int radius,
-            @RequestParam String category,
+            @RequestParam Category category,
             @RequestParam(defaultValue = "1") int pageNo,
             @RequestParam(defaultValue = "10") int pageSize) {
         return ApiResponse.success(

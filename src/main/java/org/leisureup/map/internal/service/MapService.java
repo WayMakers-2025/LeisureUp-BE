@@ -18,46 +18,40 @@ import java.util.Map;
 public class MapService {
     private final PlaceSearchService placeSearchService;
 
-    public MultiPageResponse<MapResponse> searchCategory(double x, double y, int radius, String category, int pageNo, int pageSize) {
-        List<MapResponse> all;
-        if (category.equals("hospital")) {
-            String kakaoCategory = Category.toKakaoCategory(category);
+    public MultiPageResponse<MapResponse> searchCategory(double x, double y, int radius, Category category, int pageNo, int pageSize) {
+        List<MapResponse> elements;
+        int totalCount;
+        
+        if (category == Category.hospital) {
+            String kakaoCategory = category.getKakaoCategory();
             KakaoPlaceResponse kakaoPlaceResponse = placeSearchService.searchPharmacies(x, y, radius, kakaoCategory, pageNo, pageSize);
-            all = MapResponse.fromKakaoPlace(kakaoPlaceResponse);
+            elements = MapResponse.fromKakaoPlace(kakaoPlaceResponse);
+            totalCount = kakaoPlaceResponse.getMeta().getTotal_count();
         } else {
-            Integer contentTypeId = Category.valueOf(category).getTourContentTypeId();
+            Integer contentTypeId = category.getTourContentTypeId();
             if (contentTypeId == null) {
                 throw new NotFound("지원하지 않는 카테고리입니다: " + category);
             }
-            try {
-                TourApiResponse tourApi = placeSearchService.getTourApi(x, y, radius, contentTypeId, pageNo, pageSize);
-                all = MapResponse.fromTourAPI(tourApi,category);
-            } catch (Exception e) {
-                throw new NotFound("해당 조건에 맞는 관광정보가 없습니다.");
-            }
+            
+            TourApiResponse tourApi = placeSearchService.getTourApi(x, y, radius, contentTypeId, pageNo, pageSize);
+            elements = MapResponse.fromTourAPI(tourApi, category.name());
+            totalCount = tourApi.getResponse().getBody().getTotalCount();
         }
-        int total = all.size();
-        int from = Math.max(0, (pageNo - 1) * pageSize);
-        int to = Math.min(from + pageSize, total);
-        List<MapResponse> page = all.subList(from, to);
-        PageResponse<MapResponse> pageResp = PageResponse.of(pageNo, pageSize, total, page);
+        
+        PageResponse<MapResponse> pageResp = PageResponse.of(pageNo, pageSize, totalCount, elements);
         Map<String, PageResponse<MapResponse>> map = Map.of("default", pageResp);
         return MultiPageResponse.of(pageNo, pageSize, map);
     }
 
     public MultiPageResponse<MapResponse> search(String query, int pageNo, int pageSize) {
-        List<MapResponse> all;
-        try{
-            TourApiResponse locationBySearch = placeSearchService.getLocationBySearch(query, pageNo, pageSize);
-            all = MapResponse.fromTourAPI(locationBySearch, query);
-        } catch (Exception e) {
-            throw new NotFound("검색 결과가 없습니다.");
-        }
-        int total = all.size();
-        int from = Math.max(0, (pageNo - 1) * pageSize);
-        int to = Math.min(from + pageSize, total);
-        List<MapResponse> page = all.subList(from, to);
-        PageResponse<MapResponse> pageResp = PageResponse.of(pageNo, pageSize, total, page);
+        List<MapResponse> elements;
+        int totalCount;
+        
+        TourApiResponse locationBySearch = placeSearchService.getLocationBySearch(query, pageNo, pageSize);
+        elements = MapResponse.fromTourAPI(locationBySearch, query);
+        totalCount = locationBySearch.getResponse().getBody().getTotalCount();
+        
+        PageResponse<MapResponse> pageResp = PageResponse.of(pageNo, pageSize, totalCount, elements);
         Map<String, PageResponse<MapResponse>> map = Map.of("default", pageResp);
         return MultiPageResponse.of(pageNo, pageSize, map);
     }
