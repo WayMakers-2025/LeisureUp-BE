@@ -5,15 +5,14 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.*;
 import com.github.tomakehurst.wiremock.matching.*;
-import java.nio.file.*;
 import java.util.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.cloud.contract.wiremock.*;
 import org.springframework.test.context.*;
-import org.springframework.util.*;
 
+@SuppressWarnings("SpringBootApplicationProperties")
 @SpringBootTest
 @AutoConfigureWireMock(port = 0)
 @TestPropertySource(properties = {
@@ -25,9 +24,9 @@ class WeatherInformServiceTest {
     private static final String baseDir
             = "mock-server-response/weather/get-weather-warning";
     static final byte[] sample
-            = supplyResponse(baseDir, "sample.json");
+            = Utils.supplyResponse(baseDir, "sample.json");
     static final byte[] emptySample
-            = supplyResponse(baseDir, "empty-sample.json");
+            = Utils.supplyResponse(baseDir, "empty-sample.json");
     @Value("${weatherApi.warning.key}")
     String apiKeyForTest;
     @Value("${weatherApi.warning.type}")
@@ -36,24 +35,6 @@ class WeatherInformServiceTest {
     WireMockServer wireMockServer;
     @Autowired
     WeatherInformService service;
-
-    private static byte[] supplyResponse(
-            String resourceDir,
-            String fileName
-    ) {
-
-        String classPath = String.format(
-                "classpath:%s/%s", resourceDir, fileName
-        );
-
-        try {
-            return Files.readAllBytes(
-                    ResourceUtils.getFile(classPath).toPath()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @BeforeEach
     void setUp() {
