@@ -3,12 +3,14 @@ package org.leisureup.info.weather.service.client;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
+import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.response.external.*;
 import org.leisureup.global.response.external.weather.*;
 import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -19,7 +21,8 @@ public class ShortTermForecastApiClient {
     private final String key, rspType;
     private final ShortTermForecastApi shortTermForecastApi;
 
-    private static final int DEFAULT_RETRY_CNT = 3;
+    private static final int DEFAULT_RETRY_CNT = 5;
+    private static final long DEFAULT_RETRY_DELAY_MS = 50;
 
     public ShortTermForecastApiClient(
             ShortTermForecastApi shortTermForecastApi,
@@ -72,6 +75,7 @@ public class ShortTermForecastApiClient {
      *
      * @return 재시도 했음에도 올바른 데이터를 받지 못햇으면 {@code null}
      */
+    @SneakyThrows
     private WeatherApiResponse<ShortTermForecast> doRequestWithRetry(
             int nx, int ny, ShortTermBaseDateTimeInfo dateTimeInfo,
             int pageNo, int pageSize
@@ -92,6 +96,8 @@ public class ShortTermForecastApiClient {
 
             log.warn("Retrying api call with attempts: [{}]", attempts);
             resp = null;
+
+            Thread.sleep(DEFAULT_RETRY_DELAY_MS);
         }
 
         if (resp == null) {

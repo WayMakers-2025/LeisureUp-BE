@@ -30,8 +30,8 @@ public class WeatherApiConfig {
     @Bean
     public Request.Options options() {
         return new Request.Options(
-                3, TimeUnit.SECONDS,
-                3, TimeUnit.SECONDS,
+                2, TimeUnit.SECONDS,
+                1, TimeUnit.SECONDS,
                 false
         );
     }
