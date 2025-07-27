@@ -40,6 +40,4 @@ public interface LocationQueryPort {
     );
 
     String getRepresentImage(List<Long> locationId);
-
-    RegionCode getRepresentRegion(List<Long> locationId);
 }

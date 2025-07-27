@@ -101,11 +101,6 @@ public class LocationQueryAdapter implements LocationQueryPort {
                 .findAny()
                 .orElse("");
     }
-
-    @Override
-    public RegionCode getRepresentRegion(List<Long> locationId) {
-        return null;
-    }
 }
 
 class LocationUtils {
