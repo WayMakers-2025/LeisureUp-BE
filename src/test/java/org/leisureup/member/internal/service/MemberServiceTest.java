@@ -46,6 +46,8 @@ class MemberServiceTest extends IntegrationTestSupport {
     TestInitializer testInitializer;
     @MockitoBean
     LocationQueryPort locationQueryPort;
+    @MockitoBean
+    LocationFetchSpi locationFetchSpi;
 
     private static SaveInterestRequest genReq(AgeRange ageRange) {
         return new SaveInterestRequest(
@@ -72,6 +74,13 @@ class MemberServiceTest extends IntegrationTestSupport {
                 });
         when(locationQueryPort.getLocationListById(locationIds))
                 .thenReturn(locations);
+
+        when(locationFetchSpi.fetchIfLocationExists(anyLong()))
+                .thenAnswer(invocation -> {
+                    Long id = invocation.getArgument(0, Long.class);
+                    return locationIds.contains(id) || existingLocationId.equals(id);
+                });
+
 
         testMemberId = save.getId();
     }

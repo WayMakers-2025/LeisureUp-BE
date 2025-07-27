@@ -3,10 +3,10 @@ package org.leisureup.info.weather.service;
 import java.util.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
+import org.leisureup.info.spi.*;
 import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.dto.response.*;
-import org.leisureup.info.weather.dto.response.WeatherWarningResponse;
 import org.springframework.stereotype.*;
 
 @Slf4j
@@ -16,6 +16,8 @@ public class WeatherInformService {
 
     private final WeatherWarningApiClient warningApiClient;
     private final WeatherWarningContentSupplier contentParser;
+    private final InfoSpi infoSpi;
+    private final WeatherForecastApiClient forecastApiClient;
 
     /**
      * 현재 발효된 기상 특보 내용을 조회
@@ -34,7 +36,9 @@ public class WeatherInformService {
             String allContents = rawContent.content();
 
             if (allContents != null && !allContents.isEmpty()) {
-                parsedWarnings = Arrays.stream(rawContent.content().split("\n"))
+                parsedWarnings = Arrays.stream(
+                                rawContent.content().split("\n")
+                        )
                         .map(contentParser::parseSingleContent)
                         .toList();
             } else {
@@ -49,6 +53,27 @@ public class WeatherInformService {
         return new WeatherWarningResponse(
                 parsedWarnings, rawContent
         );
+    }
+
+    /**
+     * 어느 위치의 중기 육상 에보를 조회
+     */
+    public MidTermLandResponse getMidTermLandForecast(
+            double x, double y
+    ) {
+        String region = infoSpi.getCodeOn(x, y, CodeType.WEATHER_LAND_FORECAST);
+        return forecastApiClient.forecastLand(region);
+    }
+
+    /**
+     * 어느 위치의 중기 기온 에보를 조회
+     */
+    public MidTermTemperatureResponse getMidTermTemperatureForecast(
+            double x, double y
+    ) {
+
+        String region = infoSpi.getCodeOn(x, y, CodeType.WEATHER_TEMPERATURE_FORECAST);
+        return forecastApiClient.forecastTemperature(region);
     }
 }
 

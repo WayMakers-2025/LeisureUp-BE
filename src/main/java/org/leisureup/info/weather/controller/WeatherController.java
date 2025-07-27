@@ -4,8 +4,10 @@ import lombok.*;
 import org.leisureup.global.response.*;
 import org.leisureup.info.weather.dto.response.*;
 import org.leisureup.info.weather.service.*;
+import org.springframework.validation.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/weathers")
@@ -21,4 +23,25 @@ public class WeatherController {
         return ApiResponse.success(200, resp);
     }
 
+    // 중기 육상 예보를 조회 (강수량 & 기상 예측 포함)
+    @GetMapping("/forecasts/midterm/land")
+    public ApiResponse<MidTermLandResponse> getMidTermLandForecast(
+            @RequestParam double x, @RequestParam double y
+    ) {
+
+        var resp = weatherInformService.getMidTermLandForecast(x, y);
+
+        return ApiResponse.success(200, resp);
+    }
+
+    // 중기 기온 에보를 조회
+    @GetMapping("/forecasts/midterm/temperature")
+    public ApiResponse<MidTermTemperatureResponse> getMidTermTemperatureForecast(
+            @RequestParam double x, @RequestParam double y
+    ) {
+
+        var resp = weatherInformService.getMidTermTemperatureForecast(x, y);
+
+        return ApiResponse.success(200, resp);
+    }
 }
