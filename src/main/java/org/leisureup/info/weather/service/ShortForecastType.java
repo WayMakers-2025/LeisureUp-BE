@@ -36,8 +36,8 @@ public enum ShortForecastType {
             case SNO -> ShortForecastType.SNOW_IN_1HOUR;
             case SKY -> ShortForecastType.SKY_CONDITION;
             case TMP -> ShortForecastType.TEMPERATURE_IN_1HOUR;
-            case TMN -> ShortForecastType.MAX_TEMPERATURE_OF_DAY;
-            case TMX -> ShortForecastType.MIN_TEMPERATURE_OF_DAY;
+            case TMX -> ShortForecastType.MAX_TEMPERATURE_OF_DAY;
+            case TMN -> ShortForecastType.MIN_TEMPERATURE_OF_DAY;
             case WAV -> ShortForecastType.WAVE_HEIGHT;
             case WSD -> ShortForecastType.WIND_SPEED;
             case null -> throw new IllegalArgumentException("Forecast category is null");

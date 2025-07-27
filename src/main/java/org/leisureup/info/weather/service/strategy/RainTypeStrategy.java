@@ -13,7 +13,7 @@ public class RainTypeStrategy extends BaseStrategy {
 
     private static String resolveRainType(String forecastValue) {
         return switch (forecastValue) {
-            case "0" -> "없음";
+            case "0" -> "강수 없음";
             case "1" -> "비";
             case "2" -> "비/눈";
             case "3" -> "눈";
