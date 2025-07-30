@@ -6,41 +6,49 @@ import org.leisureup.map.internal.domain.Category;
 import org.leisureup.map.internal.dto.KakaoPlaceResponse;
 import org.leisureup.map.internal.dto.MapResponse;
 import org.leisureup.map.internal.dto.TourApiResponse;
+import org.leisureup.map.internal.dto.response.MultiPageResponse;
+import org.leisureup.map.internal.dto.response.PageResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class MapService {
     private final PlaceSearchService placeSearchService;
 
-    public List<MapResponse> searchCategory(double x, double y, int radius, String category) {
-        if (category.equals("hospital")) {
-            String kakaoCategory = Category.toKakaoCategory(category);
-            KakaoPlaceResponse kakaoPlaceResponse = placeSearchService.searchPharmacies(x, y, radius, kakaoCategory);
-            return MapResponse.fromKakaoPlace(kakaoPlaceResponse);
+    public PageResponse<MapResponse> searchCategory(double x, double y, int radius, Category category, int pageNo, int pageSize) {
+        List<MapResponse> elements;
+        int totalCount;
+        
+        if (category == Category.hospital) {
+            String kakaoCategory = category.getKakaoCategory();
+            KakaoPlaceResponse kakaoPlaceResponse = placeSearchService.searchPharmacies(x, y, radius, kakaoCategory, pageNo, pageSize);
+            elements = MapResponse.fromKakaoPlace(kakaoPlaceResponse);
+            totalCount = kakaoPlaceResponse.getMeta().getTotal_count();
         } else {
-            Integer contentTypeId = Category.valueOf(category).getTourContentTypeId();
+            Integer contentTypeId = category.getTourContentTypeId();
             if (contentTypeId == null) {
                 throw new NotFound("지원하지 않는 카테고리입니다: " + category);
             }
             
-            try {
-                TourApiResponse tourApi = placeSearchService.getTourApi(x, y, radius, contentTypeId);
-                return MapResponse.fromTourAPI(tourApi,category);
-            } catch (Exception e) {
-                throw new NotFound("해당 조건에 맞는 관광정보가 없습니다.");
-            }
+            TourApiResponse tourApi = placeSearchService.getTourApi(x, y, radius, contentTypeId, pageNo, pageSize);
+            elements = MapResponse.fromTourAPI(tourApi, category.name());
+            totalCount = tourApi.getResponse().getBody().getTotalCount();
         }
+        
+        return PageResponse.of(pageNo, pageSize, totalCount, elements);
     }
 
-    public Object search(String query) {
-        try{
-            TourApiResponse locationBySearch = placeSearchService.getLocationBySearch(query);
-            return MapResponse.fromTourAPI(locationBySearch, query);
-        } catch (Exception e) {
-            throw new NotFound("검색 결과가 없습니다.");
-        }
+    public PageResponse<MapResponse> search(String query, int pageNo, int pageSize) {
+        List<MapResponse> elements;
+        int totalCount;
+        
+        TourApiResponse locationBySearch = placeSearchService.getLocationBySearch(query, pageNo, pageSize);
+        elements = MapResponse.fromTourAPI(locationBySearch, query);
+        totalCount = locationBySearch.getResponse().getBody().getTotalCount();
+        
+        return PageResponse.of(pageNo, pageSize, totalCount, elements);
     }
 }

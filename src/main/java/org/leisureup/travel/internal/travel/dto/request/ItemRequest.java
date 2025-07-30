@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @AllArgsConstructor
@@ -14,4 +15,5 @@ public class ItemRequest {
     private Integer position; // position이 null일 경우 자동으로 할당
     private LocalTime startTime;
     private LocalTime endTime;
+    private LocalDate date;
 }

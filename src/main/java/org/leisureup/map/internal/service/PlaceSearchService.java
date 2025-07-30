@@ -25,7 +25,7 @@ public class PlaceSearchService {
     private String mobileOS;
 
     public KakaoPlaceResponse searchPharmacies(double longitude, double latitude, int radiusMeters,
-                                               String category) {
+                                               String category, int pageNo, int pageSize) {
         String authorization = "KakaoAK " + kakaoApiKey;
         return kakaoLocalClient.searchByCategory(
                 authorization,
@@ -34,12 +34,12 @@ public class PlaceSearchService {
                 String.valueOf(latitude),
                 radiusMeters,
                 "distance",
-                1,
-                10
+                pageNo,
+                pageSize
         );
     }
 
-    public TourApiResponse getTourApi(double x, double y, int radius, Integer contentTypeId) {
+    public TourApiResponse getTourApi(double x, double y, int radius, Integer contentTypeId, int pageNo, int pageSize) {
         return tourApiLocalClient.searchByCategory(
                 mobileOS,
                 mobileApp,
@@ -50,13 +50,13 @@ public class PlaceSearchService {
                 _type,
                 "C",
                 contentTypeId,
-                10,1
+                pageSize, pageNo
         );
     }
 
-    public TourApiResponse getLocationBySearch(String keyword) {
+    public TourApiResponse getLocationBySearch(String keyword, int pageNo, int pageSize) {
         return tourApiLocalClient.search(
-                mobileOS, mobileApp, serviceKey, _type, keyword
+                mobileOS, mobileApp, serviceKey, _type, keyword, pageSize, pageNo
         );
     }
 }

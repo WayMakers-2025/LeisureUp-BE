@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.leisureup.travel.internal.travel.dto.request.ItemRequest;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -28,6 +29,8 @@ public class Item {
     @Column(nullable = true)
     private LocalTime endTime;
 
+    private LocalDate date;
+
     @ManyToOne
     private Travel travel;
 
@@ -38,6 +41,7 @@ public class Item {
                 .startTime(itemRequest.getStartTime())
                 .endTime(itemRequest.getEndTime())
                 .travel(travel)
+                .date(itemRequest.getDate())
                 .build();
     }
 

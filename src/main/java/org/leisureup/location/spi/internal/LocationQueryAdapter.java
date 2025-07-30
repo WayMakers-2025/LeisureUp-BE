@@ -10,6 +10,7 @@ import org.leisureup.global.exception.*;
 import org.leisureup.location.internal.domain.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.spi.*;
+import org.leisureup.travel.internal.travel.domain.RegionCode;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
