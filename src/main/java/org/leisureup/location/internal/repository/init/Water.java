@@ -31,7 +31,7 @@ public enum Water {
                     출발·회전 시 주변 수상객 거리 확보
                     눈에 띄는 복장 착용으로 사고 예방
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/wind-surfing.jpg",
             List.of(SuitableSeason.SUMMER)
     ), KayakCanoe(
             "카약/카누", "A03030200",
@@ -47,7 +47,7 @@ public enum Water {
                     해가 지기 전 복귀, 조류 및 바람 방향 주의
                     반드시 구명조끼 착용
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/kyack.jpg",
             List.of(SuitableSeason.SUMMER)
     ), Yacht(
             "요트", "A03030300",
@@ -63,7 +63,7 @@ public enum Water {
                     출항 전 선내 안전 수칙 숙지
                     날씨 급변 시 선장 지시에 즉시 따르기
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/yoat.jpg",
             List.of(SuitableSeason.SUMMER)
     ), SnorkelingSkinScubaDiving(
             "스노쿨링/스킨스쿠버다이빙", "A03030400",
@@ -85,7 +85,7 @@ public enum Water {
                     스노쿨링 시 구명조끼 필수 착용
                     수중 생물 접촉 금지, 혼자 입수 금지
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/diving.jpg",
             List.of(SuitableSeason.SUMMER, SuitableSeason.AUTUMN)
     ), FreshwaterFishing(
             "민물낚시", "A03030500",
@@ -101,7 +101,7 @@ public enum Water {
                     수질·기상·수위 등 환경 변화 점검
                     쓰레기 및 미끼 잔여물 정리 철저히 하기
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/fishing-1.jpg",
             List.of(SuitableSeason.SUMMER, SuitableSeason.AUTUMN)
     ), SeaFishing(
             "바다낚시", "A03030600",
@@ -117,7 +117,7 @@ public enum Water {
                     구명조끼 착용은 필수
                     낚싯바늘 취급 및 날카로운 도구 보관에 주의
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/fishing-2.jpg",
             List.of(SuitableSeason.SUMMER, SuitableSeason.AUTUMN)
     ), Swimming(
             "수영", "A03030700",
@@ -133,7 +133,7 @@ public enum Water {
                     반드시 동행자와 함께 수영
                     체온 저하 시 즉시 수면 위로 올라오기
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/swiming.jpg",
             List.of(SuitableSeason.SUMMER)
     ), Rafting(
             "래프팅", "A03030800",
@@ -149,7 +149,7 @@ public enum Water {
                     보트에서 떨어졌을 경우 행동요령 숙지
                     날씨 악화 및 수위 상승 시 활동 중단
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/rafting.jpg",
             List.of(SuitableSeason.SUMMER, SuitableSeason.AUTUMN)
     );
 

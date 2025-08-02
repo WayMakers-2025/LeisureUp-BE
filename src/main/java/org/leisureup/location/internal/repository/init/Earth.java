@@ -25,7 +25,7 @@ public enum Earth {
                     자전거 등 타 이용자와 충돌 위험 주의
                     젖은 노면에서는 미끄러움 주의
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/inline.jpg",
             List.of(SuitableSeason.ANY)
     ), Bike(
             "자전거 하이킹", "A03020500",
@@ -41,7 +41,7 @@ public enum Earth {
                     야간 라이딩 시 라이트·반사지 필수
                     음료·간식 등 체력 보충 준비 필요
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/bike.jpg",
             List.of(SuitableSeason.SPRING, SuitableSeason.AUTUMN)
     ), Cart(
             "카트", "A03020600",
@@ -57,7 +57,7 @@ public enum Earth {
                     추돌 방지를 위해 앞차와의 간격 유지
                     트랙 외 주행 금지, 정해진 코스 준수
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/cart.jpg",
             List.of(SuitableSeason.ANY)
     ), Golf(
             "골프", "A03020700",
@@ -72,7 +72,7 @@ public enum Earth {
                     타구 시 주변 사람과 거리 확보
                     벙커·그린 등 골프 에티켓 숙지
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/golf.jpg",
             List.of(SuitableSeason.SPRING, SuitableSeason.AUTUMN)
     ), HorseRiding(
             "승마", "A03021100",
@@ -88,7 +88,7 @@ public enum Earth {
                     돌발 행동·소음에 말이 놀랄 수 있으니 주의
                     자세 및 명령어 숙지, 지시에 따라 행동
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/horse.jpg",
             List.of(SuitableSeason.SPRING, SuitableSeason.AUTUMN)
     ), SkiSnowboard(
             "스키/스노보드", "A03021200",
@@ -104,7 +104,7 @@ public enum Earth {
                     슬로프 상태·기상 조건 사전 확인
                     넘어짐 시 체온 유지를 위한 보온 준비
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/snow-board.jpg",
             List.of(SuitableSeason.WINTER)
     ), Skate(
             "스케이트", "A03021300",
@@ -120,7 +120,7 @@ public enum Earth {
                     붐비는 시간대 피하고 충돌 방지
                     빙판 틈이나 균열 확인 후 입장
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/skate.jpg",
             List.of(SuitableSeason.WINTER, SuitableSeason.ANY)
     ), Sledding(
             "썰매장", "A03021400",
@@ -136,7 +136,7 @@ public enum Earth {
                     경사 및 주위 사람과 거리 확보하며 천천히 이용하기
                     슬로프 입·출구에서 넘어짐 주의
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/sleeding.jpg",
             List.of(SuitableSeason.WINTER)
     ), HuntingGround(
             "수렵장", "A03021500",
@@ -152,7 +152,7 @@ public enum Earth {
                     총기 방향은 항상 안전 방향으로 관리하기
                     야생동물 예상 이동 경로 주의하며 사격 금지 지역 확인
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/hunting.jpg",
             List.of(SuitableSeason.ANY)
     ), AutoCamping(
             "오토캠핑", "A03021700",
@@ -179,7 +179,7 @@ public enum Earth {
                     사격 전 과녁 위치 및 주변 사람 여부 최종 확인
                     귀 및 눈 보호 장비는 필수 착용
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/shooting.jpg",
             List.of(SuitableSeason.ANY)
     ), RockClimbing(
             "암벽등반", "A03021800",
@@ -195,7 +195,7 @@ public enum Earth {
                     낙하 위험 구간에서는 보호자 또는 전문가 동행
                     암벽 상태 변화(습기·조류 등) 체크
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/climbing.jpg",
             List.of(SuitableSeason.ANY)
     ), SurvivalGaming(
             "서바이벌게임", "A03022000",
@@ -211,7 +211,7 @@ public enum Earth {
                     안전 구간 이외 사격 금지
                     가벼운 충돌에도 몸 보호할 수 있는 복장 선택
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/survival.jpg",
             List.of(SuitableSeason.ANY)
     ), ATV(
             "ATV", "A03022100",
@@ -227,7 +227,7 @@ public enum Earth {
                     험지 주행 전 보호장비 착용 필수
                     탄력적 제동과 좌우 핸들 조작 연습 필요
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/atv.jpg",
             List.of(SuitableSeason.SPRING, SuitableSeason.AUTUMN)
     ), MTB(
             "MTB", "A03022200",
@@ -243,7 +243,7 @@ public enum Earth {
                     급경사는 천천히 통과, 균형 유지
                     넘어졌을 때 손·팔 부상에 대비
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/mtb.jpg",
             List.of(SuitableSeason.SPRING, SuitableSeason.AUTUMN)
     ), OffRoad(
             "오프로드", "A03022300",
@@ -259,7 +259,7 @@ public enum Earth {
                     차량 전조등·타이어·제동 상태 사전 점검
                     현지 가이드 동행 시 안전 수칙 철저히 따르기
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/off-road.jpg",
             List.of(SuitableSeason.SPRING, SuitableSeason.SUMMER, SuitableSeason.AUTUMN)
     ), BungeeJumping(
             "번지점프", "A03022400",
@@ -275,7 +275,7 @@ public enum Earth {
                     점프 전 장비 점검 및 안전 브리핑 필수
                     고소공포증, 심장질환자는 체험 자제
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/jump.jpg",
             List.of(SuitableSeason.SPRING, SuitableSeason.SUMMER, SuitableSeason.AUTUMN)
     ), Tracking(
             "트래킹", "A03022700",
@@ -290,7 +290,7 @@ public enum Earth {
                     무리한 속도보다는 일정한 보폭 유지
                     낙석·미끄러운 지형 등 위험 구간 주의
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/tracking.jpg",
             List.of(SuitableSeason.SPRING, SuitableSeason.AUTUMN)
     );
 
