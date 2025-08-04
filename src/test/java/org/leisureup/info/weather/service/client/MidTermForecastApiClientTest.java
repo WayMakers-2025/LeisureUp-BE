@@ -1,33 +1,33 @@
-package org.leisureup.info.weather.service;
+package org.leisureup.info.weather.service.client;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.github.tomakehurst.wiremock.*;
 import com.github.tomakehurst.wiremock.matching.*;
-import java.nio.file.*;
 import java.util.*;
 import org.junit.jupiter.api.*;
+import org.leisureup.info.weather.service.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.cloud.contract.wiremock.*;
 import org.springframework.test.context.*;
-import org.springframework.util.*;
 
+@SuppressWarnings("SpringBootApplicationProperties")
 @SpringBootTest
 @AutoConfigureWireMock(port = 0)
 @TestPropertySource(properties = {
-        "feign.weather.forecast=http://localhost:${wiremock.server.port}",
+        "feign.weather.forecast.mid-term=http://localhost:${wiremock.server.port}",
         "weatherApi.forecast.mid-term.key=testing"
 })
-class WeatherForecastApiClientTest {
+class MidTermForecastApiClientTest {
 
     private static final String baseDir
-            = "mock-server-response/weather/forecast";
+            = "mock-server-response/weather/forecast/mid-term";
     private static final byte[] landRespSample
-            = supplyResponse(baseDir, "midterm-land-forecast.json");
+            = Utils.supplyResponse(baseDir, "midterm-land-forecast.json");
     private static final byte[] temperatureRespSample
-            = supplyResponse(baseDir, "midterm-temperature-forecast.json");
+            = Utils.supplyResponse(baseDir, "midterm-temperature-forecast.json");
     private static final String landRegion = "land";
     private static final String temperatureRegion = "temp";
     @Value("${weatherApi.forecast.mid-term.key}")
@@ -37,25 +37,7 @@ class WeatherForecastApiClientTest {
     @Autowired
     WireMockServer wireMockServer;
     @Autowired
-    WeatherForecastApiClient forecastApiClient;
-
-    private static byte[] supplyResponse(
-            String resourceDir,
-            String fileName
-    ) {
-
-        String classPath = String.format(
-                "classpath:%s/%s", resourceDir, fileName
-        );
-
-        try {
-            return Files.readAllBytes(
-                    ResourceUtils.getFile(classPath).toPath()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    MidTermForecastApiClient forecastApiClient;
 
     @BeforeEach
     void setUp() {

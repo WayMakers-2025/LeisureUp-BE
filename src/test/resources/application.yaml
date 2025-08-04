@@ -34,7 +34,9 @@ feign:
     kakao: https://kapi.kakao.com
   weather:
     warning: http://apis.data.go.kr/1360000/WthrWrnInfoService
-    forecast: http://apis.data.go.kr/1360000/MidFcstInfoService
+    forecast:
+      short-term: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+      mid-term: http://apis.data.go.kr/1360000/MidFcstInfoService
 
 mdc-key:
   request-id: request-id

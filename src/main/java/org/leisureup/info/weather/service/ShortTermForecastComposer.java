@@ -1,0 +1,80 @@
+package org.leisureup.info.weather.service;
+
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+import org.leisureup.info.weather.dto.*;
+import org.leisureup.info.weather.dto.api.*;
+import org.leisureup.info.weather.dto.response.*;
+import org.springframework.stereotype.*;
+
+/**
+ * 단기 예보 정보를 조합해 응답으로 제공하는 {@code service}
+ */
+@Service
+public class ShortTermForecastComposer {
+
+    private final Map<ShortForecastType, ShortForecastStrategy> strategyMap;
+
+    public ShortTermForecastComposer(List<ShortForecastStrategy> strategyList) {
+        this.strategyMap = strategyList.stream().collect(
+                Collectors.toMap(ShortForecastStrategy::getType, Function.identity())
+        );
+    }
+
+    private static List<ShortTermForecast> filterInterests(List<ShortTermForecast> forecasts) {
+        return forecasts.stream()
+                .filter(
+                        f ->
+                                ShortForecastType.resolveType(f.category()) !=
+                                ShortForecastType.OUT_OF_INTEREST
+                )
+                .toList();
+    }
+
+    /**
+     * API 의 단기 예보 정보를 날짜별로 묶고 정형화해 제공한다.
+     *
+     * @param forecasts 임의의 단기 예보 정보들
+     * @return 정형화된 단기 예보 정보들
+     */
+    public List<ShotTermForecastResponse> composeForecasts(
+            List<ShortTermForecast> forecasts
+    ) {
+
+        // 관심 있는 예보 정보만 솎아낸다.
+        List<ShortTermForecast> targets = filterInterests(forecasts);
+
+        // 예보 날짜별로 묶는다.
+        Map<String, List<ShortTermForecast>> forecastsMap = targets.stream().collect(
+                Collectors.groupingBy(ShortTermForecast::getForecastDateInFormat)
+        );
+
+        // 예보 날짜별 정보를 담을 DTO 를 만든다.
+        List<ShortForecastInDayDto> infos = forecastsMap.keySet().stream()
+                .map(ShortForecastInDayDto::new)
+                .toList();
+
+        // 예보 날짜별 정보를 담는다.
+        for (ShortForecastInDayDto info : infos) {
+
+            // 어느 날짜에 속한 예보 정보들을
+            var forecastsInOneDay = forecastsMap.get(info.getForecastDate());
+
+            // 타입을 식별해 정보를 넣어준다.
+            for (ShortTermForecast forecastOnTime : forecastsInOneDay) {
+
+                ShortForecastType type = ShortForecastType.resolveType(
+                        forecastOnTime.category()
+                );
+
+                strategyMap.get(type).addForecastInfo(forecastOnTime, info);
+            }
+        }
+
+        return infos.stream()
+                .map(ShortForecastInDayDto::toResponse)
+                .sorted(Comparator.comparing(ShotTermForecastResponse::forecastDate))
+                .toList();
+    }
+}

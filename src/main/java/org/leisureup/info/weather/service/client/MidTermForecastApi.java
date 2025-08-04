@@ -1,4 +1,4 @@
-package org.leisureup.info.weather.service;
+package org.leisureup.info.weather.service.client;
 
 import org.leisureup.global.response.external.*;
 import org.leisureup.global.response.external.weather.*;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Component
 @FeignClient(
-        name = "WeatherMidTermForecastApi",
-        url = "${feign.weather.forecast}",
+        name = "MidTermForecastApi",
+        url = "${feign.weather.forecast.mid-term}",
         configuration = DefaultFeignErrorDecoder.class
 )
 public interface MidTermForecastApi {

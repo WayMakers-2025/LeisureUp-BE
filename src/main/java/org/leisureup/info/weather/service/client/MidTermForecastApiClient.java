@@ -1,10 +1,9 @@
-package org.leisureup.info.weather.service;
+package org.leisureup.info.weather.service.client;
 
 import java.time.*;
 import java.time.format.*;
 import java.util.*;
 import lombok.extern.slf4j.*;
-import org.leisureup.global.exception.*;
 import org.leisureup.global.response.external.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.dto.response.*;
@@ -15,12 +14,12 @@ import org.springframework.stereotype.*;
 
 @Slf4j
 @Component
-public class WeatherForecastApiClient {
+public class MidTermForecastApiClient {
 
     private final String key, rspType;
     private final MidTermForecastApi midTermForecastApi;
 
-    public WeatherForecastApiClient(
+    public MidTermForecastApiClient(
             MidTermForecastApi midTermForecastApi,
             @Value("${weatherApi.forecast.mid-term.key}") String key,
             @Value("${weatherApi.forecast.mid-term.type}") String rspType
@@ -32,16 +31,16 @@ public class WeatherForecastApiClient {
 
     public MidTermLandResponse forecastLand(String landRegionCode) {
 
-        LocalDate today = WeatherForecastApiClientUtils.getCurrentDate();
+        LocalDate today = MidTermForecastApiClientUtils.getCurrentDate();
 
         var resp = midTermForecastApi.getLandForecast(
                 key, rspType, landRegionCode,
-                WeatherForecastApiClientUtils.formatToForecastDate(today), 1
+                MidTermForecastApiClientUtils.formatToForecastDate(today), 1
         );
 
-        WeatherForecastApiClientUtils.validateResp(resp);
+        MidTermForecastApiClientUtils.validateResp(resp);
 
-        return WeatherForecastApiClientUtils.buildRespWith(
+        return MidTermForecastApiClientUtils.buildRespWith(
                 today,
                 resp.getSingleItem()
         );
@@ -49,16 +48,16 @@ public class WeatherForecastApiClient {
 
     public MidTermTemperatureResponse forecastTemperature(String temperatureCode) {
 
-        LocalDate today = WeatherForecastApiClientUtils.getCurrentDate();
+        LocalDate today = MidTermForecastApiClientUtils.getCurrentDate();
 
         var resp = midTermForecastApi.getTemperatureForecast(
                 key, rspType, temperatureCode,
-                WeatherForecastApiClientUtils.formatToForecastDate(today), 1
+                MidTermForecastApiClientUtils.formatToForecastDate(today), 1
         );
 
-        WeatherForecastApiClientUtils.validateResp(resp);
+        MidTermForecastApiClientUtils.validateResp(resp);
 
-        return WeatherForecastApiClientUtils.buildRespWith(
+        return MidTermForecastApiClientUtils.buildRespWith(
                 today,
                 resp.getSingleItem()
         );
@@ -66,7 +65,7 @@ public class WeatherForecastApiClient {
 }
 
 
-class WeatherForecastApiClientUtils {
+class MidTermForecastApiClientUtils {
 
     private static final DateTimeFormatter formatter
             = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -83,30 +82,7 @@ class WeatherForecastApiClientUtils {
     }
 
     static void validateResp(ExternalApiResponse<?> resp) {
-
-        if (resp == null) {
-            throw new WeatherForecastApiException("API 통신 중 문제가 발생했습니다.");
-        }
-
-        String resultMsg = resp.getResultMessage();
-
-        if (!resp.isSuccess()) {
-            throw new WeatherForecastApiException(
-                    String.format(
-                            "API 통신 중 문제가 발생했습니다. : [%s]",
-                            resultMsg
-                    )
-            );
-        }
-
-        if (resp.isEmpty()) {
-            throw new WeatherForecastApiException(
-                    String.format(
-                            "API 통신에는 성공했으나 content 가 비어있습니다. : [%s]",
-                            resultMsg
-                    )
-            );
-        }
+        ForecastUtils.validateResp(resp);
     }
 
     static MidTermLandResponse buildRespWith(LocalDate today, LandMidForecast resp) {

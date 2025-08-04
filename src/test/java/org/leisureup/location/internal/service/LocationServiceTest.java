@@ -21,6 +21,7 @@ import org.springframework.test.context.*;
 import org.springframework.test.context.bean.override.mockito.*;
 import org.springframework.util.*;
 
+@SuppressWarnings("SpringBootApplicationProperties")
 @SpringBootTest
 @AutoConfigureWireMock(port = 0)
 @TestPropertySource(properties = {

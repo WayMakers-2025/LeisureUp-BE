@@ -18,11 +18,7 @@ public record Body<I>(
             return items == null || items.item() == null || items.item().isEmpty();
         }
 
-        List<I> itemList;
-
-        return items != null &&
-               (itemList = items.item()) != null &&
-               itemList.size() == numOfRows;
+        return items != null && items.item() != null;
     }
 
     public I getSingleItem() {

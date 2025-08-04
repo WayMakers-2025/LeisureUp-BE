@@ -1,4 +1,4 @@
-package org.leisureup.info.weather.service;
+package org.leisureup.info.weather.service.client;
 
 import org.leisureup.global.response.external.*;
 import org.leisureup.global.response.external.weather.*;
@@ -18,6 +18,7 @@ public interface WeatherWarningApi {
     @GetMapping("/getPwnStatus")
     WeatherApiResponse<Warning> getWeatherWarning(
             @RequestParam("serviceKey") String key,
-            @RequestParam("dataType") String rspType
+            @RequestParam("dataType") String rspType,
+            @RequestParam int numOfRows
     );
 }
