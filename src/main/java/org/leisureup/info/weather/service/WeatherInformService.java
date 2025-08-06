@@ -1,6 +1,5 @@
 package org.leisureup.info.weather.service;
 
-import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 import lombok.*;
@@ -11,6 +10,7 @@ import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.dto.response.*;
 import org.leisureup.info.weather.service.client.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.*;
 
 @Slf4j
@@ -23,12 +23,15 @@ public class WeatherInformService {
     private final InfoSpi infoSpi;
     private final MidTermForecastApiClient midTermForecastApiClient;
     private final ShortTermForecastApiClient shortTermForecastApiClient;
-    private final BaseDateTimeBuilder baseDateTimeBuilder;
     private final ShortTermForecastComposer shortTermForecastComposer;
 
     /**
      * 현재 발효된 기상 특보 내용을 조회
      */
+    @Cacheable(
+            cacheNames = "get-weather-warning",
+            key = "#root.method"
+    )
     public WeatherWarningResponse getWeatherWarning() {
 
         // 특보 내용을 조회
@@ -85,14 +88,13 @@ public class WeatherInformService {
     /**
      * 어느 위치의 단기 예보를 조회
      */
-    public List<ShotTermForecastResponse> getShortTermForecast(double x, double y) {
-
-        // 요청에 사용할 좌표, 기준 시각 build
-        var cordProjection = infoSpi.convertGpsCord(x, y);
-        int nx = cordProjection.nx(), ny = cordProjection.ny();
-        var forecastingTime = baseDateTimeBuilder.buildInfoFrom(
-                WeatherInformUtils.getNow()
-        );
+    @Cacheable(
+            cacheNames = "get-short-term-forecast",
+            key = "{#nx, #ny, #forecastingTime}"
+    )
+    public List<ShotTermForecastResponse> getShortTermForecast(
+            int nx, int ny, ShortTermBaseDateTimeInfo forecastingTime
+    ) {
 
         // 페이징 요청 계획 확인
         List<PagingRequestPlan> requestPlans = shortTermForecastApiClient.inspectPagingPlan(
@@ -129,10 +131,6 @@ class WeatherInformUtils {
                 info.sequence(),
                 info.additionalInfo()
         );
-    }
-
-    static LocalDateTime getNow() {
-        return LocalDateTime.now();
     }
 
     static <T> List<T> joinAllFutureResponses(List<CompletableFuture<T>> futures) {
