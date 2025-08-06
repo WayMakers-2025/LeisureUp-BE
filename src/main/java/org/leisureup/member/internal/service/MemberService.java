@@ -108,7 +108,7 @@ public class MemberService {
         Long locationId = req.locationId();
 
         if (
-                locationQueryPort.notExists(locationId) ||
+                locationQueryPort.notExists(locationId) &&
                 !locationFetchSpi.fetchIfLocationExists(locationId)
         ) {
             throw new NotFound("Location not found");
