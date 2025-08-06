@@ -1,11 +1,12 @@
 package org.leisureup.map.internal.service;
 
+import feign.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
+import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
-import org.leisureup.global.response.external.base.*;
-import org.leisureup.global.response.external.tourapi.*;
+import org.leisureup.global.response.external.base.Body;
 import org.leisureup.global.response.external.tourapi.TourApiResponse;
 import org.leisureup.map.internal.dto.*;
 import org.leisureup.map.internal.dto.api.*;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 
+@Slf4j
 @Service
 public class TourApiSearchService {
 
@@ -102,12 +104,17 @@ public class TourApiSearchService {
         int pageSize = reqDto.getPageSize();
         String arrange = reqDto.getArrange();
 
-        return searchClient.searchOnLocationBase(
-                key, app, os, rspType,
-                x, y, radius,
-                cat1, cat2, cat3,
-                pageNo, pageSize, arrange
-        );
+        try {
+            return searchClient.searchOnLocationBase(
+                    key, app, os, rspType,
+                    x, y, radius,
+                    cat1, cat2, cat3,
+                    pageNo, pageSize, arrange
+            );
+        } catch (RetryableException e) {
+            log.warn("Failed to retrieve response", e);
+            throw new ServerSideException(503, "API 통신에 실패했습니다.");
+        }
     }
 }
 

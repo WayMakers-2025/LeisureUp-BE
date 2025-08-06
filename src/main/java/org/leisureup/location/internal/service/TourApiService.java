@@ -1,11 +1,15 @@
 package org.leisureup.location.internal.service;
 
+import feign.*;
+import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
 import org.leisureup.global.response.external.*;
+import org.leisureup.global.response.external.tourapi.*;
 import org.leisureup.location.internal.dto.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
+@Slf4j
 @Service
 public class TourApiService {
 
@@ -47,18 +51,25 @@ public class TourApiService {
      */
     public CommonInfo getCommonInfo(Long locationId) {
 
-        var rsp = apiClient.getCommonInfo(
-                locationId, key, app, os, rspType
-        );
+        TourApiResponse<CommonInfo> resp;
 
-        if (rsp == null || !rsp.isSuccess()) {
-            throw buildExMsg(rsp);
+        try {
+            resp = apiClient.getCommonInfo(
+                    locationId, key, app, os, rspType
+            );
+        } catch (RetryableException e) {
+            log.warn("Failed to retrieve response", e);
+            throw new ServerSideException(503, "API 통신에 실패했습니다.");
         }
 
-        if (rsp.isEmpty()) {
+        if (resp == null || !resp.isSuccess()) {
+            throw buildExMsg(resp);
+        }
+
+        if (resp.isEmpty()) {
             throw new NotFound("Not found");
         }
 
-        return rsp.getSingleItem();
+        return resp.getSingleItem();
     }
 }

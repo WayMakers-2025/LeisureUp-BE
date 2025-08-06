@@ -1,7 +1,9 @@
 package org.leisureup.info.weather.service.client;
 
+import feign.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.global.response.external.weather.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -24,7 +26,13 @@ public class WeatherWarningApiClient {
     }
 
     public Warning getWeatherWarning() {
-        var resp = weatherWarningApi.getWeatherWarning(key, rspType, 1);
+        WeatherApiResponse<Warning> resp;
+        try {
+            resp = weatherWarningApi.getWeatherWarning(key, rspType, 1);
+        } catch (RetryableException e) {
+            log.warn("Failed to retrieve response", e);
+            throw new ServerSideException(503, "API 통신에 실패했습니다.");
+        }
 
         if (resp == null || !resp.isSuccess()) {
             throw new WeatherWarningApiException("API 통신 중 문제가 발생했습니다.");

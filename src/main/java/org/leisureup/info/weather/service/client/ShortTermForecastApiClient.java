@@ -1,15 +1,16 @@
 package org.leisureup.info.weather.service.client;
 
+import feign.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
+import org.leisureup.global.exception.*;
 import org.leisureup.global.response.external.*;
 import org.leisureup.global.response.external.weather.*;
 import org.leisureup.info.weather.dto.*;
 import org.leisureup.info.weather.dto.api.*;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
@@ -84,11 +85,16 @@ public class ShortTermForecastApiClient {
 
         int attempts = 1;
         for (; attempts <= DEFAULT_RETRY_CNT; attempts++) {
-            resp = shortTermForecastApi.getShortTermForecast(
-                    key, rspType,
-                    dateTimeInfo.baseDate(), dateTimeInfo.baseTime(),
-                    nx, ny, pageNo, pageSize
-            );
+            try {
+                resp = shortTermForecastApi.getShortTermForecast(
+                        key, rspType,
+                        dateTimeInfo.baseDate(), dateTimeInfo.baseTime(),
+                        nx, ny, pageNo, pageSize
+                );
+            } catch (RetryableException e) {
+                log.warn("Failed to retrieve response", e);
+                throw new ServerSideException(503, "API 통신에 실패했습니다.");
+            }
 
             if (!ShortTermForecastApiClientUtils.shouldRetry(resp)) {
                 break;

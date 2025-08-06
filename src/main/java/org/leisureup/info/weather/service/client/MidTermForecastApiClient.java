@@ -1,10 +1,13 @@
 package org.leisureup.info.weather.service.client;
 
+import feign.*;
 import java.time.*;
 import java.time.format.*;
 import java.util.*;
 import lombok.extern.slf4j.*;
+import org.leisureup.global.exception.*;
 import org.leisureup.global.response.external.*;
+import org.leisureup.global.response.external.weather.*;
 import org.leisureup.info.weather.dto.api.*;
 import org.leisureup.info.weather.dto.response.*;
 import org.leisureup.info.weather.dto.response.MidTermLandResponse.*;
@@ -33,10 +36,16 @@ public class MidTermForecastApiClient {
 
         LocalDate today = MidTermForecastApiClientUtils.getCurrentDate();
 
-        var resp = midTermForecastApi.getLandForecast(
-                key, rspType, landRegionCode,
-                MidTermForecastApiClientUtils.formatToForecastDate(today), 1
-        );
+        WeatherApiResponse<LandMidForecast> resp;
+        try {
+            resp = midTermForecastApi.getLandForecast(
+                    key, rspType, landRegionCode,
+                    MidTermForecastApiClientUtils.formatToForecastDate(today), 1
+            );
+        } catch (RetryableException e) {
+            log.warn("Failed to retrieve response", e);
+            throw new ServerSideException(503, "API 통신에 실패했습니다.");
+        }
 
         MidTermForecastApiClientUtils.validateResp(resp);
 
@@ -50,10 +59,17 @@ public class MidTermForecastApiClient {
 
         LocalDate today = MidTermForecastApiClientUtils.getCurrentDate();
 
-        var resp = midTermForecastApi.getTemperatureForecast(
-                key, rspType, temperatureCode,
-                MidTermForecastApiClientUtils.formatToForecastDate(today), 1
-        );
+        WeatherApiResponse<TemperatureMidForecast> resp;
+
+        try {
+            resp = midTermForecastApi.getTemperatureForecast(
+                    key, rspType, temperatureCode,
+                    MidTermForecastApiClientUtils.formatToForecastDate(today), 1
+            );
+        } catch (RetryableException e) {
+            log.warn("Failed to retrieve response", e);
+            throw new ServerSideException(503, "API 통신에 실패했습니다.");
+        }
 
         MidTermForecastApiClientUtils.validateResp(resp);
 
