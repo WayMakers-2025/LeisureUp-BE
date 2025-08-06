@@ -23,6 +23,7 @@ public class SnowIn1HourStrategy extends BaseStrategy {
             return "적설 없음";
         }
 
+        forecastValue = forecastValue.replace("cm", "");
         double value = Double.parseDouble(forecastValue);
 
         if (0.1 <= value && value < 0.5) {

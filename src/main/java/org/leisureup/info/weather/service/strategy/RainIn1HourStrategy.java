@@ -23,6 +23,7 @@ public class RainIn1HourStrategy extends BaseStrategy {
             return "강수 없음";
         }
 
+        forecastValue = forecastValue.replace("mm", "");
         double value = Double.parseDouble(forecastValue);
 
         if (0.1 <= value && value < 1.0) {
