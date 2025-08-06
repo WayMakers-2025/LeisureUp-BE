@@ -8,7 +8,7 @@ public class DefaultTourApiErrorDecoder extends DefaultFeignErrorDecoder {
             TourApi 요청에 문제가 발생했습니다.
             """.trim();
 
-    private DefaultTourApiErrorDecoder() {
+    public DefaultTourApiErrorDecoder() {
         super(MSG_PREFIX);
     }
 }
