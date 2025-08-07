@@ -1,0 +1,37 @@
+{
+  "response": {
+    "header": {
+      "resultCode": "0000",
+      "resultMsg": "OK"
+    },
+    "body": {
+      "items": {
+        "item": [
+          {
+            "contentid": "2789499",
+            "contenttypeid": "39",
+            "seat": "",
+            "kidsfacility": "0",
+            "firstmenu": "목살",
+            "treatmenu": "삼겹살 / LA갈비 / 매운껍데기 등",
+            "smoking": "",
+            "packing": "",
+            "infocenterfood": "02-323-2360",
+            "scalefood": "",
+            "parkingfood": "가능",
+            "opendatefood": "",
+            "opentimefood": "- 일요일~목요일 11:00 ~01:00<br>- 금요일~토요일 11:00~02:00",
+            "restdatefood": "연중무휴",
+            "discountinfofood": "",
+            "chkcreditcardfood": "없음",
+            "reservationfood": "",
+            "lcnsno": "20040069617"
+          }
+        ]
+      },
+      "numOfRows": 1,
+      "pageNo": 1,
+      "totalCount": 1
+    }
+  }
+}
