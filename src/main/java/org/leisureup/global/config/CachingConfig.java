@@ -1,13 +1,19 @@
 package org.leisureup.global.config;
 
 import java.time.*;
+import lombok.*;
+import lombok.extern.slf4j.*;
+import org.springframework.boot.context.event.*;
 import org.springframework.cache.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.cache.support.*;
 import org.springframework.context.annotation.*;
+import org.springframework.context.event.*;
 import org.springframework.data.redis.cache.*;
 import org.springframework.data.redis.connection.*;
+import org.springframework.stereotype.*;
 
+@Slf4j
 @EnableCaching
 @Configuration
 public class CachingConfig {
@@ -31,5 +37,24 @@ public class CachingConfig {
     @Profile("test")
     public CacheManager testCacheManager() {
         return new NoOpCacheManager();
+    }
+}
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+class RedisInitializer {
+
+    private final RedisConnectionFactory connectionFactory;
+
+    @EventListener(ApplicationReadyEvent.class)
+    void initCache() {
+        log.info("Removing redis data");
+
+        connectionFactory.getConnection()
+                .serverCommands()
+                .flushDb();
+
+        log.info("All data has been removed");
     }
 }
