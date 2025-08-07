@@ -1,5 +1,6 @@
 package org.leisureup.info.weather.dto.response;
 
+import java.io.*;
 import java.time.*;
 
 public record RawWeatherWaringContent(
@@ -9,6 +10,6 @@ public record RawWeatherWaringContent(
         LocalDateTime activatedAt,
         long announcementSequence,
         String additionalContent
-) {
+) implements Serializable {
 
 }

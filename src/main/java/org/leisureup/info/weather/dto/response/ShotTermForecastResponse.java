@@ -1,5 +1,6 @@
 package org.leisureup.info.weather.dto.response;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -15,6 +16,6 @@ public record ShotTermForecastResponse(
         Double maxTemperature,
         Double minTemperature,
         List<SingleShortTermForecast> data
-) {
+) implements Serializable {
 
 }

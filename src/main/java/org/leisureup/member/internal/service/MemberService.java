@@ -8,6 +8,7 @@ import org.leisureup.member.internal.domain.*;
 import org.leisureup.member.internal.dto.request.*;
 import org.leisureup.member.internal.dto.response.*;
 import org.leisureup.member.internal.repository.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
@@ -54,6 +55,10 @@ public class MemberService {
      * 이전에 응답했으면 수정해 저장한다.
      */
     @Transactional
+    @CacheEvict(
+            cacheNames = "recommend-on-member",
+            key = "#memberId"
+    )
     public void saveInterest(Long memberId, SaveInterestRequest req) {
         Member member = memberRepo.findById(memberId)
                 .orElseThrow(() -> new NotFound("Member not found"));
@@ -103,7 +108,7 @@ public class MemberService {
         Long locationId = req.locationId();
 
         if (
-                locationQueryPort.notExists(locationId) ||
+                locationQueryPort.notExists(locationId) &&
                 !locationFetchSpi.fetchIfLocationExists(locationId)
         ) {
             throw new NotFound("Location not found");

@@ -9,6 +9,7 @@ import org.leisureup.info.recommend.dto.response.*;
 import org.leisureup.info.recommend.dto.response.LocationRecommendation.*;
 import org.leisureup.location.spi.*;
 import org.leisureup.member.spi.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.*;
 
 @Slf4j
@@ -48,6 +49,10 @@ public class RecommendService {
     /**
      * 로그인한 사용자에게 카테고리 (레저 종류) 목록을 추천
      */
+    @Cacheable(
+            cacheNames = "recommend-on-member",
+            key = "#memberId"
+    )
     public List<CategoryRecommendation> recommendOnMember(
             Long memberId
     ) {

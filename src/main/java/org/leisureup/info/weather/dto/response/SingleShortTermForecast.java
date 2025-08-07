@@ -1,5 +1,7 @@
 package org.leisureup.info.weather.dto.response;
 
+import java.io.*;
+
 /**
  * 특정 시각의 단기 예보 정보
  *
@@ -23,6 +25,6 @@ public record SingleShortTermForecast(
         String temperature,
         String waveHeight,
         String windSpeed
-) {
+) implements Serializable {
 
 }

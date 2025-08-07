@@ -1,8 +1,10 @@
 package org.leisureup.info.weather.controller;
 
+import java.time.*;
 import java.util.*;
 import lombok.*;
 import org.leisureup.global.response.*;
+import org.leisureup.info.spi.*;
 import org.leisureup.info.weather.dto.response.*;
 import org.leisureup.info.weather.service.*;
 import org.springframework.validation.annotation.*;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class WeatherController {
 
     private final WeatherInformService weatherInformService;
+    private final InfoSpi infoSpi;
+    private final BaseDateTimeBuilder baseDateTimeBuilder;
 
     @GetMapping("/warning")     // 기상 특보 현황 조회
     public ApiResponse<WeatherWarningResponse> getWeatherWarning() {
@@ -66,8 +70,26 @@ public class WeatherController {
             @RequestParam double x, @RequestParam double y
     ) {
 
-        var resp = weatherInformService.getShortTermForecast(x, y);
+        // 요청에 사용할 좌표, 기준 시각 build
+        var cordProjection = infoSpi.convertGpsCord(x, y);
+        int nx = cordProjection.nx(), ny = cordProjection.ny();
+        var forecastingTime = baseDateTimeBuilder.buildInfoFrom(
+                WeatherControllerUtils.getNow()
+        );
+
+        // 단기 예보 정보를 조회
+        var resp = weatherInformService.getShortTermForecast(
+                nx, ny, forecastingTime
+        );
 
         return ApiResponse.success(200, resp);
     }
+}
+
+class WeatherControllerUtils {
+
+    static LocalDateTime getNow() {
+        return LocalDateTime.now();
+    }
+
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(
         name = "WeatherWarningApi",
         url = "${feign.weather.warning}",
-        configuration = DefaultFeignErrorDecoder.class
+        configuration = DefaultXmlRetryingConfig.class
 )
 public interface WeatherWarningApi {
 
