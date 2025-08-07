@@ -1,5 +1,6 @@
 package org.leisureup.member.internal.repository;
 
+import java.util.*;
 import org.leisureup.member.internal.domain.*;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.*;
@@ -18,4 +19,10 @@ public interface PickRepository extends JpaRepository<Pick, PickCompositeKey> {
     )
     Page<Pick> findAllByMemberId(Long memberId, Pageable pageable);
 
+    @Query("""
+            select p.locationId from Pick p
+            where p.member.id = :memberId
+            and p.locationId in :locationIds
+            """)
+    List<Long> filterLocationIdsInPick(Long memberId, List<Long> locationIds);
 }

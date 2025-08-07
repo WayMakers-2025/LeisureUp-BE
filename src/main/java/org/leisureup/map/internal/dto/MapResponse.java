@@ -1,12 +1,7 @@
 package org.leisureup.map.internal.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
@@ -14,6 +9,7 @@ import java.util.List;
 @Builder
 public class MapResponse {
     // 영업시간, 예약 가능 필드 없음!!!!
+    private Long contentId;
     private String category;
     private String addr1; // 주소
     private String addr2; // 상세주소
@@ -45,6 +41,7 @@ public class MapResponse {
         List<MapResponse> mapResponses = new ArrayList<>();
         for (TourApiResponse.Item item : tourApiResponse.getResponse().getBody().getItems().getItem()) {
             MapResponse build = MapResponse.builder()
+                    .contentId(item.getContentid())
                     .category(category)
                     .addr1(item.getAddr1())
                     .addr2(item.getAddr2())

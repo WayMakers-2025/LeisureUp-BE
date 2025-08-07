@@ -1,10 +1,7 @@
 package org.leisureup.map.internal.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-import java.util.List;
+import java.util.*;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
@@ -55,7 +52,7 @@ public class TourApiResponse {
         private String cat1; // 대분류
         private String cat2; // 중분류
         private String cat3; // 소분류
-        private String contentid; // 콘텐츠ID
+        private Long contentid; // 콘텐츠ID
         private String contenttypeid; // 콘텐츠타입ID
         private String createdtime; // 등록일
         private String dist; // 거리
