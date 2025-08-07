@@ -5,6 +5,7 @@ import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
 import org.leisureup.global.response.external.*;
 import org.leisureup.global.response.external.tourapi.*;
+import org.leisureup.location.internal.dto.*;
 import org.leisureup.location.internal.dto.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -55,7 +56,7 @@ public class TourApiService {
 
         try {
             resp = apiClient.getCommonInfo(
-                    locationId, key, app, os, rspType
+                    key, app, os, rspType, locationId
             );
         } catch (RetryableException e) {
             log.warn("Failed to retrieve response", e);
@@ -68,6 +69,66 @@ public class TourApiService {
 
         if (resp.isEmpty()) {
             throw new NotFound("Not found");
+        }
+
+        return resp.getSingleItem();
+    }
+
+    public DetailedLeisureInfo getDetailedLeisureInfo(Long locationId) {
+        TourApiResponse<DetailedLeisureInfo> resp;
+
+        try {
+            resp = apiClient.getDetailedLeisureInfo(
+                    key, app, os, rspType, locationId,
+                    LocationType.LEISURE.getContentTypeId()
+            );
+        } catch (RetryableException e) {
+            log.warn("Failed to retrieve response", e);
+            throw new ServerSideException(503, "API 통신에 실패했습니다.");
+        }
+
+        if (resp == null || !resp.isSuccess()) {
+            throw buildExMsg(resp);
+        }
+
+        return resp.getSingleItem();
+    }
+
+    public DetailedHotelInfo getDetailedHotelInfo(Long locationId) {
+        TourApiResponse<DetailedHotelInfo> resp;
+
+        try {
+            resp = apiClient.getDetailedHotelInfo(
+                    key, app, os, rspType, locationId,
+                    LocationType.HOTEL.getContentTypeId()
+            );
+        } catch (RetryableException e) {
+            log.warn("Failed to retrieve response", e);
+            throw new ServerSideException(503, "API 통신에 실패했습니다.");
+        }
+
+        if (resp == null || !resp.isSuccess()) {
+            throw buildExMsg(resp);
+        }
+
+        return resp.getSingleItem();
+    }
+
+    public DetailedRestaurantInfo getDetailedRestaurantInfo(Long locationId) {
+        TourApiResponse<DetailedRestaurantInfo> resp;
+
+        try {
+            resp = apiClient.getDetailedRestaurantInfo(
+                    key, app, os, rspType, locationId,
+                    LocationType.RESTAURANT.getContentTypeId()
+            );
+        } catch (RetryableException e) {
+            log.warn("Failed to retrieve response", e);
+            throw new ServerSideException(503, "API 통신에 실패했습니다.");
+        }
+
+        if (resp == null || !resp.isSuccess()) {
+            throw buildExMsg(resp);
         }
 
         return resp.getSingleItem();
