@@ -134,7 +134,7 @@ class LocationServiceTest {
     @DisplayName("DB 에 장소가 없을땐 API 로 가져와 저장한다.")
     void testGetLocation() {
 
-        GetLocationResponse resp = locationService.getLocation(apiExistingLocationId);
+        BasicLocationInfo resp = locationService.getLocation(apiExistingLocationId);
 
         // 정상 응답이 돌아온다.
         assertThat(resp).isNotNull().hasNoNullFieldsOrProperties();
@@ -157,7 +157,7 @@ class LocationServiceTest {
     @Test
     @DisplayName("DB 에 장소가 있을 땐 API 를 호출하지 않는다.")
     void testDbExistingLocation() {
-        GetLocationResponse resp = locationService.getLocation(dbExistingLocationId);
+        BasicLocationInfo resp = locationService.getLocation(dbExistingLocationId);
 
         // 정상 응답이 돌아온다.
         assertThat(resp).isNotNull().hasNoNullFieldsOrProperties();
