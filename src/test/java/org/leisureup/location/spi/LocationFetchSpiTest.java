@@ -102,7 +102,7 @@ class LocationFetchSpiTest {
 
         GpsCord cord = GpsCord.of(0.1234, 0.1234);
         Location loc = Location.of(
-                dbExistingLocationId, "test", cord,
+                dbExistingLocationId, 32L, "test", cord,
                 null, null
         );
         loc.changeCategory(cat);

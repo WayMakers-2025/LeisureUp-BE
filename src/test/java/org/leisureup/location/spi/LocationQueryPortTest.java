@@ -32,7 +32,7 @@ class LocationQueryPortTest extends IntegrationTestSupport {
         GpsCord cord = GpsCord.of(random.nextDouble(), random.nextDouble());
 
         Location loc = Location.of(
-                id, title, cord, null, null
+                id, 32L, title, cord, null, null
         );
 
         loc.synchronizeTo(LocalDateTime.now());

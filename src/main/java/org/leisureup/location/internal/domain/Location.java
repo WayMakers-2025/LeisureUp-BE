@@ -14,6 +14,9 @@ public class Location extends LocationTimeStamp {
     @Id
     private Long id;
 
+    @Column(nullable = false)
+    private Long contentTypeId;
+
     @Embedded
     private GpsCord gpsCord;
 
@@ -32,22 +35,22 @@ public class Location extends LocationTimeStamp {
     private Category locationCategory;
 
     private Location(
-            long id, String title, GpsCord gpsCord,
+            long id, long contentTypeId, String title, GpsCord gpsCord,
             Address address, LocationDescription locationDescription
     ) {
         this.id = id;
+        this.contentTypeId = contentTypeId;
         this.title = title;
         this.gpsCord = gpsCord;
         this.address = address;
         this.description = locationDescription;
     }
 
-    @Builder
     public static Location of(
-            long id, String title, GpsCord gpsCord,
+            long id, long contentTypeId, String title, GpsCord gpsCord,
             Address address, LocationDescription description
     ) {
-        return new Location(id, title, gpsCord, address, description);
+        return new Location(id, contentTypeId, title, gpsCord, address, description);
     }
 
     public void changeCord(GpsCord cord) {
