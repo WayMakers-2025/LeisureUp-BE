@@ -1,4 +1,4 @@
-package org.leisureup.location.spi;
+package org.leisureup.location.internal.service;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.*;
@@ -6,11 +6,9 @@ import static org.assertj.core.api.Assertions.*;
 import com.github.tomakehurst.wiremock.*;
 import com.github.tomakehurst.wiremock.matching.*;
 import java.nio.file.*;
-import java.time.*;
 import java.util.*;
 import org.junit.jupiter.api.*;
-import org.leisureup.location.internal.domain.*;
-import org.leisureup.location.internal.repository.*;
+import org.leisureup.location.internal.dto.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.cloud.contract.wiremock.*;
@@ -24,12 +22,11 @@ import org.springframework.util.*;
         "feign.tour-api.url=http://localhost:${wiremock.server.port}",
         "tourApi.key=testing"
 })
-class LocationFetchSpiTest {
+public class AdditionalInfoServiceTest {
 
-    private final static Long dbExistingLocationId = 10L;
-    private final static Long apiExistingLocationId = 990140L;
-    private final static Long apiNonExistentLocationId = 0L;
-
+    private static final Long leisureLocationId = 2773417L,
+            hotelLocationId = 3103316L,
+            restaurantLocationId = 2789499L;
     @Value("${tourApi.key}")
     String apiKeyForTest;
     @Value("${tourApi.types.os}")
@@ -38,21 +35,16 @@ class LocationFetchSpiTest {
     String app;
     @Value("${tourApi.types.response}")
     String response;
-
     @Autowired
     WireMockServer wireMockServer;
     @Autowired
-    LocationFetchSpi locationFetchSpi;
-    @Autowired
-    LocationRepository locationRepo;
-    @Autowired
-    CategoryRepository categoryRepo;
+    AdditionalInfoService additionalInfoService;
 
     private static byte[] supplyResponse(Long locationId) {
 
         String classPath = String.format(
                 "classpath:" +
-                "mock-server-response/tour-api/get-common-detail" +
+                "mock-server-response/tour-api/get-detailed-info" +
                 "/%d.json", locationId
         );
 
@@ -65,7 +57,7 @@ class LocationFetchSpiTest {
         }
     }
 
-    void stubMockServer(Long locationId) {
+    void stubMockServer(Long locationId, Long contentTypeId) {
 
         byte[] body = supplyResponse(locationId);
 
@@ -75,9 +67,10 @@ class LocationFetchSpiTest {
         queryParams.put("MobileOS", equalTo(os));
         queryParams.put("_type", equalTo(response));
         queryParams.put("contentId", equalTo(String.valueOf(locationId)));
+        queryParams.put("contentTypeId", equalTo(String.valueOf(contentTypeId)));
 
         stubFor(
-                get(urlPathEqualTo("/detailCommon2"))
+                get(urlPathEqualTo("/detailIntro2"))
                         .withQueryParams(queryParams)
                         .willReturn(
                                 aResponse()
@@ -93,52 +86,47 @@ class LocationFetchSpiTest {
     @BeforeEach
     void setUp() {
         wireMockServer.start();
-
-        stubMockServer(apiExistingLocationId);
-        stubMockServer(apiNonExistentLocationId);
-
-        Category cat = CatOther.of("testing", "abcde");
-        categoryRepo.save(cat);
-
-        GpsCord cord = GpsCord.of(0.1234, 0.1234);
-        Location loc = Location.of(
-                dbExistingLocationId, 32L, "test", cord,
-                null, null
-        );
-        loc.changeCategory(cat);
-        loc.synchronizeTo(LocalDateTime.now());
-
-        locationRepo.save(loc);
     }
 
     @AfterEach
     void tearDown() {
-        locationRepo.deleteAll();
-        categoryRepo.deleteAll();
         wireMockServer.resetAll();
         wireMockServer.stop();
     }
 
     @Test
-    @DisplayName("장소가 존재하면 true 를 반환한다.")
-    void fetchIfLocationExists() {
+    @DisplayName("레저 장소에 대한 추가 정보를 조회할 수 있다.")
+    void getAdditionalLeisureInfo() {
 
-        // DB 에 장소가 있어도 true
-        assertThat(locationFetchSpi.fetchIfLocationExists(dbExistingLocationId)).isTrue();
+        stubMockServer(leisureLocationId, LocationType.LEISURE.getContentTypeId());
 
-        // DB 에 장소가 없지만 API 상 있으면 true
-        assertThat(locationFetchSpi.fetchIfLocationExists(apiExistingLocationId)).isTrue();
+        var resp = additionalInfoService.getAdditionalLeisureInfo(leisureLocationId);
 
-        // DB 에 자동 저장된다.
-        assertThat(locationRepo.existsById(apiExistingLocationId)).isTrue();
-
+        assertThat(resp).isNotNull()
+                .hasNoNullFieldsOrProperties();
     }
 
     @Test
-    @DisplayName("장소가 없으면 false 를 반환한다.")
-    void testNonExistingLocation() {
+    @DisplayName("숙박 장소에 대한 추가 정보를 조회할 수 있다.")
+    void getAdditionalHotelInfo() {
 
-        assertThat(locationFetchSpi.fetchIfLocationExists(apiNonExistentLocationId)).isFalse();
+        stubMockServer(hotelLocationId, LocationType.HOTEL.getContentTypeId());
 
+        var resp = additionalInfoService.getAdditionalHotelInfo(hotelLocationId);
+
+        assertThat(resp).isNotNull()
+                .hasNoNullFieldsOrProperties();
+    }
+
+    @Test
+    @DisplayName("음식점 장소에 대한 추가 정보를 조회할 수 있다.")
+    void getAdditionalRestaurantInfo() {
+
+        stubMockServer(restaurantLocationId, LocationType.RESTAURANT.getContentTypeId());
+
+        var resp = additionalInfoService.getAdditionalRestaurantInfo(restaurantLocationId);
+
+        assertThat(resp).isNotNull()
+                .hasNoNullFieldsOrProperties();
     }
 }

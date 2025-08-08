@@ -1,39 +1,42 @@
 package org.leisureup.location.internal.dto.response;
 
+import org.leisureup.location.internal.dto.*;
+
 public record GetLocationResponse(
-        Long id, String name,
-        double gpsX, double gpsY,
-        String briefAddress, String detailedAddress, String zipcode,
-
-        String introduction,
-        String homepageUrl, String telephone,
-        String largeThumbnail, String smallThumbnail,
-
-        Category category
+        BasicLocationInfo basicLocationInfo,
+        LocationType type,
+        LeisureInfo leisureInfo,
+        HotelInfo hotelInfo,
+        RestaurantInfo restaurantInfo
 ) {
 
-    public enum Category {
-        EARTH, WATER, SKY, OTHER
-    }
-
     public static GetLocationResponse of(
-            Long id, String name, double gpsX, double gpsY,
-            String add1, String add2, String zipcode,
-            String intro, String homepage, String tel,
-            String thumb1, String thumb2,
-            String categoryType
+            BasicLocationInfo basicLocationInfo, LocationType type,
+            LeisureInfo leisureInfo, HotelInfo hotelInfo, RestaurantInfo restaurantInfo
     ) {
 
-        Category cat = switch (categoryType) {
-            case "EARTH" -> Category.EARTH;
-            case "WATER" -> Category.WATER;
-            case "SKY" -> Category.SKY;
-            default -> Category.OTHER;
-        };
+        switch (type) {
+            case LEISURE -> {
+                hotelInfo = null;
+                restaurantInfo = null;
+            }
+            case HOTEL -> {
+                leisureInfo = null;
+                restaurantInfo = null;
+            }
+            case RESTAURANT -> {
+                leisureInfo = null;
+                hotelInfo = null;
+            }
+            default -> {
+                leisureInfo = null;
+                hotelInfo = null;
+                restaurantInfo = null;
+            }
+        }
 
         return new GetLocationResponse(
-                id, name, gpsX, gpsY, add1, add2, zipcode,
-                intro, homepage, tel, thumb1, thumb2, cat
+                basicLocationInfo, type, leisureInfo, hotelInfo, restaurantInfo
         );
     }
 }
