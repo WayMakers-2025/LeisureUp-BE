@@ -23,6 +23,14 @@ public class RainIn1HourStrategy extends BaseStrategy {
             return "강수 없음";
         }
 
+        if (
+                forecastValue.endsWith("미만") ||
+                forecastValue.endsWith("이상") ||
+                forecastValue.contains("~")
+        ) {
+            return forecastValue;
+        }
+
         forecastValue = forecastValue.replace("mm", "");
         double value = Double.parseDouble(forecastValue);
 
