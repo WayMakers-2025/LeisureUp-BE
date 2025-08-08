@@ -29,6 +29,8 @@ public interface TourApiLocalClient {
             @RequestParam("MobileApp") String mobileApp,
             @RequestParam("serviceKey") String serviceKey,
             @RequestParam(value = "_type", defaultValue = "json") String type,
-            @RequestParam("keyword") String keyword
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "numOfRows", defaultValue = "10") int numOfRows,
+            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo
             );
 }

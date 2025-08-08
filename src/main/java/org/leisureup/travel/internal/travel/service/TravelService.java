@@ -47,6 +47,11 @@ public class TravelService {
     public GetTravelDetailResponse getTravelDetail(Long travelId, Long memberId) {
         Travel travel = this.findTravel(travelId, memberId);
 
+        List<Item> items = travel.getItems();
+        List<Long> itemIdList = items.stream().map(Item::getItemId).toList();
+        // 대표 이미지 불러오기
+        String representImage = locationQueryPort.getRepresentImage(itemIdList);
+
         // ID : Item mapping
         Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
 
@@ -61,12 +66,12 @@ public class TravelService {
         for (Long id : locationInfoMap.keySet()) {
             var info = locationInfoMap.get(id);
             var item = itemMap.get(id);
-            var detail = new LocationResponseDetail(info, item.getPosition());
+            var detail = new LocationResponseDetail(info, item.getPosition(), item.getStartTime(), item.getEndTime());
             detailList.add(detail);
         }
-        detailList.sort(Comparator.comparing(LocationResponseDetail::getPosition));
+        detailList.sort(java.util.Comparator.comparing(LocationResponseDetail::getPosition));
 
-        return GetTravelDetailResponse.fromEntity(travel, detailList);
+        return GetTravelDetailResponse.fromEntity(travel, representImage, detailList);
     }
 
     private static <K, V> Map<K, V> listToMap(List<V> list, Function<V, K> keyMapper) {

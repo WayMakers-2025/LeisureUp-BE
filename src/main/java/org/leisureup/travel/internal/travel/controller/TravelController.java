@@ -36,7 +36,7 @@ public class TravelController {
     }
 
     /**
-     * 여행 전체 조회
+     * 여행 1개 상세 조회
      */
     @GetMapping("/travels/{travelId}")
     public ApiResponse<GetTravelDetailResponse> getTravelDetail(@PathVariable Long travelId){
@@ -46,7 +46,6 @@ public class TravelController {
                 travelService.getTravelDetail(travelId,memberId)
         );
     }
-
     /**
      * 여행에 Item 하나 추가
      */

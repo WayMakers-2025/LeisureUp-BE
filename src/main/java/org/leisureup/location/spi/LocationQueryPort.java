@@ -1,5 +1,7 @@
 package org.leisureup.location.spi;
 
+import org.leisureup.travel.internal.travel.domain.RegionCode;
+
 import java.util.*;
 
 public interface LocationQueryPort {

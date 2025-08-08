@@ -25,7 +25,7 @@ public enum Sky {
                     낙하 위치, 착지 지점 명확히 숙지
                     날씨·기류 등 항공 환경 철저히 확인
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/sky-diving.jpg",
             List.of(SuitableSeason.WINTER)
     ), UltralightAircraft(
             "초경량비행", "A03040200",
@@ -44,7 +44,7 @@ public enum Sky {
                     바람 방향·세기·시정거리 철저히 확인
                     탑승 전 전체 기체 점검 필수
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/light-flight.jpg",
             List.of(SuitableSeason.ANY)
     ), HangGlidingParagliding(
             "행글라이딩/패러글라이딩", "A03040300",
@@ -61,7 +61,7 @@ public enum Sky {
                     강풍, 우천 시 비행 절대 금지
                     장비 착용 상태 꼼꼼히 점검
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/gliding.jpg",
             List.of(SuitableSeason.ANY)
     ), HotAirBalloon(
             "열기구", "A03040400",
@@ -77,7 +77,7 @@ public enum Sky {
                     착륙 시 지면 충격 대비해 자세 잡기
                     기구 이동 시 몸을 바깥으로 내밀지 않기
                     """.trim(),
-            "",
+            "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/ballown.jpg",
             List.of(SuitableSeason.ANY)
     );
 

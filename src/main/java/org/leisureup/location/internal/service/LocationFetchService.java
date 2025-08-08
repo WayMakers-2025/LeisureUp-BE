@@ -24,7 +24,8 @@ public class LocationFetchService {
         LocationDescription desc = info.locationDescription();
 
         Location loc = Location.of(
-                info.contentId(), info.title(), cord, address, desc
+                info.contentId(), info.contentTypeId(), info.title(),
+                cord, address, desc
         );
         loc.synchronizeTo(info.modifiedTime());
 

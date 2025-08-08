@@ -15,11 +15,11 @@ public class Position extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 위도
+    // 경도
     @Column(nullable = false)
     private double gpsX;
 
-    // 경도
+    // 위도
     @Column(nullable = false)
     private double gpsY;
 

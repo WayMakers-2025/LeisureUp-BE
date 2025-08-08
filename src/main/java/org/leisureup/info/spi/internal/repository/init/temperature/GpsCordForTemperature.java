@@ -12,7 +12,7 @@ public enum GpsCordForTemperature {
     // 지역별 최소 10 개
 
     // 서울
-    Seoul_01(126.789923, 37.559863, T_01),
+    Seoul_01(37.559863, 126.789923, T_01),
     Seoul_02(37.514575, 127.0495556, T_01),
     Seoul_03(37.52736667, 127.1258639, T_01),
     Seoul_04(37.63695556, 127.0277194, T_01),
@@ -325,7 +325,7 @@ public enum GpsCordForTemperature {
 
     ;
 
-    final double x, y;
+    final double y, x;
     final TemperatureCode temperatureCode;
 
     public Position bindPositionTo(RegionCode regionCode) {

@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.*;
 import org.springframework.cloud.contract.wiremock.*;
 import org.springframework.test.context.*;
 
+@SuppressWarnings("SpringBootApplicationProperties")
 @SpringBootTest
 @AutoConfigureWireMock(port = 0)
 @TestPropertySource(properties = {
