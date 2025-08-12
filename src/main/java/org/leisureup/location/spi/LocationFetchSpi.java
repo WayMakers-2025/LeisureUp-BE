@@ -13,4 +13,8 @@ public interface LocationFetchSpi {
      */
     boolean fetchIfLocationExists(Long locationId);
 
+    /**
+     * 어느 장소를 반드시 DB 에 저장해야 하는 event
+     */
+    void onFetchLocationEvent(FetchLocationEvent event);
 }

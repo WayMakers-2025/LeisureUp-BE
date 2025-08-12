@@ -11,6 +11,7 @@ import org.leisureup.travel.internal.travel.domain.*;
 import org.leisureup.travel.internal.travel.dto.request.*;
 import org.leisureup.travel.internal.travel.dto.response.*;
 import org.leisureup.travel.internal.travel.repository.*;
+import org.springframework.context.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
 
@@ -21,6 +22,7 @@ public class TravelService {
     private final TravelRepository travelRepository;
     private final ItemRepository itemRepository;
     private final LocationQueryPort locationQueryPort;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public List<GetAllTravelResponse> getAllTravel(Long memberId){
@@ -82,6 +84,8 @@ public class TravelService {
         int position = travel.getItems().size();
         Item newItem = Item.addItem(locationId, position, travel);
         itemRepository.save(newItem);
+
+        eventPublisher.publishEvent(new FetchLocationEvent(locationId));
         
         return "성공적으로 아이템이 추가되었습니다.";
     }
@@ -114,6 +118,10 @@ public class TravelService {
                 
                 // 3. Travel 엔티티에 Item들 연결
                 savedTravel.getItems().addAll(items);
+
+                items.stream().map(Item::getLocationId)
+                        .map(FetchLocationEvent::new)
+                        .forEach(eventPublisher::publishEvent);
             }
             
             return ApiResponse.success(201, "여행 정보가 성공적으로 저장되었습니다.");

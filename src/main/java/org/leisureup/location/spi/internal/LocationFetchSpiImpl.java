@@ -1,12 +1,15 @@
 package org.leisureup.location.spi.internal;
 
+import jakarta.validation.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.internal.service.*;
 import org.leisureup.location.spi.*;
+import org.springframework.modulith.events.*;
 import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.*;
 
 @Slf4j
 @Component
@@ -36,5 +39,25 @@ public class LocationFetchSpiImpl implements LocationFetchSpi {
         }
 
         return false;
+    }
+
+    @Override
+    @ApplicationModuleListener(propagation = Propagation.REQUIRES_NEW)
+    public void onFetchLocationEvent(@Valid FetchLocationEvent event) {
+        Long locationId = event.locationId();
+
+        if (locationRepo.existsById(locationId)) {
+            return;
+        }
+
+        try {
+            locationFetchService.fetchAndStoreLocation(locationId);
+        } catch (Exception e) {
+            log.error(
+                    "Failed to fetch location [{}] by [{}]",
+                    e.getClass().getSimpleName(),
+                    locationId
+            );
+        }
     }
 }
