@@ -1,22 +1,18 @@
 package org.leisureup.travel.internal.travel.service;
 
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 import lombok.*;
 import org.leisureup.global.exception.*;
 import org.leisureup.global.response.*;
 import org.leisureup.location.spi.*;
 import org.leisureup.travel.internal.travel.domain.*;
-import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
-import org.leisureup.travel.internal.travel.dto.request.ItemRequest;
-import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
-import org.leisureup.travel.internal.travel.dto.response.GetTravelDetailResponse;
-import org.leisureup.travel.internal.travel.dto.response.LocationResponseDetail;
+import org.leisureup.travel.internal.travel.dto.request.*;
+import org.leisureup.travel.internal.travel.dto.response.*;
 import org.leisureup.travel.internal.travel.repository.*;
 import org.springframework.stereotype.*;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +31,7 @@ public class TravelService {
         Map<Long, String> representImageMap = new HashMap<>();
         for (Travel travel : travels) {
             List<Long> itemIdList = itemRepository.findByTravel(travel).stream()
-                    .map(Item::getItemId)
+                    .map(Item::getLocationId)
                     .collect(Collectors.toList());
             String representImage = locationQueryPort.getRepresentImage(itemIdList);
             representImageMap.put(travel.getTravelId(), representImage);

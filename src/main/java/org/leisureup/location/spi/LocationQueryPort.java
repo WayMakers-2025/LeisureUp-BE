@@ -1,7 +1,5 @@
 package org.leisureup.location.spi;
 
-import org.leisureup.travel.internal.travel.domain.RegionCode;
-
 import java.util.*;
 
 public interface LocationQueryPort {
@@ -39,5 +37,8 @@ public interface LocationQueryPort {
             int maxElements, List<Long> categoryIds
     );
 
-    String getRepresentImage(List<Long> locationId);
+    /**
+     * 주어진 ID 로 대표 썸네일을 제공한다.
+     */
+    String getRepresentImage(List<Long> locationIds);
 }

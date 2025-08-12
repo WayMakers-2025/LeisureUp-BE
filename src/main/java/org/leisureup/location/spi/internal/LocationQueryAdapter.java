@@ -10,7 +10,6 @@ import org.leisureup.global.exception.*;
 import org.leisureup.location.internal.domain.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.spi.*;
-import org.leisureup.travel.internal.travel.domain.RegionCode;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
@@ -90,15 +89,26 @@ public class LocationQueryAdapter implements LocationQueryPort {
     }
 
     @Override
-    public String getRepresentImage(List<Long> locationId) {
-        List<LocationResponse> locations = this.getLocationListById(locationId);
+    public String getRepresentImage(List<Long> locationIds) {
+        List<LocationResponse> locations = new ArrayList<>(locationIds.size());
+
+        try {
+            locations.addAll(this.getLocationListById(locationIds));
+        } catch (NotFound ignored) {
+            // ignored
+        } catch (Exception e) {
+            log.warn(
+                    "Unexpected error [{}] occurred while try to get represent image with ids: [{}]",
+                    e.getClass().getSimpleName(), locationIds, e
+            );
+        }
 
         return locations.stream()
                 .map(LocationResponse::description)
                 .filter(Objects::nonNull)
                 .map(LocationUtils::getFirstAvailableThumbnail)
                 .filter(Objects::nonNull)
-                .findAny()
+                .findFirst()
                 .orElse("");
     }
 }
