@@ -179,6 +179,7 @@ public class TravelService {
 
             if (updateTravelRequest.getItems() != null && !updateTravelRequest.getItems().isEmpty()) {
                 for (ItemRequest itemRequest : updateTravelRequest.getItems()) {
+                    
                     // 해당 locationId를 가진 기존 item 찾기
                     travel.getItems().stream()
                         .filter(item -> item.getLocationId().equals(itemRequest.getLocationId()))
@@ -188,6 +189,13 @@ public class TravelService {
                             item.updatePosition(itemRequest.getPosition());
                         });
                 }
+
+                // 요청으로 전달된 locationId 들에 대해 DB 저장을 트리거하는 이벤트 발행
+                updateTravelRequest.getItems().stream()
+                        .map(ItemRequest::getLocationId)
+                        .distinct()
+                        .map(FetchLocationEvent::new)
+                        .forEach(eventPublisher::publishEvent);
             }
             travelRepository.save(travel);
             
