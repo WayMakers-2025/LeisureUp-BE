@@ -1,9 +1,11 @@
 package org.leisureup.travel.internal.travel.dto.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.leisureup.global.json.FlexibleLocalTimeSerializer;
 import org.leisureup.location.spi.LocationResponse;
 import org.leisureup.travel.internal.travel.domain.Item;
 
@@ -19,7 +21,9 @@ import java.util.List;
 public class LocationResponseDetail {
     private LocationResponse locationResponse;
     private int position;
+    @JsonSerialize(using = FlexibleLocalTimeSerializer.class)
     private LocalTime startTime;
+    @JsonSerialize(using = FlexibleLocalTimeSerializer.class)
     private LocalTime endTime;
 
 //    public static List<LocationResponse> fromLocationResponse(List<LocationResponse> locationResponses, Item item) {
