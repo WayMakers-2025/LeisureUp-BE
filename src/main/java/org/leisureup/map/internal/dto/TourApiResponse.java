@@ -1,5 +1,9 @@
 package org.leisureup.map.internal.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.*;
 import lombok.*;
 
@@ -15,6 +19,14 @@ public class TourApiResponse {
     public static class Response {
         private Header header;
         private Body body;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "header=" + header +
+                    ", body=" + body +
+                    '}';
+        }
     }
 
     @Getter
@@ -29,6 +41,7 @@ public class TourApiResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Body {
+        @JsonDeserialize(using = TourItemsDeserializer.class)
         private Items items;
         private int numOfRows;
         private int pageNo;

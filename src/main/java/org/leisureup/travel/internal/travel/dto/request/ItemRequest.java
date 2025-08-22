@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.leisureup.global.json.FlexibleLocalDateDeserializer;
 import org.leisureup.global.json.FlexibleLocalTimeDeserializer;
 
 import java.time.LocalDate;
@@ -19,5 +20,6 @@ public class ItemRequest {
     private LocalTime startTime;
     @JsonDeserialize(using = FlexibleLocalTimeDeserializer.class)
     private LocalTime endTime;
+    @JsonDeserialize(using = FlexibleLocalDateDeserializer.class)
     private LocalDate date;
 }
