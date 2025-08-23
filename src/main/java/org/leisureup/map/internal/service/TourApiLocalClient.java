@@ -33,4 +33,17 @@ public interface TourApiLocalClient {
             @RequestParam(value = "numOfRows", defaultValue = "10") int numOfRows,
             @RequestParam(value = "pageNo", defaultValue = "1") int pageNo
             );
+
+    @GetMapping("/B551011/KorService2/searchKeyword2")
+    TourApiResponse searchWithRegion(
+            @RequestParam("MobileOS") String mobileOS,
+            @RequestParam("MobileApp") String mobileApp,
+            @RequestParam("serviceKey") String serviceKey,
+            @RequestParam(value = "_type", defaultValue = "json") String type,
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "lDongRegnCd", required = false) Integer lDongRegnCd,
+            @RequestParam(value = "lDongSignguCd", required = false) Integer lDongSignguCd,
+            @RequestParam(value = "numOfRows", defaultValue = "10") int numOfRows,
+            @RequestParam(value = "pageNo", defaultValue = "1") int pageNo
+    );
 }

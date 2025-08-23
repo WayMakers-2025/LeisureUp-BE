@@ -1,9 +1,11 @@
 package org.leisureup.travel.internal.travel.dto.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.leisureup.global.json.FlexibleLocalDateSerializer;
 import org.leisureup.travel.internal.travel.domain.Travel;
 
 import java.time.LocalDate;
@@ -22,8 +24,10 @@ public class GetAllTravelResponse {
 
     private String travelDescription;
 
+    @JsonSerialize(using = FlexibleLocalDateSerializer.class)
     private LocalDate startDate;
 
+    @JsonSerialize(using = FlexibleLocalDateSerializer.class)
     private LocalDate endDate;
 
     private String representImage;

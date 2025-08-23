@@ -20,4 +20,12 @@ public interface KakaoLocalClient {
             @RequestParam(value = "page", defaultValue = "1") int page, // pageNo
             @RequestParam(value = "size", defaultValue = "10") int size // pageSize
     );
+
+    @GetMapping("/v2/local/geo/coord2regioncode.json")
+    org.leisureup.map.internal.dto.KakaoRegionResponse coordToRegion(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam("x") String longitude,
+            @RequestParam("y") String latitude,
+            @RequestParam(value = "input_coord", defaultValue = "WGS84") String inputCoord
+    );
 }
