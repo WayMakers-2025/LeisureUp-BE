@@ -62,12 +62,12 @@ jobs:
       - name: Pull docker image
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.jump-host-address }}
-          username: ${{ secrets.jump-host-id }}
-          key: ${{ secrets.jump-host-key }}
-          proxy_host: ${{ secrets.remote-host-address }}
-          proxy_username: ${{ secrets.remote-host-id }}
-          proxy_key: ${{ secrets.remote-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          proxy_host: ${{ secrets.jump-host-address }}
+          proxy_username: ${{ secrets.jump-host-id }}
+          proxy_key: ${{ secrets.jump-host-key }}
           script: |
             echo ${{ secrets.docker-hub-pw }} | \
             docker login -u ${{ secrets.docker-hub-id }} --password-stdin
@@ -77,12 +77,12 @@ jobs:
       - name: Copy compose
         uses: appleboy/scp-action@v1.0.0
         with:
-          host: ${{ secrets.jump-host-address }}
-          username: ${{ secrets.jump-host-id }}
-          key: ${{ secrets.jump-host-key }}
-          proxy_host: ${{ secrets.remote-host-address }}
-          proxy_username: ${{ secrets.remote-host-id }}
-          proxy_key: ${{ secrets.remote-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          proxy_host: ${{ secrets.jump-host-address }}
+          proxy_username: ${{ secrets.jump-host-id }}
+          proxy_key: ${{ secrets.jump-host-key }}
           overwrite: true
           source: ${{ env.compose-file }}
           target: '/home/${{ secrets.remote-host-id }}'
@@ -90,12 +90,12 @@ jobs:
       - name: Compose application
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.jump-host-address }}
-          username: ${{ secrets.jump-host-id }}
-          key: ${{ secrets.jump-host-key }}
-          proxy_host: ${{ secrets.remote-host-address }}
-          proxy_username: ${{ secrets.remote-host-id }}
-          proxy_key: ${{ secrets.remote-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          proxy_host: ${{ secrets.jump-host-address }}
+          proxy_username: ${{ secrets.jump-host-id }}
+          proxy_key: ${{ secrets.jump-host-key }}
           envs: IMAGE_TAG
           script: |
             docker compose -f ${{ env.compose-file }} up -d

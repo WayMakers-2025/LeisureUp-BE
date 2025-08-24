@@ -41,23 +41,23 @@ jobs:
       - name: Down composed containers
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.jump-host-address }}
-          username: ${{ secrets.jump-host-id }}
-          key: ${{ secrets.jump-host-key }}
-          proxy_host: ${{ secrets.remote-host-address }}
-          proxy_username: ${{ secrets.remote-host-id }}
-          proxy_key: ${{ secrets.remote-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          proxy_host: ${{ secrets.jump-host-address }}
+          proxy_username: ${{ secrets.jump-host-id }}
+          proxy_key: ${{ secrets.jump-host-key }}
           script: |
             docker compose -f "${{ inputs.compose-file-name }}" down || true
 
       - name: Prune images
         uses: appleboy/ssh-action@v1.2.2
         with:
-          host: ${{ secrets.jump-host-address }}
-          username: ${{ secrets.jump-host-id }}
-          key: ${{ secrets.jump-host-key }}
-          proxy_host: ${{ secrets.remote-host-address }}
-          proxy_username: ${{ secrets.remote-host-id }}
-          proxy_key: ${{ secrets.remote-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          proxy_host: ${{ secrets.jump-host-address }}
+          proxy_username: ${{ secrets.jump-host-id }}
+          proxy_key: ${{ secrets.jump-host-key }}
           script: |
             docker image prune -af || true
