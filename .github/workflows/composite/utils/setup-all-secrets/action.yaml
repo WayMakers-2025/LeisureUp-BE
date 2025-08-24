@@ -1,0 +1,41 @@
+name: Setup all secrets
+
+description: 'Setup all secret property profiles'
+
+inputs:
+  common-secret-context:
+    required: true
+    description: 'Common secret property context'
+
+  prod-secret-context:
+    required: true
+    description: 'Production secret property context'
+
+  staging-secret-context:
+    required: true
+    description: 'Staging secret property context'
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Setup common secret
+      uses: ./.github/workflows/composite/utils/save-to-file
+      with:
+        context: ${{ inputs.common-secret-context }}
+        file_dir: 'src/main/resources'
+        file_name: 'application-common-secret.yaml'
+
+    - name: Setup prod secret
+      uses: ./.github/workflows/composite/utils/save-to-file
+      with:
+        context: ${{ inputs.prod-secret-context }}
+        file_dir: 'src/main/resources'
+        file_name: 'application-prod-secret.yaml'
+
+    - name: Setup staging secret
+      uses: ./.github/workflows/composite/utils/save-to-file
+      with:
+        context: ${{ inputs.staging-secret-context }}
+        file_dir: 'src/main/resources'
+        file_name: 'application-staging-secret.yaml'

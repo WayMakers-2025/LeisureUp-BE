@@ -1,0 +1,35 @@
+{
+  "response": {
+    "header": {
+      "resultCode": "0000",
+      "resultMsg": "OK"
+    },
+    "body": {
+      "items": {
+        "item": [
+          {
+            "contentid": "2773417",
+            "contenttypeid": "28",
+            "openperiod": "",
+            "reservation": "",
+            "infocenterleports": "0507-1303-8149",
+            "scaleleports": "",
+            "accomcountleports": "",
+            "restdateleports": "연중무휴",
+            "usetimeleports": "10:00~22:00<br>※ 방문 전 예약 및 사전 문의 필수",
+            "usefeeleports": "",
+            "expagerangeleports": "",
+            "parkingleports": "가능",
+            "parkingfeeleports": "",
+            "chkbabycarriageleports": "없음",
+            "chkpetleports": "",
+            "chkcreditcardleports": "가능"
+          }
+        ]
+      },
+      "numOfRows": 1,
+      "pageNo": 1,
+      "totalCount": 1
+    }
+  }
+}

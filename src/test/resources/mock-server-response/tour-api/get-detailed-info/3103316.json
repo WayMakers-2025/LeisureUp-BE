@@ -1,0 +1,48 @@
+{
+  "response": {
+    "header": {
+      "resultCode": "0000",
+      "resultMsg": "OK"
+    },
+    "body": {
+      "items": {
+        "item": [
+          {
+            "contentid": "3103316",
+            "contenttypeid": "32",
+            "roomcount": "30",
+            "roomtype": "양실, 한실",
+            "refundregulation": "입실 7일전 50% 수수료\n입실 5일전 70% 수수료\n입실 3일전 80% 수수료\n입실 2일전 100% 수수료 발생",
+            "checkintime": "15:00",
+            "checkouttime": "11:00",
+            "chkcooking": "가능(펜션만)",
+            "seminar": "1",
+            "sports": "1",
+            "sauna": "0",
+            "beauty": "0",
+            "beverage": "1",
+            "karaoke": "0",
+            "barbecue": "1",
+            "campfire": "0",
+            "bicycle": "0",
+            "fitness": "0",
+            "publicpc": "0",
+            "publicbath": "1",
+            "subfacility": "수영장(하절기만 운영, 키즈풀), 스포츠시설(실내서핑장), 세탁실",
+            "foodplace": "있음(카페)",
+            "reservationurl": "",
+            "pickup": "불가",
+            "infocenterlodging": "055-945-8800, gosurfingpark@daum.net",
+            "parkinglodging": "가능",
+            "reservationlodging": "가능(055-945-8800, gosurfingpark@daum.net)",
+            "scalelodging": "총 30객실(리조트 18, 펜션 4, 글램핑 8)",
+            "accomcountlodging": "80"
+          }
+        ]
+      },
+      "numOfRows": 1,
+      "pageNo": 1,
+      "totalCount": 1
+    }
+  }
+}

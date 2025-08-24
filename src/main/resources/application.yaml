@@ -1,3 +1,105 @@
 spring:
-  application:
-    name: LeisureUp-BE
+  application.name: LeisureUp-BE
+  threads.virtual.enabled: true
+  modulith.events.republish-outstanding-events-on-restart: on
+
+  profiles:
+    default: local
+    group:
+      local:
+        - common-secret
+        - local-secret
+        - init-categories
+        - init-region-codes
+      staging:
+        - common-secret
+        - staging-secret
+        - file-logger
+        - discord-error-logger
+        - init-categories
+        - init-region-codes
+      prod:
+        - common-secret
+        - prod-secret
+        - file-logger
+        - discord-error-logger
+        - init-categories
+        - init-region-codes
+
+  datasource:
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+        globally_quoted_identifiers: true
+
+  data:
+    redis:
+      host: ${redis-config.host}
+      port: 6379
+      password:
+
+  cloud.openfeign.client.config.default:
+    logger-level: full
+
+springdoc:
+  cache.disabled: true
+  api-docs.groups.enabled: true
+
+  swagger-ui:
+    enabled: true
+    path: /api-doc
+    tags-sorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+
+  api-docs.path: /api-doc
+
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  show-oauth2-endpoints: true
+  show-actuator: true
+  show-login-endpoint: true
+  paths-to-match: /**
+
+feign:
+  tour-api:
+    url: http://apis.data.go.kr/B551011/KorService2
+  openid:
+    google: https://openidconnect.googleapis.com
+    kakao: https://kapi.kakao.com
+  weather:
+    warning: http://apis.data.go.kr/1360000/WthrWrnInfoService
+    forecast:
+      short-term: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+      mid-term: http://apis.data.go.kr/1360000/MidFcstInfoService
+
+mdc-key:
+  request-id: request-id
+  trace-id: trace-id
+
+logback-config:
+  # noinspection SpringBootApplicationYaml
+  log-directory: ./logs
+  # noinspection SpringBootApplicationYaml
+  discord-webhook: ${discord.webhook-url}
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+  pattern:
+    level: '[RID:%10X{${mdc-key.request-id}}] [TID:%10X{${mdc-key.trace-id}}] %5p'
+    dateformat: yyyy-MM-dd'T'HH:mm:ss.SSSz,Asia/Seoul
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      total-size-cap: 2GB
+      max-history: 7
+      clean-history-on-start: true

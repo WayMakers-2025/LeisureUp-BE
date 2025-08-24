@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<included>
+  <springProfile name="discord-error-logger">
+
+    <appender class="ch.qos.logback.classic.AsyncAppender" name="ASYNC_DISCORD">
+      <appender-ref ref="DISCORD"/>
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>ERROR</level>
+      </filter>
+    </appender>
+
+    <include resource="logback/appender/discord-appender.xml"/>
+
+    <root level="info">
+      <appender-ref ref="ASYNC_DISCORD"/>
+    </root>
+
+  </springProfile>
+</included>

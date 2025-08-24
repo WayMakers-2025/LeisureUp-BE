@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<included>
+  <springProfile name="file-logger">
+
+    <include resource="logback/appender/error-warn-file-appender.xml"/>
+
+    <root level="info">
+      <appender-ref ref="ERROR_WARN_FILE"/>
+    </root>
+
+  </springProfile>
+</included>

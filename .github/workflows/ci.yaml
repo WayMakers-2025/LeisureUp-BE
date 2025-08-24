@@ -1,0 +1,23 @@
+name: CI
+
+# Required permission for test result comment
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - prod
+      - staging
+
+jobs:
+  run-and-report-test:
+    uses: ./.github/workflows/run-test.yaml
+    with:
+      comment-test-result: true
+    secrets:
+      common-test-secret: ${{ secrets.COMMON_TEST_SECRET }}
