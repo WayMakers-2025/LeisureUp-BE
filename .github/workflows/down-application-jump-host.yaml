@@ -1,0 +1,63 @@
+name: Down application with jump host
+
+on:
+  workflow_call:
+    inputs:
+      compose-file-name:
+        required: true
+        type: string
+        description: 'Name of a docker-compose file in server to down application'
+
+    secrets:
+      jump-host-address:
+        required: true
+        description: 'An address of jump host (bastion) server'
+
+      jump-host-id:
+        required: true
+        description: 'SSH user for jump host'
+
+      jump-host-key:
+        required: true
+        description: 'SSH key for jump host'
+
+      remote-host-address:
+        required: true
+        description: 'An address of remote host (target) server that configurable on jump host'
+
+      remote-host-id:
+        required: true
+        description: 'SSH user for remote host'
+
+      remote-host-key:
+        required: true
+        description: 'SSH key for remote host'
+
+jobs:
+  down-application:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Down composed containers
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.jump-host-address }}
+          username: ${{ secrets.jump-host-id }}
+          key: ${{ secrets.jump-host-key }}
+          proxy_host: ${{ secrets.remote-host-address }}
+          proxy_username: ${{ secrets.remote-host-id }}
+          proxy_key: ${{ secrets.remote-host-key }}
+          script: |
+            docker compose -f "${{ inputs.compose-file-name }}" down || true
+
+      - name: Prune images
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.jump-host-address }}
+          username: ${{ secrets.jump-host-id }}
+          key: ${{ secrets.jump-host-key }}
+          proxy_host: ${{ secrets.remote-host-address }}
+          proxy_username: ${{ secrets.remote-host-id }}
+          proxy_key: ${{ secrets.remote-host-key }}
+          script: |
+            docker image prune -af || true

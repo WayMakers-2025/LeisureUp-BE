@@ -33,25 +33,31 @@ jobs:
 
   down-application:
     needs: run-test-for-validation
-    uses: ./.github/workflows/down-application.yaml
+    uses: ./.github/workflows/down-application-jump-host.yaml
     with:
       compose-file-name: 'docker-compose.prod.yaml'
     secrets:
-      server-address: ${{ secrets.PROD_SERVER_ADDRESS }}
-      server-id: ${{ secrets.PROD_SERVER_ID }}
-      serve-key: ${{ secrets.PROD_SERVER_KEY }}
+      jump-host-address: ${{ secrets.PROD_BASTION_ADDRESS }}
+      jump-host-id: ${{ secrets.PROD_BASTION_ID }}
+      jump-host-key: ${{ secrets.PROD_BASTION_KEY }}
+      remote-host-address: ${{ secrets.PROD_APPLICATION_ADDRESS }}
+      remote-host-id: ${{ secrets.PROD_APPLICATION_ID }}
+      remote-host-key: ${{ secrets.PROD_APPLICATION_KEY }}
 
   up-application:
     needs:
       - push-image
       - down-application
-    uses: ./.github/workflows/up-application.yaml
+    uses: ./.github/workflows/up-application-jump-host.yaml
     with:
       compose-file-name: 'docker-compose.prod.yaml'
       image-tag: "${{ github.ref_name }}-${{ github.sha }}"
     secrets:
-      server-address: ${{ secrets.PROD_SERVER_ADDRESS }}
-      server-id: ${{ secrets.PROD_SERVER_ID }}
-      serve-key: ${{ secrets.PROD_SERVER_KEY }}
+      jump-host-address: ${{ secrets.PROD_BASTION_ADDRESS }}
+      jump-host-id: ${{ secrets.PROD_BASTION_ID }}
+      jump-host-key: ${{ secrets.PROD_BASTION_KEY }}
+      remote-host-address: ${{ secrets.PROD_APPLICATION_ADDRESS }}
+      remote-host-id: ${{ secrets.PROD_APPLICATION_ID }}
+      remote-host-key: ${{ secrets.PROD_APPLICATION_KEY }}
       docker-hub-id: ${{ secrets.DOCKER_HUB_ID }}
       docker-hub-pw: ${{ secrets.DOCKER_HUB_PW }}
