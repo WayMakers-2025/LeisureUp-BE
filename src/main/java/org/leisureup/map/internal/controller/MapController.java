@@ -40,12 +40,14 @@ public class MapController {
 
     @GetMapping("/map/search")
     public ApiResponse<PageResponse<MapResponse>> search(
+            @RequestParam double x,
+            @RequestParam double y,
             @RequestParam String query,
             @RequestParam(defaultValue = "1") int pageNo,
             @RequestParam(defaultValue = "10") int pageSize) {
         return ApiResponse.success(
                 200,
-                mapService.search(query, pageNo, pageSize)
+                mapService.search(x,y,query, pageNo, pageSize)
         );
     }
 

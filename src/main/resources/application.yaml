@@ -1,6 +1,7 @@
 spring:
   application.name: LeisureUp-BE
   threads.virtual.enabled: true
+  modulith.events.republish-outstanding-events-on-restart: on
 
   profiles:
     default: local
@@ -13,15 +14,17 @@ spring:
       staging:
         - common-secret
         - staging-secret
-        - init-categories
-        - init-region-codes
         - file-logger
         - discord-error-logger
+        - init-categories
+        - init-region-codes
       prod:
         - common-secret
         - prod-secret
         - file-logger
         - discord-error-logger
+        - init-categories
+        - init-region-codes
 
   datasource:
     url: ${db.url}

@@ -39,6 +39,12 @@ public class MapResponse {
 
     public static List<MapResponse> fromTourAPI(TourApiResponse tourApiResponse, String category) {
         List<MapResponse> mapResponses = new ArrayList<>();
+        if (tourApiResponse.getResponse() == null ||
+                tourApiResponse.getResponse().getBody() == null ||
+                tourApiResponse.getResponse().getBody().getItems() == null ||
+                tourApiResponse.getResponse().getBody().getItems().getItem() == null) {
+            return mapResponses;
+        }
         for (TourApiResponse.Item item : tourApiResponse.getResponse().getBody().getItems().getItem()) {
             MapResponse build = MapResponse.builder()
                     .contentId(item.getContentid())

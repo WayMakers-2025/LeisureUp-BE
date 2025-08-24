@@ -3,6 +3,7 @@ package org.leisureup.global.config;
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.*;
 import io.swagger.v3.oas.models.security.*;
+import io.swagger.v3.oas.models.servers.*;
 import org.springframework.context.annotation.*;
 
 @Configuration
@@ -13,9 +14,17 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(components())
                 .info(info())
+                .addServersItem(server())
                 .addSecurityItem(
                         new SecurityRequirement().addList("Authorization")
                 );
+    }
+
+    @Bean
+    public Server server() {
+        return new Server()
+                .url("/")
+                .description("Swagger will use same protocol (http/https) that current page uses.");
     }
 
     @Bean
