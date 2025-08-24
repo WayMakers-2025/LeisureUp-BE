@@ -23,8 +23,6 @@ spring:
         - prod-secret
         - file-logger
         - discord-error-logger
-        - init-categories
-        - init-region-codes
 
   datasource:
     url: ${db.url}
