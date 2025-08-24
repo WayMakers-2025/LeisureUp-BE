@@ -8,6 +8,7 @@ import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.internal.service.*;
 import org.leisureup.location.spi.*;
 import org.springframework.modulith.events.*;
+import org.springframework.retry.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
 
@@ -18,6 +19,8 @@ public class LocationFetchSpiImpl implements LocationFetchSpi {
 
     private final LocationRepository locationRepo;
     private final LocationFetchService locationFetchService;
+
+    private static final long RETRY_DELAY_MS = 500L;
 
     @Override
     public boolean fetchIfLocationExists(Long locationId) {
@@ -42,9 +45,16 @@ public class LocationFetchSpiImpl implements LocationFetchSpi {
     }
 
     @Override
+    @SneakyThrows
     @ApplicationModuleListener(propagation = Propagation.REQUIRES_NEW)
+    @Retryable(
+            maxAttempts = 5,
+            retryFor = {ServerSideException.class, TourApiException.class},
+            backoff = @Backoff(delay = RETRY_DELAY_MS)
+    )
     public void onFetchLocationEvent(@Valid FetchLocationEvent event) {
         Long locationId = event.locationId();
+        log.info("Received fetch event for ID [{}]", locationId);
 
         if (locationRepo.existsById(locationId)) {
             return;
@@ -54,9 +64,9 @@ public class LocationFetchSpiImpl implements LocationFetchSpi {
             locationFetchService.fetchAndStoreLocation(locationId);
         } catch (Exception e) {
             log.error(
-                    "Failed to fetch location [{}] by [{}]",
-                    e.getClass().getSimpleName(),
-                    locationId
+                    "Failed to fetch location [{}] due to [{}]",
+                    locationId,
+                    e.getClass().getSimpleName()
             );
         }
     }
