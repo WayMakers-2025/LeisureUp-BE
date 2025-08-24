@@ -45,10 +45,14 @@ public class TravelService {
     public GetTravelDetailResponse getTravelDetail(Long travelId, Long memberId) {
         Travel travel = this.findTravel(travelId, memberId);
 
+        if (!memberId.equals(travel.getMemberId())) {
+            throw new RequestForbiddenException("자신의 여행만 조회할 수 있습니다.");
+        }
+
         List<Item> items = travel.getItems();
-        List<Long> itemIdList = items.stream().map(Item::getItemId).toList();
+        List<Long> locationIds = items.stream().map(Item::getLocationId).toList();
         // 대표 이미지 불러오기
-        String representImage = locationQueryPort.getRepresentImage(itemIdList);
+        String representImage = locationQueryPort.getRepresentImage(locationIds);
 
         // ID : Item mapping
         Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
