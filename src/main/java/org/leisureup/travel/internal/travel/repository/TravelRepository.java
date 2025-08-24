@@ -1,15 +1,19 @@
 package org.leisureup.travel.internal.travel.repository;
 
-import org.leisureup.travel.internal.travel.domain.Travel;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
-import java.util.Optional;
+import jakarta.annotation.*;
+import java.util.*;
+import org.leisureup.travel.internal.travel.domain.*;
+import org.springframework.data.jpa.repository.*;
 
 public interface TravelRepository extends JpaRepository<Travel, Long> {
     List<Travel> findByMemberId(Long memberId);
 
     Optional<Travel> findByTravelIdAndMemberId(Long travelId, Long memberId);
 
-    void deleteByTravelIdAndMemberId(Long travelId, Long memberId);
+    @Query("""
+            delete Travel t where t.travelId = :travelId
+            """)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    void deleteById(@Nonnull Long travelId);
+
 }
