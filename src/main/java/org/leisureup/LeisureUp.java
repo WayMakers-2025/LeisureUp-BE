@@ -6,8 +6,10 @@ import org.springframework.cloud.openfeign.*;
 import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.*;
 import org.springframework.modulith.*;
+import org.springframework.retry.annotation.*;
 
 @Modulithic
+@EnableRetry
 @EnableJpaAuditing
 @EnableAspectJAutoProxy
 @SpringBootApplication
