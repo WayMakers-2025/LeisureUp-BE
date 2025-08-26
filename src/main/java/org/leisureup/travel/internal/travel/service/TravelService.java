@@ -25,9 +25,9 @@ public class TravelService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
-    public List<GetAllTravelResponse> getAllTravel(Long memberId){
+    public List<GetAllTravelResponse> getAllTravel(Long memberId) {
         List<Travel> travels = travelRepository.findByMemberId((memberId));
-        if (travels.isEmpty()){
+        if (travels.isEmpty()) {
             throw new NotFound("생성된 여행이 없습니다.");
         }
         Map<Long, String> representImageMap = new HashMap<>();
@@ -38,7 +38,7 @@ public class TravelService {
             String representImage = locationQueryPort.getRepresentImage(itemIdList);
             representImageMap.put(travel.getTravelId(), representImage);
         }
-        return GetAllTravelResponse.fromTravel(travels,representImageMap);
+        return GetAllTravelResponse.fromTravel(travels, representImageMap);
     }
 
     @Transactional(readOnly = true)
@@ -88,7 +88,7 @@ public class TravelService {
     }
 
     @Transactional
-    public String addItem(Long travelId, Long locationId, Long memberId){
+    public String addItem(Long travelId, Long locationId, Long memberId) {
         Travel travel = this.findTravel(travelId, memberId);
 
         int position = travel.getItems().size();
@@ -96,7 +96,7 @@ public class TravelService {
         itemRepository.save(newItem);
 
         eventPublisher.publishEvent(new FetchLocationEvent(locationId));
-        
+
         return "성공적으로 아이템이 추가되었습니다.";
     }
 
