@@ -68,8 +68,13 @@ public class TravelService {
         for (Long id : locationInfoMap.keySet()) {
             var info = locationInfoMap.get(id);
             var item = itemMap.get(id);
-            var detail = new LocationResponseDetail(info, item.getPosition(), item.getStartTime(),
-                    item.getEndTime());
+            var detail = LocationResponseDetail.builder()
+                    .locationResponse(info)
+                    .position(item.getPosition())
+                    .startTime(item.getStartTime())
+                    .endTime(item.getEndTime())
+                    .date(item.getDate())
+                    .build();
             detailList.add(detail);
         }
         detailList.sort(java.util.Comparator.comparing(LocationResponseDetail::getPosition));

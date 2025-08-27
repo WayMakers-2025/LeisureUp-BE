@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.leisureup.global.json.FlexibleLocalDateSerializer;
 import org.leisureup.global.json.FlexibleLocalTimeSerializer;
 import org.leisureup.location.spi.LocationResponse;
 import org.leisureup.travel.internal.travel.domain.Item;
@@ -25,6 +26,8 @@ public class LocationResponseDetail {
     private LocalTime startTime;
     @JsonSerialize(using = FlexibleLocalTimeSerializer.class)
     private LocalTime endTime;
+    @JsonSerialize(using = FlexibleLocalDateSerializer.class)
+    private LocalDate date;
 
 //    public static List<LocationResponse> fromLocationResponse(List<LocationResponse> locationResponses, Item item) {
 //        List<LocationResponse> locationResponseList = new ArrayList<LocationResponse>();
