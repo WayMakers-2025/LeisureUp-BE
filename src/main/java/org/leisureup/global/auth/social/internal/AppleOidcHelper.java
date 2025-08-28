@@ -54,6 +54,8 @@ public class AppleOidcHelper {
             throw new InvalidIdentityTokenException(401, "Token has been expired.");
         } catch (IncorrectClaimException | MissingClaimException e) {
             throw new InvalidIdentityTokenException(401, "Invalid token issuer detected.");
+        } catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Unexpected exception occurred", e);
             throw new RuntimeException(e);
