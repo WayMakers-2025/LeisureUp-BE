@@ -32,6 +32,8 @@ feign:
   openid:
     google: https://openidconnect.googleapis.com
     kakao: https://kapi.kakao.com
+    apple:
+      oidc-key: https://appleid.apple.com
   weather:
     warning: http://apis.data.go.kr/1360000/WthrWrnInfoService
     forecast:
