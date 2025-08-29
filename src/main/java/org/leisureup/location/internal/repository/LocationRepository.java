@@ -1,5 +1,6 @@
 package org.leisureup.location.internal.repository;
 
+import java.time.*;
 import java.util.*;
 import org.leisureup.location.internal.domain.*;
 import org.springframework.data.domain.*;
@@ -39,4 +40,11 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             where l.locationCategory.id in :categoryIds
             """)
     List<Location> findAllByCategories(Pageable pageable, List<Long> categoryIds);
+
+    @Query("""
+            select l from Location l
+            inner join fetch l.locationCategory
+            where l.lastModifiedAt < :time
+            """)
+    List<Location> findAllLastModifiedBeforeThan(LocalDateTime time);
 }
