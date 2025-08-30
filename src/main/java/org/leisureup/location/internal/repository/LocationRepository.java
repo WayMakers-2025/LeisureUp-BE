@@ -47,4 +47,11 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             where l.lastModifiedAt < :time
             """)
     List<Location> findAllLastModifiedBeforeThan(LocalDateTime time);
+
+    @Query("""
+            update Location l set l.lastModifiedAt = current_timestamp
+            where l.id = :locationId
+            """)
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    void updateModifiedTimeFor(Long locationId);
 }
