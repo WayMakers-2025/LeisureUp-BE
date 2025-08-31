@@ -25,7 +25,6 @@ public abstract class LocationTimeStamp {
     /**
      * 우리 DB 가 마지막으로 동기화한 시각
      */
-    @CreatedDate
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastModifiedAt;
@@ -47,5 +46,9 @@ public abstract class LocationTimeStamp {
     public void synchronizeTo(LocalDateTime time) {
         this.lastChangedAt = time;
         this.lastModifiedAt = LocalDateTime.now();
+    }
+
+    public void changeModifiedTime(LocalDateTime time) {
+        this.lastModifiedAt = time;
     }
 }
