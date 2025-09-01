@@ -16,13 +16,16 @@ import org.leisureup.member.internal.dto.request.*;
 import org.leisureup.member.internal.dto.request.SaveInterestRequest.*;
 import org.leisureup.member.internal.dto.response.*;
 import org.leisureup.member.internal.repository.*;
+import org.leisureup.member.spi.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 import org.springframework.test.context.bean.override.mockito.*;
+import org.springframework.test.context.event.*;
 import org.springframework.transaction.annotation.*;
 
 @Slf4j
+@RecordApplicationEvents
 class MemberServiceTest extends IntegrationTestSupport {
 
     private static final Long invalidMemberId = Long.MAX_VALUE;
@@ -34,6 +37,9 @@ class MemberServiceTest extends IntegrationTestSupport {
             .map(MemberServiceTest::locationResponse)
             .toList();
     private static final Long existingLocationId = Long.MAX_VALUE / 2;
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    ApplicationEvents applicationEvents;
     @Autowired
     MemberService service;
     @Autowired
@@ -43,7 +49,7 @@ class MemberServiceTest extends IntegrationTestSupport {
     @Autowired
     PickRepository pickRepo;
     @Autowired
-    TestInitializer testInitializer;
+    MemberServiceTestInitializer testInitializer;
     @MockitoBean
     LocationQueryPort locationQueryPort;
     @MockitoBean
@@ -65,7 +71,9 @@ class MemberServiceTest extends IntegrationTestSupport {
 
     @BeforeEach
     void setUp() {
-        Member save = testInitializer.initializeData(locationIds);
+        applicationEvents.clear();
+
+        Member save = testInitializer.initializePicks(locationIds);
 
         when(locationQueryPort.notExists(anyLong()))
                 .thenAnswer(invocation -> {
@@ -80,7 +88,6 @@ class MemberServiceTest extends IntegrationTestSupport {
                     Long id = invocation.getArgument(0, Long.class);
                     return locationIds.contains(id) || existingLocationId.equals(id);
                 });
-
 
         testMemberId = save.getId();
     }
@@ -107,12 +114,31 @@ class MemberServiceTest extends IntegrationTestSupport {
     }
 
     @Test
+    @DisplayName("어느 사용자를 삭제할 수 있다.")
+    void deleteMember() {
+
+        service.deleteMember(testMemberId);
+
+        assertThat(memberRepo.findById(testMemberId)).isEmpty();
+
+        List<MemberRemovalEvent> publishedEvents
+                = applicationEvents.stream(MemberRemovalEvent.class).toList();
+
+        assertThat(publishedEvents).hasSize(1)
+                .element(0)
+                .satisfies(e -> assertThat(e.memberId()).isEqualTo(testMemberId));
+
+    }
+
+    @Test
     @DisplayName("니즈 수집 질문을 저장한다.")
     void saveInterest() {
 
-        var req = genReq(AgeRange.A_20);
+        var req1 = genReq(AgeRange.A_20);
+        var req2 = genReq(AgeRange.A_30);
+        var expected = InterestInfo.AgeRange.A_30;
 
-        service.saveInterest(testMemberId, req);
+        service.saveInterest(testMemberId, req1);
 
         // 정보가 정상적으로 저장된다.
         assertThat(interestRepo.findById(testMemberId))
@@ -124,6 +150,15 @@ class MemberServiceTest extends IntegrationTestSupport {
 
         assertThat(resp).isNotNull().hasNoNullFieldsOrProperties();
         assertThat(resp.hasAnswered()).isTrue();
+
+        // 다시 저장하면 정보가 수정된다.
+        service.saveInterest(testMemberId, req2);
+
+        assertThat(interestRepo.findById(testMemberId))
+                .isPresent().get()
+                .isNotNull().satisfies(
+                        itr -> assertThat(itr.getInfo().getAgeRange()).isEqualTo(expected)
+                );
     }
 
     @Test
@@ -205,13 +240,13 @@ class MemberServiceTest extends IntegrationTestSupport {
 
 @Component
 @RequiredArgsConstructor
-class TestInitializer {
+class MemberServiceTestInitializer {
 
     private final MemberRepository memberRepo;
     private final PickRepository pickRepo;
 
     @Transactional
-    Member initializeData(List<Long> locationIds) {
+    Member initializePicks(List<Long> locationIds) {
         Member save = memberRepo.save(
                 Member.of("test", "test")
         );
