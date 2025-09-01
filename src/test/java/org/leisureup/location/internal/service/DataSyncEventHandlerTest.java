@@ -193,7 +193,7 @@ class DataSyncEventHandlerTest extends IntegrationTestSupport {
 
         await()
                 .atMost(Duration.ofSeconds(5L))
-                .pollDelay(Duration.ofMillis(1000L))
+                .pollDelay(Duration.ofMillis(100L))
                 .untilAsserted(() -> {
                     Location modified = locationRepo.findById(testId)
                             .orElseThrow();
