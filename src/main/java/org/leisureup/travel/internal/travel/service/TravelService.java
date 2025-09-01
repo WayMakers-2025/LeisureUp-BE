@@ -197,55 +197,27 @@ public class TravelService {
             Travel travel = this.findTravel(travelId, memberId);
             travel.updateTravelInfo(updateTravelRequest);
 
-            if (updateTravelRequest.getItems() != null) {
+            // Full replace semantics for items
+            List<ItemRequest> reqItems = updateTravelRequest.getItems();
 
-                List<ItemRequest> reqItems = updateTravelRequest.getItems();
+            // 1) delete all existing items for this travel
+            itemRepository.deleteAllByTravelId(travelId);
+            travel.getItems().clear();
 
-                Map<Long, Item> currentByLocation = travel.getItems().stream()
-                        .collect(Collectors.toMap(Item::getLocationId, Function.identity()));
+            // 2) recreate from request
+            if (reqItems != null && !reqItems.isEmpty()) {
+                List<Item> recreated = createItemsFromRequest(reqItems, travel);
+                itemRepository.saveAll(recreated);
+                travel.getItems().addAll(recreated);
 
-                Set<Long> requestedLocationIds = reqItems.stream()
+                // 3) publish events for requested locations
+                reqItems.stream()
                         .map(ItemRequest::getLocationId)
-                        .collect(Collectors.toSet());
-
-                // 1) 삭제: 요청에 없는 항목 제거
-                List<Item> toRemove = travel.getItems().stream()
-                        .filter(existing -> !requestedLocationIds.contains(existing.getLocationId()))
-                        .toList();
-                if (!toRemove.isEmpty()) {
-                    toRemove.forEach(itemRepository::delete);
-                    travel.getItems().removeAll(toRemove);
-                }
-
-                // 2) 추가/업데이트
-                for (int i = 0; i < reqItems.size(); i++) {
-                    ItemRequest req = reqItems.get(i);
-                    Item existing = currentByLocation.get(req.getLocationId());
-                    int desiredPosition = req.getPosition() != null ? req.getPosition() : i;
-
-                    if (existing == null) {
-                        Item created = Item.buildItem(req, desiredPosition, travel);
-                        itemRepository.save(created);
-                        travel.getItems().add(created);
-                    } else {
-                        existing.updatePosition(desiredPosition);
-                        existing.updateDate(req.getDate());
-                        existing.updateTime(req.getStartTime(), req.getEndTime());
-                    }
-                }
-
-                // 3) 포지션 정규화: position 기준 정렬 후 0..n-1 재부여
-                travel.getItems().sort(Comparator.comparingInt(Item::getPosition));
-                for (int i = 0; i < travel.getItems().size(); i++) {
-                    travel.getItems().get(i).updatePosition(i);
-                }
-
-                // 4) 요청 locationId 들로 이벤트 발행
-                requestedLocationIds.stream()
                         .distinct()
                         .map(FetchLocationEvent::new)
                         .forEach(eventPublisher::publishEvent);
             }
+
             travelRepository.save(travel);
             
             return ApiResponse.success(200, "여행 정보가 성공적으로 수정되었습니다.");
