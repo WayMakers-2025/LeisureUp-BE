@@ -55,4 +55,13 @@ public class Item {
     public void updatePosition(int newPosition) {
         this.position = newPosition;
     }
+
+    public void updateDate(LocalDate newDate) {
+        this.date = newDate;
+    }
+
+    public void updateTime(LocalTime newStartTime, LocalTime newEndTime) {
+        this.startTime = newStartTime;
+        this.endTime = newEndTime;
+    }
 }
