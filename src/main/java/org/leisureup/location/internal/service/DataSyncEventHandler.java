@@ -91,7 +91,6 @@ public class DataSyncEventHandler {
         Optional<CommonInfoCache> cache = commonInfoCacheRepo.findById(locationId);
 
         if (cache.isPresent()) {
-            log.info("cache!");
             replace = cache.get().getInfo();
             commonInfoCacheRepo.delete(cache.get());
         } else {

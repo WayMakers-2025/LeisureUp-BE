@@ -22,6 +22,7 @@ public class MemberService {
     private final PickRepository pickRepo;
     private final LocationQueryPort locationQueryPort;
     private final LocationFetchSpi locationFetchSpi;
+    private final MemberRemovalService memberRemovalService;
 
     /**
      * 사용자 정보를 조회한다.
@@ -47,6 +48,24 @@ public class MemberService {
 
         String newNickname = req.nickname();
         find.changeNickname(newNickname);
+    }
+
+    /**
+     * 사용자를 삭제한다.
+     */
+    @Transactional
+    public void deleteMember(Long memberId) {
+
+        Member target = memberRepo.findById(memberId)
+                .orElseThrow(() -> new NotFound("Member not found"));
+
+        memberRemovalService.removeRelatedPicks(memberId);
+        memberRemovalService.removeRelatedInterest(memberId);
+        memberRemovalService.removeRelatedOAuths(memberId);
+
+        memberRepo.delete(target);
+
+        memberRemovalService.publishMemberRemovalEvent(memberId);
     }
 
     /**

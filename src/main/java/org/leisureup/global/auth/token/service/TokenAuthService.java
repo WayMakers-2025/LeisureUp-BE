@@ -2,13 +2,17 @@ package org.leisureup.global.auth.token.service;
 
 import java.util.*;
 import lombok.*;
+import lombok.extern.slf4j.*;
 import org.leisureup.global.auth.dto.*;
 import org.leisureup.global.auth.token.internal.*;
 import org.leisureup.global.auth.token.repository.*;
 import org.leisureup.global.exception.*;
 import org.leisureup.member.spi.*;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenAuthService {
@@ -78,5 +82,17 @@ public class TokenAuthService {
         refreshTokenRepo.save(RefreshToken.of(memberId, rt));
 
         return Tokens.of(at, rt);
+    }
+
+    @Async
+    @EventListener
+    public void handleMemberRemovalEvent(MemberRemovalEvent event) {
+        Long memberId = event.memberId();
+
+        log.info("Member removal event received with ID: {}", memberId);
+
+        refreshTokenRepo.deleteById(memberId);
+
+        log.info("Refresh token has been removed for ID: {}", memberId);
     }
 }

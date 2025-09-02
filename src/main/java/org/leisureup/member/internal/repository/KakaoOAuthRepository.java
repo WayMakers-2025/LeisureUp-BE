@@ -13,4 +13,12 @@ public interface KakaoOAuthRepository
             where ko.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(String socialId);
+
+    @Query("""
+            delete KakaoOAuth ko where ko.member.id = :memberId
+            """)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    void deleteByMemberId(Long memberId);
+
+    boolean existsByMemberId(Long memberId);
 }
