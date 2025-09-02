@@ -197,18 +197,16 @@ public class TravelService {
             Travel travel = this.findTravel(travelId, memberId);
             travel.updateTravelInfo(updateTravelRequest);
 
-            // Full replace semantics for items
+            // Full replace semantics for items (no collection manipulation on detached entity)
             List<ItemRequest> reqItems = updateTravelRequest.getItems();
 
             // 1) delete all existing items for this travel
             itemRepository.deleteAllByTravelId(travelId);
-            travel.getItems().clear();
 
             // 2) recreate from request
             if (reqItems != null && !reqItems.isEmpty()) {
                 List<Item> recreated = createItemsFromRequest(reqItems, travel);
                 itemRepository.saveAll(recreated);
-                travel.getItems().addAll(recreated);
 
                 // 3) publish events for requested locations
                 reqItems.stream()

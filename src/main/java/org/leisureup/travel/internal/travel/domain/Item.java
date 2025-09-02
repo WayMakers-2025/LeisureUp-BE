@@ -49,7 +49,9 @@ public class Item {
         return Item.builder()
                 .locationId(locationId)
                 .position(position)
-                .travel(travel).build();
+                .travel(travel)
+                .date(travel.getStartDate() != null ? travel.getStartDate() : travel.getEndDate())
+                .build();
     }
 
     public void updatePosition(int newPosition) {
