@@ -1,11 +1,12 @@
 package org.leisureup.location.spi.internal;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 import java.util.stream.*;
 import lombok.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.global.logging.*;
 import org.leisureup.location.internal.domain.*;
 import org.leisureup.location.internal.domain.AdditionalCategoryInfo.*;
 import org.leisureup.location.internal.repository.*;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
 @Component
+@LogMethodIO
 @RequiredArgsConstructor
 public class CategorySpiImpl implements CategorySpi {
 

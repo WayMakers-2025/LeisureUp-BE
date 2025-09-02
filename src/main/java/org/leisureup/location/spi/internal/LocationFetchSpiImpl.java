@@ -4,6 +4,7 @@ import jakarta.validation.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.global.logging.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.internal.service.*;
 import org.leisureup.location.spi.*;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.*;
 
 @Slf4j
 @Component
+@LogMethodIO
 @RequiredArgsConstructor
 public class LocationFetchSpiImpl implements LocationFetchSpi {
 

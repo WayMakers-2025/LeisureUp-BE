@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 import lombok.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.global.logging.*;
 import org.leisureup.global.response.*;
 import org.leisureup.location.spi.*;
 import org.leisureup.travel.internal.travel.domain.*;
@@ -15,6 +16,7 @@ import org.springframework.context.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
 
+@LogMethodIO
 @Service
 @RequiredArgsConstructor
 public class TravelService {
