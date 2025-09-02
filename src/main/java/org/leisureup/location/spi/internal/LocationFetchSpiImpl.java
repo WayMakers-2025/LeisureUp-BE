@@ -1,6 +1,5 @@
 package org.leisureup.location.spi.internal;
 
-import jakarta.validation.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
@@ -52,7 +51,7 @@ public class LocationFetchSpiImpl implements LocationFetchSpi {
             retryFor = {ServerSideException.class, TourApiException.class},
             backoff = @Backoff(delay = RETRY_DELAY_MS)
     )
-    public void onFetchLocationEvent(@Valid FetchLocationEvent event) {
+    public void onFetchLocationEvent(FetchLocationEvent event) {
         Long locationId = event.locationId();
         log.info("Received fetch event for ID [{}]", locationId);
 
