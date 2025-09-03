@@ -97,6 +97,11 @@ public class TravelService {
 
         eventPublisher.publishEvent(new FetchLocationEvent(locationId));
         
+        // Eagerly load location info to avoid empty representImage right after add
+        try {
+            locationQueryPort.getLocationListById(java.util.List.of(locationId));
+        } catch (Exception ignored) {}
+        
         return "성공적으로 아이템이 추가되었습니다.";
     }
 
@@ -207,6 +212,12 @@ public class TravelService {
             if (reqItems != null && !reqItems.isEmpty()) {
                 List<Item> recreated = createItemsFromRequest(reqItems, travel);
                 itemRepository.saveAll(recreated);
+
+                // Prefetch location info to avoid empty representImage on subsequent reads
+                try {
+                    List<Long> ids = reqItems.stream().map(ItemRequest::getLocationId).distinct().toList();
+                    locationQueryPort.getLocationListById(ids);
+                } catch (Exception ignored) {}
 
                 // 3) publish events for requested locations
                 reqItems.stream()
