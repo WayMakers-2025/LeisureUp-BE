@@ -125,31 +125,26 @@ public class TravelService {
     @Transactional
     public ApiResponse<String> createTravel(CreateTravelRequest createTravelRequest,
                                             Long memberId) {
-        try {
-            // 1. Travel 엔티티 생성 및 저장
-            Travel travel = createTravelRequest.toEntity(memberId);
-            Travel savedTravel = travelRepository.save(travel);
+        // 1. Travel 엔티티 생성 및 저장
+        Travel travel = createTravelRequest.toEntity(memberId);
+        Travel savedTravel = travelRepository.save(travel);
 
-            // 2. Item 엔티티들 생성 및 저장
-            if (createTravelRequest.getItems() != null && !createTravelRequest.getItems()
-                    .isEmpty()) {
-                List<Item> items = createItemsFromRequest(createTravelRequest.getItems(),
-                        savedTravel);
-                itemRepository.saveAll(items);
+        // 2. Item 엔티티들 생성 및 저장
+        if (createTravelRequest.getItems() != null && !createTravelRequest.getItems()
+                .isEmpty()) {
+            List<Item> items = createItemsFromRequest(createTravelRequest.getItems(),
+                    savedTravel);
+            itemRepository.saveAll(items);
 
-                // 3. Travel 엔티티에 Item들 연결
-                savedTravel.getItems().addAll(items);
+            // 3. Travel 엔티티에 Item들 연결
+            savedTravel.getItems().addAll(items);
 
-                items.stream().map(Item::getLocationId)
-                        .map(FetchLocationEvent::new)
-                        .forEach(eventPublisher::publishEvent);
-            }
-
-            return ApiResponse.success(201, "여행 정보가 성공적으로 저장되었습니다.");
-
-        } catch (Exception e) {
-            return ApiResponse.failure(500, "여행 저장 중 오류가 발생했습니다: " + e.getMessage());
+            items.stream().map(Item::getLocationId)
+                    .map(FetchLocationEvent::new)
+                    .forEach(eventPublisher::publishEvent);
         }
+
+        return ApiResponse.success(201, "여행 정보가 성공적으로 저장되었습니다.");
     }
 
     /**
