@@ -13,10 +13,15 @@ import org.springframework.stereotype.*;
 @Component
 public class MethodLoggingUtils {
 
+    private static final String VISITED = "<VISITED>";
     private static final String MASK_REPRESENTATION = "[*****]";
     private static final String UNABLE_TO_EXTRACT = "<?>";
     private static final String BASE_PACKAGE_NAME
             = LeisureUp.class.getPackage().getName();
+
+    private static Set<Integer> getNewSet() {
+        return new HashSet<>();
+    }
 
     public Method cast(JoinPoint joinPoint) {
         return ((MethodSignature) joinPoint.getSignature()).getMethod();
@@ -32,11 +37,11 @@ public class MethodLoggingUtils {
                 String returnObjClazzName = method.getReturnType().getSimpleName();
                 representation = String.format("%s%s", returnObjClazzName, MASK_REPRESENTATION);
             } else {
-                representation = representObj(returnObj);
+                representation = representObj(returnObj, getNewSet());
             }
 
             return representation;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.warn("Failed to log method returns value", e);
             return UNABLE_TO_EXTRACT;
         }
@@ -67,7 +72,7 @@ public class MethodLoggingUtils {
             }
 
             return sb.append(")").toString();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.warn("Failed to log method arguments", e);
             return UNABLE_TO_EXTRACT;
         }
@@ -80,7 +85,7 @@ public class MethodLoggingUtils {
         if (isMasked(parameter)) {
             representation = MASK_REPRESENTATION;
         } else {
-            representation = representObj(arg);
+            representation = representObj(arg, getNewSet());
         }
 
         return String.format("%s=%s", name, representation);
@@ -101,7 +106,7 @@ public class MethodLoggingUtils {
                 .anyMatch(annotation -> annotation instanceof MaskedReturn);
     }
 
-    private String representObj(Object obj) {
+    private String representObj(Object obj, Set<Integer> visited) {
 
         if (obj == null) {
             return "null";
@@ -122,7 +127,7 @@ public class MethodLoggingUtils {
         }
 
         if (obj instanceof Collection<?> col) {
-            return col.stream().map(this::representObj)
+            return col.stream().map(c -> representObj(c, visited))
                     .toList()
                     .toString();
         }
@@ -130,8 +135,8 @@ public class MethodLoggingUtils {
         if (obj instanceof Map<?, ?> map) {
             Map<String, String> representation = new HashMap<>();
             for (Map.Entry<?, ?> entry : map.entrySet()) {
-                String key = representObj(entry.getKey());
-                String value = representObj(entry.getValue());
+                String key = representObj(entry.getKey(), visited);
+                String value = representObj(entry.getValue(), visited);
                 representation.put(key, value);
             }
             return representation.toString();
@@ -141,7 +146,7 @@ public class MethodLoggingUtils {
             int length = Array.getLength(obj);
             List<String> representation = new ArrayList<>(length);
             for (int i = 0; i < length; i++) {
-                representation.add(representObj(Array.get(obj, i)));
+                representation.add(representObj(Array.get(obj, i), visited));
             }
             return representation.toString();
         }
@@ -154,6 +159,19 @@ public class MethodLoggingUtils {
             return obj.toString();
         }
 
+        int identityHashCode = System.identityHashCode(obj);
+
+        // visisted obj
+        if (!visited.add(identityHashCode)) {
+            String clazzName = obj.getClass().getSimpleName();
+            log.warn(
+                    "Circular reference detected for [{}@{}]. Truncating representation.",
+                    clazzName, obj.hashCode()
+            );
+            return String.format("%s@%s%s", clazzName, obj.hashCode(), VISITED);
+        }
+
+        // our clazz
         StringBuilder sb = new StringBuilder()
                 .append(obj.getClass().getSimpleName())
                 .append("{");
@@ -172,8 +190,8 @@ public class MethodLoggingUtils {
                 valRepresentation = MASK_REPRESENTATION;
             } else {
                 try {
-                    valRepresentation = representObj(field.get(obj));
-                } catch (Exception e) {
+                    valRepresentation = representObj(field.get(obj), visited);
+                } catch (Throwable e) {
                     valRepresentation = UNABLE_TO_EXTRACT;
                 }
             }
