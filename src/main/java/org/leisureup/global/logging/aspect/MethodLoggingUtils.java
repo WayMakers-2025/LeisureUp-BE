@@ -29,7 +29,8 @@ public class MethodLoggingUtils {
             String representation;
 
             if (isMethodReturnMasked(method)) {
-                representation = MASK_REPRESENTATION;
+                String returnObjClazzName = method.getReturnType().getSimpleName();
+                representation = String.format("%s%s", returnObjClazzName, MASK_REPRESENTATION);
             } else {
                 representation = representObj(returnObj);
             }
@@ -108,7 +109,8 @@ public class MethodLoggingUtils {
 
         // has Masked annotation on class definition?
         if (isMasked(obj)) {
-            return MASK_REPRESENTATION;
+            String clazzName = obj.getClass().getSimpleName();
+            return String.format("%s%s", clazzName, MASK_REPRESENTATION);
         }
 
         if (
