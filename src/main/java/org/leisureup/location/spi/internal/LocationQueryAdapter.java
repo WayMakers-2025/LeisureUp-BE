@@ -7,6 +7,7 @@ import java.util.stream.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.global.logging.*;
 import org.leisureup.location.internal.domain.*;
 import org.leisureup.location.internal.repository.*;
 import org.leisureup.location.spi.*;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.*;
 
 @Slf4j
 @Component
+@LogMethodIO
 @RequiredArgsConstructor
 public class LocationQueryAdapter implements LocationQueryPort {
 

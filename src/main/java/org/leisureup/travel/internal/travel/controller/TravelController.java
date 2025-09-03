@@ -1,18 +1,16 @@
 package org.leisureup.travel.internal.travel.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.leisureup.global.AuthHolder;
-import org.leisureup.global.JwtAuthRequired;
-import org.leisureup.global.response.ApiResponse;
-import org.leisureup.travel.internal.travel.dto.request.AddItemRequest;
-import org.leisureup.travel.internal.travel.dto.request.CreateTravelRequest;
-import org.leisureup.travel.internal.travel.dto.response.GetAllTravelResponse;
-import org.leisureup.travel.internal.travel.dto.response.GetTravelDetailResponse;
-import org.leisureup.travel.internal.travel.service.TravelService;
+import java.util.*;
+import lombok.*;
+import org.leisureup.global.*;
+import org.leisureup.global.logging.*;
+import org.leisureup.global.response.*;
+import org.leisureup.travel.internal.travel.dto.request.*;
+import org.leisureup.travel.internal.travel.dto.response.*;
+import org.leisureup.travel.internal.travel.service.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@LogMethodInvocation
 @RestController
 @RequiredArgsConstructor
 @JwtAuthRequired
