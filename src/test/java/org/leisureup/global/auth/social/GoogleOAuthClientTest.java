@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.*;
 import com.github.tomakehurst.wiremock.*;
 import java.io.*;
 import org.junit.jupiter.api.*;
-import org.leisureup.global.auth.social.internal.*;
+import org.leisureup.global.auth.dto.api.*;
 import org.leisureup.global.exception.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;

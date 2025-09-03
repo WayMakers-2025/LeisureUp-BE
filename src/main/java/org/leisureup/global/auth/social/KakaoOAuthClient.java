@@ -1,6 +1,7 @@
 package org.leisureup.global.auth.social;
 
 import lombok.*;
+import org.leisureup.global.auth.dto.api.*;
 import org.leisureup.global.auth.dto.request.SignInUpRequest.*;
 import org.leisureup.global.auth.social.internal.*;
 import org.springframework.cloud.openfeign.*;

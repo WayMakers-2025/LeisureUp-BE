@@ -1,4 +1,4 @@
-package org.leisureup.global.auth.social.internal;
+package org.leisureup.global.auth.dto.api;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.*;
 import com.fasterxml.jackson.databind.annotation.*;
@@ -6,14 +6,17 @@ import java.security.*;
 import org.leisureup.global.auth.social.*;
 
 @JsonNaming(SnakeCaseStrategy.class)
-public record GetUserInfoGoogle(
+public record GetUserInfoKakao(
         String sub,
         String name,
-        String givenName,
-        String familyName,
+        String nickname,
         String picture,
         String email,
-        Boolean emailVerified
+        Boolean emailVerified,
+        String gender,
+        String birthdate,
+        String phoneNumber,
+        Boolean phoneNumberVerified
 ) {
 
     public OAuthResponse toOAuthResponse() {
@@ -28,7 +31,9 @@ public record GetUserInfoGoogle(
         }
 
         return OAuthResponse.of(
-                sub, name, userEmail
+                sub,
+                name == null || name.isEmpty() ? nickname : name,
+                userEmail
         );
     }
 
@@ -37,7 +42,7 @@ public record GetUserInfoGoogle(
             throw new InvalidParameterException("sub is null");
         }
 
-        if ((name == null || name.isEmpty())) {
+        if ((name == null || name.isEmpty()) && (nickname == null || nickname.isEmpty())) {
             throw new InvalidParameterException("name is empty");
         }
     }
