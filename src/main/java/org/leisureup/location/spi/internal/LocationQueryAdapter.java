@@ -25,6 +25,8 @@ public class LocationQueryAdapter implements LocationQueryPort {
     @Override
     public LocationResponse getLocationById(Long locationId) {
 
+        LocationUtils.validateIds(locationId);
+
         Location location = locationRepo.findByIdFetchingCategory(locationId)
                 .orElseThrow(() -> new NotFound("ID 에 해당하는 장소를 찾을 수 없습니다."));
 
@@ -33,6 +35,8 @@ public class LocationQueryAdapter implements LocationQueryPort {
 
     @Override
     public List<LocationResponse> getLocationListById(List<Long> locationIds) {
+
+        LocationUtils.validateIds(locationIds);
 
         List<Location> locations = locationRepo.findAllByLocationIds(locationIds);
 
@@ -51,6 +55,7 @@ public class LocationQueryAdapter implements LocationQueryPort {
 
     @Override
     public boolean notExists(Long locationId) {
+        LocationUtils.validateIds(locationId);
         return !locationRepo.existsById(locationId);
     }
 
@@ -92,6 +97,11 @@ public class LocationQueryAdapter implements LocationQueryPort {
 
     @Override
     public String getRepresentImage(List<Long> locationIds) {
+
+        locationIds = locationIds.stream()
+                .filter(Objects::nonNull)
+                .toList();
+
         List<LocationResponse> locations = new ArrayList<>(locationIds.size());
 
         try {
@@ -191,5 +201,21 @@ class LocationUtils {
         return desc == null ? "" :
                 Optional.ofNullable(desc.largeThumbnail())
                         .orElse(desc.smallThumbnail());
+    }
+
+    static void validateIds(Long locationId) {
+        if (locationId == null || locationId <= 0L) {
+            throw new IllegalArgumentException("locationId must exists and be positive");
+        }
+    }
+
+    static void validateIds(List<Long> locationIds) {
+        if (locationIds == null) {
+            throw new IllegalArgumentException("locationIds must not be null");
+        }
+
+        for (Long locationId : locationIds) {
+            validateIds(locationId);
+        }
     }
 }

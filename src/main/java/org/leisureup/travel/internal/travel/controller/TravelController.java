@@ -1,5 +1,6 @@
 package org.leisureup.travel.internal.travel.controller;
 
+import jakarta.validation.*;
 import java.util.*;
 import lombok.*;
 import org.leisureup.global.*;
@@ -9,6 +10,7 @@ import org.leisureup.travel.internal.travel.dto.request.*;
 import org.leisureup.travel.internal.travel.dto.response.*;
 import org.leisureup.travel.internal.travel.service.*;
 import org.springframework.web.bind.annotation.*;
+
 
 @LogMethodInvocation
 @RestController
@@ -48,8 +50,11 @@ public class TravelController {
      * 여행에 Item 하나 추가
      */
     @PostMapping("/travels/{travelId}")
-    public ApiResponse<String> addItem(@PathVariable Long travelId,
-                                  AddItemRequest addItemRequest){
+    public ApiResponse<String> addItem(
+            @PathVariable Long travelId,
+            @Valid @RequestBody
+            AddItemRequest addItemRequest
+    ) {
         Long memberId = authHolder.getMemberId();
         return ApiResponse.success(
                 200,
@@ -73,7 +78,10 @@ public class TravelController {
      * 여행 생성
      */
     @PostMapping("/travels")
-    public ApiResponse<String> createTravel(@RequestBody CreateTravelRequest createTravelRequest) {
+    public ApiResponse<String> createTravel(
+            @Valid @RequestBody
+            CreateTravelRequest createTravelRequest
+    ) {
         Long memberId = authHolder.getMemberId();
         return travelService.createTravel(createTravelRequest, memberId);
     }
@@ -91,8 +99,10 @@ public class TravelController {
      * 여행 정보 수정
      */
     @PutMapping("/travels/{travelId}")
-    public ApiResponse<String> updateTravel(@PathVariable Long travelId, 
-                                           @RequestBody CreateTravelRequest updateTravelRequest) {
+    public ApiResponse<String> updateTravel(
+            @PathVariable Long travelId,
+            @Valid @RequestBody CreateTravelRequest updateTravelRequest
+    ) {
         Long memberId = authHolder.getMemberId();
         return travelService.updateTravel(travelId, updateTravelRequest, memberId);
     }

@@ -43,6 +43,12 @@ public class TravelService {
         return GetAllTravelResponse.fromTravel(travels, representImageMap);
     }
 
+    private static <K, V> Map<K, V> listToMergedValueMap(List<V> list, Function<V, K> keyMapper) {
+        // merge duplite key case
+        return list.stream()
+                .collect(Collectors.toMap(keyMapper, Function.identity(), (v1, v2) -> v1));
+    }
+
     @Transactional(readOnly = true)
     public GetTravelDetailResponse getTravelDetail(Long travelId, Long memberId) {
         Travel travel = this.findTravel(travelId, memberId);
@@ -57,36 +63,35 @@ public class TravelService {
         String representImage = locationQueryPort.getRepresentImage(locationIds);
 
         // ID : Item mapping
-        Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
+        Map<Long, List<Item>> itemMap = travel.getItems().stream()
+                .collect(Collectors.groupingBy(Item::getLocationId));
 
         // 필요한 장소 목록들 가져온 후 ID : Resp mapping
         List<LocationResponse> resp = locationQueryPort.getLocationListById(
                 new ArrayList<>(itemMap.keySet())
         );
-        Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
+        Map<Long, LocationResponse> locationInfoMap
+                = listToMergedValueMap(resp, LocationResponse::locationId);
 
         // 응답 만들기
         List<LocationResponseDetail> detailList = new ArrayList<>();
         for (Long id : locationInfoMap.keySet()) {
             var info = locationInfoMap.get(id);
-            var item = itemMap.get(id);
-            var detail = LocationResponseDetail.builder()
-                    .locationResponse(info)
-                    .position(item.getPosition())
-                    .startTime(item.getStartTime())
-                    .endTime(item.getEndTime())
-                    .date(item.getDate())
-                    .build();
-            detailList.add(detail);
+            var itemList = itemMap.get(id);
+            for (Item item : itemList) {
+                var detail = LocationResponseDetail.builder()
+                        .locationResponse(info)
+                        .position(item.getPosition())
+                        .startTime(item.getStartTime())
+                        .endTime(item.getEndTime())
+                        .date(item.getDate())
+                        .build();
+                detailList.add(detail);
+            }
         }
         detailList.sort(java.util.Comparator.comparing(LocationResponseDetail::getPosition));
 
         return GetTravelDetailResponse.fromEntity(travel, representImage, detailList);
-    }
-
-    private static <K, V> Map<K, V> listToMap(List<V> list, Function<V, K> keyMapper) {
-        return list.stream()
-                .collect(Collectors.toMap(keyMapper, Function.identity()));
     }
 
     @Transactional
