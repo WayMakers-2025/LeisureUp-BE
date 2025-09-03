@@ -34,7 +34,7 @@ public class AppleOAuthClient implements OAuthClient {
     public OAuthResponse fetchInfo(String idToken) {
 
         GetAppleOidcOpenKeys publicKeys = appleOidcClient.getAppleOidcOpenKeys();
-        String kid = appleOidcHelper.getKidClaimUnsignedFrom(idToken);
+        String kid = appleOidcHelper.getKidClaimsFrom(idToken);
 
         AppleOidcKey matchingKey = publicKeys.keys().stream()
                 .filter(k -> k.kid().equals(kid))
