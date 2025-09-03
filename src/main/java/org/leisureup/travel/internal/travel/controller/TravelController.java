@@ -51,7 +51,7 @@ public class TravelController {
      */
     @PostMapping("/travels/{travelId}")
     public ApiResponse<String> addItem(@PathVariable Long travelId,
-                                  AddItemRequest addItemRequest){
+                                  @RequestBody AddItemRequest addItemRequest){
         Long memberId = authHolder.getMemberId();
         return ApiResponse.success(
                 200,

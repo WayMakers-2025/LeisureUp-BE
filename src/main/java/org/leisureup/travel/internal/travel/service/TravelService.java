@@ -35,8 +35,9 @@ public class TravelService {
         for (Travel travel : travels) {
             List<Long> itemIdList = itemRepository.findByTravel(travel).stream()
                     .map(Item::getLocationId)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            String representImage = locationQueryPort.getRepresentImage(itemIdList);
+            String representImage = itemIdList.isEmpty() ? "" : locationQueryPort.getRepresentImage(itemIdList);
             representImageMap.put(travel.getTravelId(), representImage);
         }
         return GetAllTravelResponse.fromTravel(travels, representImageMap);
@@ -51,15 +52,21 @@ public class TravelService {
         }
 
         List<Item> items = travel.getItems();
-        List<Long> locationIds = items.stream().map(Item::getLocationId).toList();
+        List<Long> locationIds = items.stream()
+                .map(Item::getLocationId)
+                .filter(Objects::nonNull)
+                .toList();
         // 대표 이미지 불러오기
-        String representImage = locationQueryPort.getRepresentImage(locationIds);
+        String representImage = locationIds.isEmpty() ? "" : locationQueryPort.getRepresentImage(locationIds);
 
         // ID : Item mapping
-        Map<Long, Item> itemMap = listToMap(travel.getItems(), Item::getLocationId);
+        Map<Long, Item> itemMap = listToMap(
+                travel.getItems().stream().filter(i -> i.getLocationId() != null).toList(),
+                Item::getLocationId
+        );
 
         // 필요한 장소 목록들 가져온 후 ID : Resp mapping
-        List<LocationResponse> resp = locationQueryPort.getLocationListById(
+        List<LocationResponse> resp = locationIds.isEmpty() ? List.of() : locationQueryPort.getLocationListById(
                 new ArrayList<>(itemMap.keySet())
         );
         Map<Long, LocationResponse> locationInfoMap = listToMap(resp, LocationResponse::locationId);
@@ -201,13 +208,6 @@ public class TravelService {
         if (reqItems != null && !reqItems.isEmpty()) {
             List<Item> recreated = createItemsFromRequest(reqItems, travel);
             itemRepository.saveAll(recreated);
-
-            // Prefetch location info to avoid empty representImage on subsequent reads
-            try {
-                List<Long> ids = reqItems.stream().map(ItemRequest::getLocationId).distinct().toList();
-                locationQueryPort.getLocationListById(ids);
-            } catch (Exception ignored) {
-            }
 
             // 3) publish events for requested locations
             reqItems.stream()
