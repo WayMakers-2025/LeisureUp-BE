@@ -1,10 +1,13 @@
 package org.leisureup.global.auth.social.internal;
 
+import com.fasterxml.jackson.databind.*;
 import io.jsonwebtoken.*;
+import java.io.*;
 import java.math.*;
 import java.security.*;
 import java.security.spec.*;
 import java.util.*;
+import java.util.Base64.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
 import org.leisureup.global.auth.social.*;
@@ -16,15 +19,30 @@ import org.springframework.stereotype.*;
 @RequiredArgsConstructor
 public class AppleOidcHelper {
 
+    private static final String KID = "kid";
+    private static final String SUB = "sub";
     private static final String APPLE_ISS = "https://appleid.apple.com";
+    private static final Decoder base64Decoder = Base64.getUrlDecoder();
+    private final ObjectMapper objMapper;
 
-    private static String getUnsignedToken(String idToken) {
-        String[] splitToken = idToken.split("\\.");
-        if (splitToken.length != 3) {
+    private JsonNode getHeaderNodeFrom(String idToken) {
+        String[] split = idToken.split("\\.");
+
+        if (split.length != 3) {
             throw new InvalidIdentityTokenException(401, "Invalid id token encountered.");
         }
-        return splitToken[0] + "." + splitToken[1] + ".";
 
+        String header = split[0];
+        JsonNode headerNode;
+
+        try {
+            headerNode = objMapper.readTree(base64Decoder.decode(header));
+        } catch (IOException e) {
+            log.warn("Unexpected error occurred while reading header from token.", e);
+            throw new RuntimeException(e);
+        }
+
+        return headerNode;
     }
 
     private static PublicKey getRSAPublicKey(String modulus, String exponent)
@@ -42,26 +60,21 @@ public class AppleOidcHelper {
         );
     }
 
-    public String getKidClaimUnsignedFrom(String idToken) {
-        Jwt<Header, Claims> claims;
+    public String getKidClaimsFrom(String idToken) {
 
-        try {
-            claims = Jwts.parser()
-                    .requireIssuer(APPLE_ISS)
-                    .build()
-                    .parseUnsecuredClaims(getUnsignedToken(idToken));
-        } catch (ExpiredJwtException e) {
-            throw new InvalidIdentityTokenException(401, "Token has been expired.");
-        } catch (IncorrectClaimException | MissingClaimException e) {
-            throw new InvalidIdentityTokenException(401, "Invalid token issuer detected.");
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Unexpected exception occurred", e);
-            throw new RuntimeException(e);
+        JsonNode headerNode = getHeaderNodeFrom(idToken);
+        JsonNode kidValNode = headerNode.get(KID);
+
+        if (kidValNode == null) {
+            throw new InvalidIdentityTokenException(401, "Cannot find kid attribute from token.");
         }
 
-        return claims.getPayload().get("kid", String.class);
+        String kid = kidValNode.asText();
+        if (kid.isEmpty()) {
+            throw new InvalidIdentityTokenException(401, "Empty kid value found from token.");
+        }
+
+        return kid;
     }
 
     public OAuthResponse getVerifiedInfoFrom(
@@ -70,19 +83,20 @@ public class AppleOidcHelper {
         Claims jwsClaims = getOidcJwsClaimsWith(idToken, modulus, exponent)
                 .getPayload();
 
-        String sub = jwsClaims.get("sub", String.class);
-        String email = jwsClaims.get("email", String.class);
-        boolean emailVerified = jwsClaims.get("email_verified", Boolean.class);
-        boolean isPrivateEmail = jwsClaims.get("is_private_email", Boolean.class);
-
-        if (sub == null || sub.isEmpty()) {
-            log.error("Invalid sub id detected.");
-            throw new IllegalStateException("Invalid sub id detected.");
+        String sub;
+        try {
+            sub = jwsClaims.get(SUB, String.class);
+        } catch (Exception e) {
+            log.error("Unexpected error occurred", e);
+            throw new RuntimeException(e);
         }
 
-        email = email != null && emailVerified && !isPrivateEmail ? email : null;
+        if (sub == null || sub.isEmpty()) {
+            throw new InvalidIdentityTokenException(401,
+                    "Cannot find sub id attribute from token.");
+        }
 
-        return OAuthResponse.of(sub, "User", email);
+        return OAuthResponse.of(sub, "User", "");
     }
 
     private Jws<Claims> getOidcJwsClaimsWith(
