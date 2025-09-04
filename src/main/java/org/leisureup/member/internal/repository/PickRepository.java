@@ -25,4 +25,12 @@ public interface PickRepository extends JpaRepository<Pick, PickCompositeKey> {
             and p.locationId in :locationIds
             """)
     List<Long> filterLocationIdsInPick(Long memberId, List<Long> locationIds);
+
+    @Query("""
+            delete Pick p where p.member.id = :memberId
+            """)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    void deleteByMemberId(Long memberId);
+
+    boolean existsByMemberId(Long memberId);
 }

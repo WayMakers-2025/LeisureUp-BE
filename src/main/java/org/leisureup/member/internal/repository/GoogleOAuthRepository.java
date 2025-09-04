@@ -13,4 +13,12 @@ public interface GoogleOAuthRepository
             where go.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(String socialId);
+
+    @Query("""
+            delete GoogleOAuth go where go.member.id = :memberId
+            """)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    void deleteByMemberId(Long memberId);
+
+    boolean existsByMemberId(Long memberId);
 }

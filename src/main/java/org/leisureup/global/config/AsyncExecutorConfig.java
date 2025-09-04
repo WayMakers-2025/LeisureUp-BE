@@ -13,7 +13,7 @@ public class AsyncExecutorConfig {
 
     private final RequestAndTraceIdDecorator requestAndTraceIdDecorator;
 
-    @Bean
+    @Bean(name = "taskExecutor")
     public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setVirtualThreads(true);

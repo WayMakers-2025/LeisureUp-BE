@@ -68,4 +68,8 @@ public class Location extends LocationTimeStamp {
     public void changeCategory(Category category) {
         this.locationCategory = category;
     }
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
 }
