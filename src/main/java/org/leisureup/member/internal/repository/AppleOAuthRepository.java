@@ -13,4 +13,12 @@ public interface AppleOAuthRepository
             where ao.id = :socialId
             """)
     Optional<Long> findMemberIdBySocial(String socialId);
+
+    @Query("""
+            delete AppleOAuth ao where ao.member.id = :memberId
+            """)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    void deleteByMemberId(Long memberId);
+
+    boolean existsByMemberId(Long memberId);
 }

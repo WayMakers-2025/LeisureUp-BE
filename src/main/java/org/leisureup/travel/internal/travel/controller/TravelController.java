@@ -4,12 +4,15 @@ import jakarta.validation.*;
 import java.util.*;
 import lombok.*;
 import org.leisureup.global.*;
+import org.leisureup.global.logging.*;
 import org.leisureup.global.response.*;
 import org.leisureup.travel.internal.travel.dto.request.*;
 import org.leisureup.travel.internal.travel.dto.response.*;
 import org.leisureup.travel.internal.travel.service.*;
 import org.springframework.web.bind.annotation.*;
 
+
+@LogMethodInvocation
 @RestController
 @RequiredArgsConstructor
 @JwtAuthRequired
