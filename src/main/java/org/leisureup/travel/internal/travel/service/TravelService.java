@@ -3,6 +3,7 @@ package org.leisureup.travel.internal.travel.service;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
 import lombok.*;
 import org.leisureup.global.exception.*;
 import org.leisureup.global.logging.*;
@@ -36,8 +37,9 @@ public class TravelService {
         for (Travel travel : travels) {
             List<Long> itemIdList = itemRepository.findByTravel(travel).stream()
                     .map(Item::getLocationId)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            String representImage = locationQueryPort.getRepresentImage(itemIdList);
+            String representImage = itemIdList.isEmpty() ? "" : locationQueryPort.getRepresentImage(itemIdList);
             representImageMap.put(travel.getTravelId(), representImage);
         }
         return GetAllTravelResponse.fromTravel(travels, representImageMap);
@@ -58,16 +60,19 @@ public class TravelService {
         }
 
         List<Item> items = travel.getItems();
-        List<Long> locationIds = items.stream().map(Item::getLocationId).toList();
+        List<Long> locationIds = items.stream()
+                .map(Item::getLocationId)
+                .filter(Objects::nonNull)
+                .toList();
         // 대표 이미지 불러오기
-        String representImage = locationQueryPort.getRepresentImage(locationIds);
+        String representImage = locationIds.isEmpty() ? "" : locationQueryPort.getRepresentImage(locationIds);
 
         // ID : Item mapping
         Map<Long, List<Item>> itemMap = travel.getItems().stream()
                 .collect(Collectors.groupingBy(Item::getLocationId));
 
         // 필요한 장소 목록들 가져온 후 ID : Resp mapping
-        List<LocationResponse> resp = locationQueryPort.getLocationListById(
+        List<LocationResponse> resp = locationIds.isEmpty() ? List.of() : locationQueryPort.getLocationListById(
                 new ArrayList<>(itemMap.keySet())
         );
         Map<Long, LocationResponse> locationInfoMap
@@ -130,50 +135,45 @@ public class TravelService {
 
     @Transactional
     public ApiResponse<String> createTravel(CreateTravelRequest createTravelRequest,
-            Long memberId) {
-        try {
-            // 1. Travel 엔티티 생성 및 저장
-            Travel travel = createTravelRequest.toEntity(memberId);
-            Travel savedTravel = travelRepository.save(travel);
-            
-            // 2. Item 엔티티들 생성 및 저장
-            if (createTravelRequest.getItems() != null && !createTravelRequest.getItems()
-                    .isEmpty()) {
-                List<Item> items = createItemsFromRequest(createTravelRequest.getItems(),
-                        savedTravel);
-                itemRepository.saveAll(items);
-                
-                // 3. Travel 엔티티에 Item들 연결
-                savedTravel.getItems().addAll(items);
+                                            Long memberId) {
+        // 1. Travel 엔티티 생성 및 저장
+        Travel travel = createTravelRequest.toEntity(memberId);
+        Travel savedTravel = travelRepository.save(travel);
 
-                items.stream().map(Item::getLocationId)
-                        .map(FetchLocationEvent::new)
-                        .forEach(eventPublisher::publishEvent);
-            }
-            
-            return ApiResponse.success(201, "여행 정보가 성공적으로 저장되었습니다.");
-            
-        } catch (Exception e) {
-            return ApiResponse.failure(500, "여행 저장 중 오류가 발생했습니다: " + e.getMessage());
+        // 2. Item 엔티티들 생성 및 저장
+        if (createTravelRequest.getItems() != null && !createTravelRequest.getItems()
+                .isEmpty()) {
+            List<Item> items = createItemsFromRequest(createTravelRequest.getItems(),
+                    savedTravel);
+            itemRepository.saveAll(items);
+
+            // 3. Travel 엔티티에 Item들 연결
+            savedTravel.getItems().addAll(items);
+
+            items.stream().map(Item::getLocationId)
+                    .map(FetchLocationEvent::new)
+                    .forEach(eventPublisher::publishEvent);
         }
+
+        return ApiResponse.success(201, "여행 정보가 성공적으로 저장되었습니다.");
     }
-    
+
     /**
      * ItemRequest 리스트를 Item 엔티티 리스트로 변환 position이 null인 경우 자동으로 순차적으로 할당
      */
     private List<Item> createItemsFromRequest(List<ItemRequest> itemRequests, Travel travel) {
         List<Item> items = new ArrayList<>();
-        
+
         for (int i = 0; i < itemRequests.size(); i++) {
             ItemRequest itemRequest = itemRequests.get(i);
-            
+
             // position이 null이면 인덱스 기반으로 자동 할당
             int position = itemRequest.getPosition() != null ? itemRequest.getPosition() : i;
-            
+
             Item item = Item.buildItem(itemRequest, position, travel);
             items.add(item);
         }
-        
+
         return items;
     }
 
@@ -199,65 +199,30 @@ public class TravelService {
 
     @Transactional
     public ApiResponse<String> updateTravel(Long travelId, CreateTravelRequest updateTravelRequest,
-            Long memberId) {
-        try {
-            Travel travel = this.findTravel(travelId, memberId);
-            travel.updateTravelInfo(updateTravelRequest);
+                                            Long memberId) {
+        itemRepository.deleteAllByTravelId(travelId);
 
-            if (updateTravelRequest.getItems() != null) {
+        Travel travel = this.findTravel(travelId, memberId);
+        travel.updateTravelInfo(updateTravelRequest);
 
-                List<ItemRequest> reqItems = updateTravelRequest.getItems();
+        // Full replace semantics for items (no collection manipulation on detached entity)
+        List<ItemRequest> reqItems = updateTravelRequest.getItems();
 
-                Map<Long, Item> currentByLocation = travel.getItems().stream()
-                        .collect(Collectors.toMap(Item::getLocationId, Function.identity()));
+        // 2) recreate from request
+        if (reqItems != null && !reqItems.isEmpty()) {
+            List<Item> recreated = createItemsFromRequest(reqItems, travel);
+            itemRepository.saveAll(recreated);
 
-                Set<Long> requestedLocationIds = reqItems.stream()
-                        .map(ItemRequest::getLocationId)
-                        .collect(Collectors.toSet());
-
-                // 1) 삭제: 요청에 없는 항목 제거
-                List<Item> toRemove = travel.getItems().stream()
-                        .filter(existing -> !requestedLocationIds.contains(existing.getLocationId()))
-                        .toList();
-                if (!toRemove.isEmpty()) {
-                    toRemove.forEach(itemRepository::delete);
-                    travel.getItems().removeAll(toRemove);
-                }
-
-                // 2) 추가/업데이트
-                for (int i = 0; i < reqItems.size(); i++) {
-                    ItemRequest req = reqItems.get(i);
-                    Item existing = currentByLocation.get(req.getLocationId());
-                    int desiredPosition = req.getPosition() != null ? req.getPosition() : i;
-
-                    if (existing == null) {
-                        Item created = Item.buildItem(req, desiredPosition, travel);
-                        itemRepository.save(created);
-                        travel.getItems().add(created);
-                    } else {
-                        existing.updatePosition(desiredPosition);
-                        existing.updateDate(req.getDate());
-                        existing.updateTime(req.getStartTime(), req.getEndTime());
-                    }
-                }
-
-                // 3) 포지션 정규화: position 기준 정렬 후 0..n-1 재부여
-                travel.getItems().sort(Comparator.comparingInt(Item::getPosition));
-                for (int i = 0; i < travel.getItems().size(); i++) {
-                    travel.getItems().get(i).updatePosition(i);
-                }
-
-                // 4) 요청 locationId 들로 이벤트 발행
-                requestedLocationIds.stream()
-                        .distinct()
-                        .map(FetchLocationEvent::new)
-                        .forEach(eventPublisher::publishEvent);
-            }
-            travelRepository.save(travel);
-            
-            return ApiResponse.success(200, "여행 정보가 성공적으로 수정되었습니다.");
-        } catch (Exception e) {
-            return ApiResponse.failure(500, "여행 수정 중 오류가 발생했습니다: " + e.getMessage());
+            // 3) publish events for requested locations
+            reqItems.stream()
+                    .map(ItemRequest::getLocationId)
+                    .distinct()
+                    .map(FetchLocationEvent::new)
+                    .forEach(eventPublisher::publishEvent);
         }
+
+        travelRepository.save(travel);
+
+        return ApiResponse.success(200, "여행 정보가 성공적으로 수정되었습니다.");
     }
 }

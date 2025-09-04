@@ -120,6 +120,7 @@ public class LocationQueryAdapter implements LocationQueryPort {
                 .filter(Objects::nonNull)
                 .map(LocationUtils::getFirstAvailableThumbnail)
                 .filter(Objects::nonNull)
+                .filter(s->!s.isEmpty())
                 .findFirst()
                 .orElse("");
     }
