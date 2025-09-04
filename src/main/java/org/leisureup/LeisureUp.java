@@ -7,9 +7,11 @@ import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.*;
 import org.springframework.modulith.*;
 import org.springframework.retry.annotation.*;
+import org.springframework.scheduling.annotation.*;
 
 @Modulithic
 @EnableRetry
+@EnableScheduling
 @EnableJpaAuditing
 @EnableAspectJAutoProxy
 @SpringBootApplication

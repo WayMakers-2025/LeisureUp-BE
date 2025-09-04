@@ -3,8 +3,10 @@ package org.leisureup.travel.internal.travel.service;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
 import lombok.*;
 import org.leisureup.global.exception.*;
+import org.leisureup.global.logging.*;
 import org.leisureup.global.response.*;
 import org.leisureup.location.spi.*;
 import org.leisureup.travel.internal.travel.domain.*;
@@ -15,6 +17,7 @@ import org.springframework.context.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
 
+@LogMethodIO
 @Service
 @RequiredArgsConstructor
 public class TravelService {
@@ -34,8 +37,9 @@ public class TravelService {
         for (Travel travel : travels) {
             List<Long> itemIdList = itemRepository.findByTravel(travel).stream()
                     .map(Item::getLocationId)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            String representImage = locationQueryPort.getRepresentImage(itemIdList);
+            String representImage = itemIdList.isEmpty() ? "" : locationQueryPort.getRepresentImage(itemIdList);
             representImageMap.put(travel.getTravelId(), representImage);
         }
         return GetAllTravelResponse.fromTravel(travels, representImageMap);
@@ -56,16 +60,19 @@ public class TravelService {
         }
 
         List<Item> items = travel.getItems();
-        List<Long> locationIds = items.stream().map(Item::getLocationId).toList();
+        List<Long> locationIds = items.stream()
+                .map(Item::getLocationId)
+                .filter(Objects::nonNull)
+                .toList();
         // 대표 이미지 불러오기
-        String representImage = locationQueryPort.getRepresentImage(locationIds);
+        String representImage = locationIds.isEmpty() ? "" : locationQueryPort.getRepresentImage(locationIds);
 
         // ID : Item mapping
         Map<Long, List<Item>> itemMap = travel.getItems().stream()
                 .collect(Collectors.groupingBy(Item::getLocationId));
 
         // 필요한 장소 목록들 가져온 후 ID : Resp mapping
-        List<LocationResponse> resp = locationQueryPort.getLocationListById(
+        List<LocationResponse> resp = locationIds.isEmpty() ? List.of() : locationQueryPort.getLocationListById(
                 new ArrayList<>(itemMap.keySet())
         );
         Map<Long, LocationResponse> locationInfoMap
@@ -128,32 +135,27 @@ public class TravelService {
 
     @Transactional
     public ApiResponse<String> createTravel(CreateTravelRequest createTravelRequest,
-            Long memberId) {
-        try {
-            // 1. Travel 엔티티 생성 및 저장
-            Travel travel = createTravelRequest.toEntity(memberId);
-            Travel savedTravel = travelRepository.save(travel);
+                                            Long memberId) {
+        // 1. Travel 엔티티 생성 및 저장
+        Travel travel = createTravelRequest.toEntity(memberId);
+        Travel savedTravel = travelRepository.save(travel);
 
-            // 2. Item 엔티티들 생성 및 저장
-            if (createTravelRequest.getItems() != null && !createTravelRequest.getItems()
-                    .isEmpty()) {
-                List<Item> items = createItemsFromRequest(createTravelRequest.getItems(),
-                        savedTravel);
-                itemRepository.saveAll(items);
+        // 2. Item 엔티티들 생성 및 저장
+        if (createTravelRequest.getItems() != null && !createTravelRequest.getItems()
+                .isEmpty()) {
+            List<Item> items = createItemsFromRequest(createTravelRequest.getItems(),
+                    savedTravel);
+            itemRepository.saveAll(items);
 
-                // 3. Travel 엔티티에 Item들 연결
-                savedTravel.getItems().addAll(items);
+            // 3. Travel 엔티티에 Item들 연결
+            savedTravel.getItems().addAll(items);
 
-                items.stream().map(Item::getLocationId)
-                        .map(FetchLocationEvent::new)
-                        .forEach(eventPublisher::publishEvent);
-            }
-
-            return ApiResponse.success(201, "여행 정보가 성공적으로 저장되었습니다.");
-
-        } catch (Exception e) {
-            return ApiResponse.failure(500, "여행 저장 중 오류가 발생했습니다: " + e.getMessage());
+            items.stream().map(Item::getLocationId)
+                    .map(FetchLocationEvent::new)
+                    .forEach(eventPublisher::publishEvent);
         }
+
+        return ApiResponse.success(201, "여행 정보가 성공적으로 저장되었습니다.");
     }
 
     /**
@@ -197,38 +199,30 @@ public class TravelService {
 
     @Transactional
     public ApiResponse<String> updateTravel(Long travelId, CreateTravelRequest updateTravelRequest,
-            Long memberId) {
-        try {
-            Travel travel = this.findTravel(travelId, memberId);
-            travel.updateTravelInfo(updateTravelRequest);
+                                            Long memberId) {
+        itemRepository.deleteAllByTravelId(travelId);
 
-            if (updateTravelRequest.getItems() != null && !updateTravelRequest.getItems()
-                    .isEmpty()) {
-                for (ItemRequest itemRequest : updateTravelRequest.getItems()) {
+        Travel travel = this.findTravel(travelId, memberId);
+        travel.updateTravelInfo(updateTravelRequest);
 
-                    // 해당 locationId를 가진 기존 item 찾기
-                    travel.getItems().stream()
-                            .filter(item -> item.getLocationId()
-                                    .equals(itemRequest.getLocationId()))
-                            .findFirst()
-                            .ifPresent(item -> {
-                                // position 업데이트
-                                item.updatePosition(itemRequest.getPosition());
-                            });
-                }
+        // Full replace semantics for items (no collection manipulation on detached entity)
+        List<ItemRequest> reqItems = updateTravelRequest.getItems();
 
-                // 요청으로 전달된 locationId 들에 대해 DB 저장을 트리거하는 이벤트 발행
-                updateTravelRequest.getItems().stream()
-                        .map(ItemRequest::getLocationId)
-                        .distinct()
-                        .map(FetchLocationEvent::new)
-                        .forEach(eventPublisher::publishEvent);
-            }
-            travelRepository.save(travel);
+        // 2) recreate from request
+        if (reqItems != null && !reqItems.isEmpty()) {
+            List<Item> recreated = createItemsFromRequest(reqItems, travel);
+            itemRepository.saveAll(recreated);
 
-            return ApiResponse.success(200, "여행 정보가 성공적으로 수정되었습니다.");
-        } catch (Exception e) {
-            return ApiResponse.failure(500, "여행 수정 중 오류가 발생했습니다: " + e.getMessage());
+            // 3) publish events for requested locations
+            reqItems.stream()
+                    .map(ItemRequest::getLocationId)
+                    .distinct()
+                    .map(FetchLocationEvent::new)
+                    .forEach(eventPublisher::publishEvent);
         }
+
+        travelRepository.save(travel);
+
+        return ApiResponse.success(200, "여행 정보가 성공적으로 수정되었습니다.");
     }
 }

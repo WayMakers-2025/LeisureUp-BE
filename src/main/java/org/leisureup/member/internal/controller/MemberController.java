@@ -49,6 +49,13 @@ public class MemberController {
         return ApiResponse.success(204, null);
     }
 
+    @DeleteMapping  // 멤버 삭제
+    public ApiResponse<?> deleteMember() {
+        Long memberId = authHolder.getMemberId();
+        memberService.deleteMember(memberId);
+
+        return ApiResponse.success(204, null);
+    }
 
     @PostMapping("/interest")       // 니즈 수집 질문 응답 저장
     public ApiResponse<?> saveInterest(
