@@ -102,25 +102,13 @@ public class LocationQueryAdapter implements LocationQueryPort {
                 .filter(Objects::nonNull)
                 .toList();
 
-        List<LocationResponse> locations = new ArrayList<>(locationIds.size());
-
-        try {
-            locations.addAll(this.getLocationListById(locationIds));
-        } catch (NotFound ignored) {
-            // ignored
-        } catch (Exception e) {
-            log.warn(
-                    "Unexpected error [{}] occurred while try to get represent image with ids: [{}]",
-                    e.getClass().getSimpleName(), locationIds, e
-            );
-        }
-
-        return locations.stream()
+        return locationRepo.findAllByLocationIds(locationIds).stream()
+                .map(LocationUtils::toRecord)
                 .map(LocationResponse::description)
                 .filter(Objects::nonNull)
                 .map(LocationUtils::getFirstAvailableThumbnail)
                 .filter(Objects::nonNull)
-                .filter(s->!s.isEmpty())
+                .filter(s -> !s.isEmpty())
                 .findFirst()
                 .orElse("");
     }
