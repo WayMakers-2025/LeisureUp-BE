@@ -154,17 +154,6 @@ public enum Earth {
                     """.trim(),
             "https://waymakers-from-staging.s3.ap-northeast-2.amazonaws.com/public-assets/backend/hunting.jpg",
             List.of(SuitableSeason.ANY)
-    ), AutoCamping(
-            "오토캠핑", "A03021700",
-            "",
-            """
-                    """.trim(),
-            "",
-            "",
-            """
-                    """.trim(),
-            "",
-            List.of(SuitableSeason.SPRING)
     ), ShootingRange(
             "사격장", "A03021600",
             encodeCodes("bc", "b", "bc", "bd", "b"),
