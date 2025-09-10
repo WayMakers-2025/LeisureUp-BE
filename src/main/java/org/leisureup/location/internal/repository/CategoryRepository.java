@@ -14,6 +14,33 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             where c.id in :categoryIds
             """)
     List<Category> findAllByCategoryId(List<Long> categoryIds);
-           
-    List<Category> findAllBy(Pageable pageable);
+
+    @Query("""
+            select c from Category c
+            where type(c) = CatEarth or
+                type(c) = CatWater or
+                type(c) = CatSky
+            """)
+    List<Category> findAllEWSCategories();
+
+    @Query("""
+            select count(c) from Category c
+            where type(c) = CatEarth or
+                type(c) = CatWater or
+                type(c) = CatSky
+            """)
+    long countEWSCategories();
+
+    @Query(value = """
+            select c from Category c
+            where type(c) = CatEarth or
+                type(c) = CatWater or
+                type(c) = CatSky
+            """, countQuery = """
+            select count(c) from Category c
+            where type(c) = CatEarth or
+                type(c) = CatWater or
+                type(c) = CatSky
+            """)
+    List<Category> findAllEWSCategoriesBy(Pageable pageable);
 }

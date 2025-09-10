@@ -43,7 +43,7 @@ class CategoryServiceTest extends IntegrationTestSupport {
             infos.add(gen(id, Cat.SKY));
         }
 
-        when(categorySpi.getAllCategories()).thenReturn(infos);
+        when(categorySpi.getAllEWSCategories()).thenReturn(infos);
     }
 
     @Test

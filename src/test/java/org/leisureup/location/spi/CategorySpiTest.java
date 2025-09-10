@@ -42,12 +42,12 @@ class CategorySpiTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("모든 카테고리 정보를 조회할 수 있다.")
-    void getAllCategories() {
+    @DisplayName("땅, 물, 하늘 카테고리 정보를 조회할 수 있다.")
+    void getAllEWSCategories() {
 
-        List<CategoryInfo> resp = categorySpi.getAllCategories();
+        List<CategoryInfo> resp = categorySpi.getAllEWSCategories();
 
-        assertThat(resp).hasSize(3)
+        assertThat(resp).hasSize(2)
                 .doesNotContainNull();
 
         for (var one : resp) {
@@ -101,11 +101,11 @@ class CategorySpiTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("랜덤한 카테고리를 제공받을 수 있다.")
-    void getAnyCategories() {
+    @DisplayName("랜덤한 땅, 물, 하늘 카테고리를 제공받을 수 있다.")
+    void getAnyEWSCategories() {
 
         int max = 3;    // id1, 2, 3 --> max 3
-        List<CategoryInfo> resp = categorySpi.getAnyCategories(max);
+        List<CategoryInfo> resp = categorySpi.getAnyEWSCategories(max);
 
         assertThat(resp).isNotNull();
         for (var one : resp) {
