@@ -19,7 +19,7 @@ public class CategoryService {
      */
     public GetAllCategoriesResponse getAllCategories() {
 
-        List<CategoryInfo> allCategories = categorySpi.getAllCategories();
+        List<CategoryInfo> allCategories = categorySpi.getAllEWSCategories();
 
         var earths = CategoryServiceUtil.toResponse(
                 allCategories, CategoryServiceUtil::filterEarths
