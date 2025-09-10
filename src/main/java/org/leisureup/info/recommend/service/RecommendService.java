@@ -33,12 +33,12 @@ public class RecommendService {
     private final PrioritizingService prioritizingService;
 
     /**
-     * 로그인 하지 않은 사용자에게 임의의 카테고리 (레저 종류) 목록을 추천
+     * 로그인 하지 않은 사용자에게 임의의 카테고리 (땅, 물, 하늘 레저 종류) 목록을 추천
      */
     public List<CategoryRecommendation> recommendOnAnonymous() {
 
         List<CategoryInfo> categories
-                = categorySpi.getAnyCategories(DEFAULT_RECOMMENDING_CATEGORY_SIZE);
+                = categorySpi.getAnyEWSCategories(DEFAULT_RECOMMENDING_CATEGORY_SIZE);
 
         return categories.stream()
                 .map(RecommendServiceUtil::toResponse)
@@ -64,8 +64,8 @@ public class RecommendService {
             return this.recommendOnAnonymous();
         }
 
-        // 모든 카테고리 중
-        List<CategoryInfo> allCategories = categorySpi.getAllCategories();
+        // 모든 땅, 물, 하늘 카테고리 중
+        List<CategoryInfo> allCategories = categorySpi.getAllEWSCategories();
 
         // 사용자가 관심있는 카테고리만 끌어내 반환한다.
         return prioritizingService.prioritize(
@@ -83,7 +83,7 @@ public class RecommendService {
 
         // 모든 카테고리를 가져온다.
         // 카테고리 중 현재 계절에 적합한 카테고리만 filter, ID 만 가져온다.
-        List<Long> seasonCategoryIds = categorySpi.getAllCategories().stream()
+        List<Long> seasonCategoryIds = categorySpi.getAllEWSCategories().stream()
                 .filter(RecommendServiceUtil::filterOnCurrentSeason)
                 .map(CategoryInfo::id)
                 .toList();

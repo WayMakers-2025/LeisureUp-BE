@@ -22,8 +22,8 @@ public class CategorySpiImpl implements CategorySpi {
     private final CategoryRepository categoryRepo;
 
     @Override
-    public List<CategoryInfo> getAllCategories() {
-        return categoryRepo.findAll().stream()
+    public List<CategoryInfo> getAllEWSCategories() {
+        return categoryRepo.findAllEWSCategories().stream()
                 .map(CategorySpiUtil::toRecord)
                 .toList();
     }
@@ -56,15 +56,15 @@ public class CategorySpiImpl implements CategorySpi {
     }
 
     @Override
-    public List<CategoryInfo> getAnyCategories(int maxElements) {
+    public List<CategoryInfo> getAnyEWSCategories(int maxElements) {
 
-        long cnt = categoryRepo.count();
+        long cnt = categoryRepo.countEWSCategories();
 
         if (cnt == 0) {
             return Collections.emptyList();
         }
 
-        List<Category> categories = categoryRepo.findAllBy(
+        List<Category> categories = categoryRepo.findAllEWSCategoriesBy(
                 CategorySpiUtil.randomPageRequest(maxElements, cnt)
         );
 
