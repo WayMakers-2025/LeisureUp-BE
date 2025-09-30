@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+app-type: BLUE
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: green
+
+app-type: GREEN
