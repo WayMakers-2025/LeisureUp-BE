@@ -9,11 +9,15 @@ spring:
       local:
         - common-secret
         - local-secret
+        - blue-green
+        - blue
         - init-categories
         - init-region-codes
       staging:
         - common-secret
         - staging-secret
+        - blue-green
+        - blue
         - file-logger
         - discord-error-logger
         - init-categories
@@ -21,6 +25,8 @@ spring:
       prod:
         - common-secret
         - prod-secret
+        - blue-green
+        - blue
         - file-logger
         - discord-error-logger
 
