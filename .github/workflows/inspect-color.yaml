@@ -1,0 +1,66 @@
+name: Inspect deploy color
+
+on:
+  workflow_call:
+    inputs:
+      max_attempts:
+        required: true
+        type: number
+        description: 'Health check max attempts'
+
+      timeout:
+        required: true
+        type: number
+        description: 'Health check timeout'
+
+    outputs:
+      success:
+        value: ${{ jobs.inspect-color.outputs.success }}
+        description: 'Whether health check succeeded'
+
+      type:
+        value: ${{ jobs.inspect-color.outputs.type }}
+        description: '[BLUE|GREEN]'
+
+    secrets:
+      health-check-api:
+        required: true
+        description: 'Health check API'
+
+jobs:
+  inspect-color:
+    runs-on: ubuntu-latest
+    outputs:
+      success: ${{ steps.health_check.outputs.success }}
+      type: ${{ steps.health_check.outputs.type }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Change health check script permission
+        run: chmod +x ./health-check.sh
+
+      - name: Inspect color
+        id: health_check
+        shell: bash
+        run: |
+          # run health check script
+          HEALTH_CHECK_RESULT=$(./health-check.sh \
+            -u "${{ secrets.health-check-api }}"  \
+            -m "${{ inputs.max_attempts }}" \
+            -t "${{ inputs.timeout }}"  )
+          
+          # parse result
+          SUCCESS=$(echo "${HEALTH_CHECK_RESULT}" | grep '^success=' | cut -d= -f2)
+          TYPE=$(echo "${HEALTH_CHECK_RESULT}" | grep '^type=' | cut -d= -f2)
+          
+          # abort if health bad
+          if [[ "${SUCCESS}" != "true" || ("${TYPE}" != "BLUE" && "${TYPE}" != "GREEN") ]]; then
+            echo "Health check failed"
+            exit 1
+          fi
+          
+          # transfer result to workflow output
+          echo "success=${SUCCESS}" >> $GITHUB_OUTPUT
+          echo "type=${TYPE}" >> $GITHUB_OUTPUT

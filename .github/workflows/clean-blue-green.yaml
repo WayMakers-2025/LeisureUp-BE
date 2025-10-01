@@ -1,0 +1,92 @@
+name: Clean blue green
+
+on:
+  workflow_call:
+    inputs:
+      compose-file-name:
+        required: true
+        type: string
+        description: 'A name of compose file to up service'
+
+      prune-blue:
+        required: true
+        type: boolean
+        description: 'Whether to clean blue version on call'
+
+      blue-name:
+        required: true
+        type: string
+        description: 'Service name for blue app container'
+
+      green-name:
+        required: true
+        type: string
+        description: 'Service name for green app container'
+
+    secrets:
+      bastion-host-address:
+        required: true
+        description: 'An address of bastion host server'
+
+      bastion-host-id:
+        required: true
+        description: 'SSH user for bastion host'
+
+      bastion-host-key:
+        required: true
+        description: 'SSH key for bastion host'
+
+      remote-host-address:
+        required: true
+        description: 'An address of remote host (target) server that configurable on jump host'
+
+      remote-host-id:
+        required: true
+        description: 'SSH user for remote host'
+
+      remote-host-key:
+        required: true
+        description: 'SSH key for remote host'
+
+jobs:
+  prune-prev-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Down blue service
+        if: ${{ inputs.prune-blue }}
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          proxy_host: ${{ secrets.bastion-host-address }}
+          proxy_username: ${{ secrets.bastion-host-id }}
+          proxy_key: ${{ secrets.bastion-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          script: |
+            docker compose -f "${{ inputs.compose-file-name }}" down ${{ inputs.blue-name }} || true
+
+      - name: Down green service
+        if: ${{ ! inputs.prune-blue }}
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          proxy_host: ${{ secrets.bastion-host-address }}
+          proxy_username: ${{ secrets.bastion-host-id }}
+          proxy_key: ${{ secrets.bastion-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          script: |
+            docker compose -f "${{ inputs.compose-file-name }}" down ${{ inputs.green-name }} || true
+
+      - name: Prune images
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          proxy_host: ${{ secrets.bastion-host-address }}
+          proxy_username: ${{ secrets.bastion-host-id }}
+          proxy_key: ${{ secrets.bastion-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          script: |
+            docker image prune -af || true
