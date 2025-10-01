@@ -22,7 +22,7 @@ ROLLBACK_DIR=''       # required  -rd, --rollback-dir
 ROLLBACK_NAME=''      # required  -rn, --rollback-name
 
 # logging utility
-LOGGING="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/./logging.sh"
+LOGGING="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../common/logging.sh"
 log() {
   bash "${LOGGING}" -m "${1}" -t "${2}"
 }
