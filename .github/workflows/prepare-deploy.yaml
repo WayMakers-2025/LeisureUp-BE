@@ -40,16 +40,16 @@ on:
 
 env:
   base-script-dir: "./blue-green"
+  rollback-script: "./blue-green/rollback.sh"
 
-  common-script-dir: "${{ env.base-script-dir }}/common"
-  bastion-script-dir: "${{ env.base-script-dir }}/bastion-host"
-  app-script-dir: "${{ env.base-script-dir }}/app-instance"
+  common-script-dir: "./blue-green/common"
+  common-scripts: "./blue-green/common/*.sh"
 
-  common-scripts: "${{ env.common-script-dir }}/*.sh"
-  bastion-scripts: "${{ env.bastion-script-dir }}/*.sh"
-  app-scripts: "${{ env.app-script-dir }}/*.sh"
+  bastion-script-dir: "./blue-green/bastion-host"
+  bastion-scripts: "./blue-green/bastion-host/*.sh"
 
-  rollback-script: "${{ env.base-script-dir }}/rollback.sh"
+  app-script-dir: "./blue-green/app-instance"
+  app-scripts: "./blue-green/app-instance/*.sh"
 
   compose-file-path: "${{ inputs.compose-file-dir }}/${{ inputs.compose-file-name }}"
 

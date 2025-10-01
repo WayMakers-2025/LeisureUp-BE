@@ -97,14 +97,21 @@ env:
   image-to-pull: "waymakers/leisureupbe:${{ inputs.image-tag }}"
 
   base-script-dir: "./blue-green"
-  app-script-dir: "${{ env.base-script-dir }}/app-instance"
-  bastion-script-dir: "${{ env.base-script-dir }}/bastion-host"
+  rollback-script: "./blue-green/rollback.sh"
+
+  app-script-dir: "./blue-green/app-instance"
+  up-container-script: "./blue-green/app-instance/up-container.sh"
+
+  bastion-script-dir: "./blue-green/bastion-host"
+  health-check-script: "./blue-green/bastion-host/assert-health-check.sh"
+  switch-to-blue-script: "./blue-green/bastion-host/switch-to-blue.sh"
+  switch-to-green-script: "./blue-green/bastion-host/switch-to-green.sh"
+
+  rollback-path: "${{ inputs.rollback-dir }}/${{ inputs.rollback-name }}"
 
 jobs:
   deploy-app:
     runs-on: ubuntu-latest
-    env:
-      up-container-script: "${{ env.app-script-dir }}/up-conatiner.sh"
 
     steps:
       - name: Pull docker image
@@ -164,10 +171,6 @@ jobs:
   deploy-bastion:
     runs-on: ubuntu-latest
     needs: deploy-app
-    env:
-      health-check-script: "${{ env.bastion-script-dir }}/assert-health-check.sh"
-      switch-to-blue-script: "${{ env.bastion-script-dir }}/switch-to-blue.sh"
-      switch-to-green-script: "${{ env.bastion-script-dir }}/switch-to-green.sh"
 
     steps:
       - name: Check blue health
@@ -269,9 +272,6 @@ jobs:
   rollback:
     runs-on: ubuntu-latest
     if: failure()
-    env:
-      rollback-script: "${{ env.base-script-dir }}/rollback.sh"
-      rollback-path: "${{ inputs.rollback-dir }}/${{ inputs.rollback-name }}"
 
     steps:
       - name: Rollback bastion deploy

@@ -11,22 +11,6 @@ permissions:
   checks: write
   pull-requests: write
 
-env:
-  health-check-max-attempts: 50
-  health-check-timeout: 5
-
-  image-tag: "${{ github.ref_name }}-${{ github.sha }}"
-
-  blue-name: 'app-blue'
-  green-name: 'app-green'
-
-  rollback-directory: './.rollback'
-  rollback-file-name: 'rollback-commands'
-
-  compose-file-dir: './'
-  compose-file-name: 'docker-compose.prod.blue-green.yaml'
-
-
 jobs:
   # 0
   run-test-for-validation:
@@ -40,8 +24,8 @@ jobs:
   inspect-color:
     uses: ./.github/workflows/inspect-color.yaml
     with:
-      max_attempts: ${{ env.health-check-max-attempts }}
-      timeout: ${{ env.health-check-timeout }}
+      max_attempts: 30
+      timeout: 5
     secrets:
       health-check-api: ${{ secrets.PROD_HEALTH_CHECK_API }}
 
@@ -52,7 +36,7 @@ jobs:
       - inspect-color
     uses: ./.github/workflows/push-docker-image.yaml
     with:
-      tags: ${{ env.image-tag }}
+      tags: "${{ github.ref_name }}-${{ github.sha }}"
     secrets:
       docker-hub-id: ${{ secrets.DOCKER_HUB_ID }}
       docker-hub-pw: ${{ secrets.DOCKER_HUB_PW }}
@@ -67,8 +51,8 @@ jobs:
       - inspect-color
     uses: ./.github/workflows/prepare-deploy.yaml
     with:
-      compose-file-dir: ${{ env.compose-file-dir }}
-      compose-file-name: ${{ env.compose-file-name }}
+      compose-file-dir: "./"
+      compose-file-name: "docker-compose.prod.blue-green.yaml"
     secrets:
       bastion-host-address: ${{ secrets.PROD_BASTION_ADDRESS }}
       bastion-host-id: ${{ secrets.PROD_BASTION_ID }}
@@ -85,15 +69,15 @@ jobs:
       - inspect-color
     uses: ./.github/workflows/deploy-blue-green.yaml
     with:
-      image-tag: ${{ env.image-tag }}
-      rollback-dir: ${{ env.rollback-directory }}
-      rollback-name: ${{ env.rollback-file-name }}
-      compose-file-name: ${{ env.compose-file-name }}
+      image-tag: "${{ github.ref_name }}-${{ github.sha }}"
+      rollback-dir: "./.rollback"
+      rollback-name: "rollback-commands"
+      compose-file-name: "docker-compose.prod.blue-green.yaml"
       to-blue: ${{ needs.inspect-color.outputs.type == 'BLUE' }}
-      blue-name: ${{ env.blue-name }}
-      green-name: ${{ env.green-name }}
-      health-check-max-attempts: ${{ env.health-check-max-attempts }}
-      health-check-timeout: ${{ env.health-check-timeout }}
+      blue-name: "app-blue"
+      green-name: "app-green"
+      health-check-max-attempts: 60
+      health-check-timeout: 5
     secrets:
       bastion-host-address: ${{ secrets.PROD_BASTION_ADDRESS }}
       bastion-host-id: ${{ secrets.PROD_BASTION_ID }}
@@ -114,10 +98,10 @@ jobs:
       - inspect-color
     uses: ./.github/workflows/clean-blue-green.yaml
     with:
-      compose-file-name: ${{ env.compose-file-name }}
+      compose-file-name: "docker-compose.prod.blue-green.yaml"
       prune-blue: ${{ needs.inspect-color.outputs.type == 'GREEN' }}
-      blue-name: ${{ env.blue-name }}
-      green-name: ${{ env.green-name }}
+      blue-name: "app-blue"
+      green-name: "app-green"
     secrets:
       bastion-host-address: ${{ secrets.PROD_BASTION_ADDRESS }}
       bastion-host-id: ${{ secrets.PROD_BASTION_ID }}
