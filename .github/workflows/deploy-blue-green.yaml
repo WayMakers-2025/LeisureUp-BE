@@ -124,9 +124,9 @@ jobs:
           username: ${{ secrets.remote-host-id }}
           key: ${{ secrets.remote-host-key }}
           script: |
-            echo ${{ secrets.docker-hub-pw }} | \
-            docker login -u ${{ secrets.docker-hub-id }} --password-stdin
-            docker pull ${{ env.image-to-pull }}
+            echo "${{ secrets.docker-hub-pw }}" | \
+            docker login -u "${{ secrets.docker-hub-id }}" --password-stdin
+            docker pull "${{ env.image-to-pull }}"
             docker logout
 
       - name: Up blue instance
@@ -141,11 +141,12 @@ jobs:
           host: ${{ secrets.remote-host-address }}
           username: ${{ secrets.remote-host-id }}
           key: ${{ secrets.remote-host-key }}
-          script: |
-            ${{ env.up-container-script }} \ 
+          envs: IMAGE_TAG
+          script: |   # no white space should exists after '\'
+            ${{ env.up-container-script }} \
             -c "${{ inputs.blue-name }}" \
-            -cp "${{ inputs.compose-file-name }}" \ 
-            -rd "${{ inputs.rollback-dir }}" \ 
+            -cp "${{ inputs.compose-file-name }}" \
+            -rd "${{ inputs.rollback-dir }}" \
             -rn "${{ inputs.rollback-name }}"
 
       - name: Up green instance
@@ -160,11 +161,12 @@ jobs:
           host: ${{ secrets.remote-host-address }}
           username: ${{ secrets.remote-host-id }}
           key: ${{ secrets.remote-host-key }}
-          script: |
-            ${{ env.up-container-script }} \ 
+          envs: IMAGE_TAG
+          script: |   # no white space should exists after '\'
+            ${{ env.up-container-script }} \
             -c "${{ inputs.green-name }}" \
-            -cp "${{ inputs.compose-file-name }}" \ 
-            -rd "${{ inputs.rollback-dir }}" \ 
+            -cp "${{ inputs.compose-file-name }}" \
+            -rd "${{ inputs.rollback-dir }}" \
             -rn "${{ inputs.rollback-name }}"
 
 
@@ -180,11 +182,11 @@ jobs:
           host: ${{ secrets.bastion-host-address }}
           username: ${{ secrets.bastion-host-id }}
           key: ${{ secrets.bastion-host-key }}
-          script: |
+          script: |   # no white space should exists after '\'
             ${{ env.health-check-script }} \
-            -u "${{ secrets.health-check-api-blue }} \
-            -m "${{ inputs.health-check-max-attempts }} \
-            -t "${{ inputs.health-check-timeout }}
+            -u "${{ secrets.health-check-api-blue }}" \
+            -m "${{ inputs.health-check-max-attempts }}" \
+            -t "${{ inputs.health-check-timeout }}"
 
       - name: Check green health
         if: ${{ ! inputs.to-blue }}
@@ -193,11 +195,11 @@ jobs:
           host: ${{ secrets.bastion-host-address }}
           username: ${{ secrets.bastion-host-id }}
           key: ${{ secrets.bastion-host-key }}
-          script: |
+          script: |   # no white space should exists after '\'
             ${{ env.health-check-script }} \
-            -u "${{ secrets.health-check-api-green }} \
-            -m "${{ inputs.health-check-max-attempts }} \
-            -t "${{ inputs.health-check-timeout }}
+            -u "${{ secrets.health-check-api-green }}" \
+            -m "${{ inputs.health-check-max-attempts }}" \
+            -t "${{ inputs.health-check-timeout }}"
 
       - name: Switch to blue
         if: ${{ inputs.to-blue }}
@@ -206,10 +208,10 @@ jobs:
           host: ${{ secrets.bastion-host-address }}
           username: ${{ secrets.bastion-host-id }}
           key: ${{ secrets.bastion-host-key }}
-          script: |
+          script: |   # no white space should exists after '\'
             ${{ env.switch-to-blue-script }} \
-            -rd ${{ inputs.rollback-dir }} \
-            -rn ${{ inputs.rollback-name }}
+            -rd "${{ inputs.rollback-dir }}" \
+            -rn "${{ inputs.rollback-name }}"
 
       - name: Switch to green
         if: ${{ ! inputs.to-blue }}
@@ -218,10 +220,10 @@ jobs:
           host: ${{ secrets.bastion-host-address }}
           username: ${{ secrets.bastion-host-id }}
           key: ${{ secrets.bastion-host-key }}
-          script: |
+          script: |   # no white space should exists after '\'
             ${{ env.switch-to-green-script }} \
-            -rd ${{ inputs.rollback-dir }} \
-            -rn ${{ inputs.rollback-name }}
+            -rd "${{ inputs.rollback-dir }}" \
+            -rn "${{ inputs.rollback-name }}"
 
 
   inspect-color:
@@ -271,6 +273,10 @@ jobs:
 
   rollback:
     runs-on: ubuntu-latest
+    needs:
+      - deploy-app
+      - deploy-bastion
+      - validate-color
     if: failure()
 
     steps:

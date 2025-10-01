@@ -73,7 +73,7 @@ jobs:
       rollback-dir: "./.rollback"
       rollback-name: "rollback-commands"
       compose-file-name: "docker-compose.prod.blue-green.yaml"
-      to-blue: ${{ needs.inspect-color.outputs.type == 'BLUE' }}
+      to-blue: ${{ needs.inspect-color.outputs.type == 'GREEN' }}
       blue-name: "app-blue"
       green-name: "app-green"
       health-check-max-attempts: 60
@@ -89,7 +89,7 @@ jobs:
       docker-hub-pw: ${{ secrets.DOCKER_HUB_PW }}
       health-check-api: ${{ secrets.PROD_HEALTH_CHECK_API }}
       health-check-api-blue: ${{ secrets.PROD_HEALTH_CHECK_API_BLUE }}
-      health-check-api-green: ${{ secrets.PROD_HELATH_CHECK_API_GREEN }}
+      health-check-api-green: ${{ secrets.PROD_HEALTH_CHECK_API_GREEN }}
 
   # 3
   clean:
@@ -99,7 +99,7 @@ jobs:
     uses: ./.github/workflows/clean-blue-green.yaml
     with:
       compose-file-name: "docker-compose.prod.blue-green.yaml"
-      prune-blue: ${{ needs.inspect-color.outputs.type == 'GREEN' }}
+      prune-blue: ${{ needs.inspect-color.outputs.type == 'BLUE' }}
       blue-name: "app-blue"
       green-name: "app-green"
     secrets:

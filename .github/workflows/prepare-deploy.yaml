@@ -39,17 +39,9 @@ on:
         description: 'SSH key for remote host'
 
 env:
-  base-script-dir: "./blue-green"
-  rollback-script: "./blue-green/rollback.sh"
-
-  common-script-dir: "./blue-green/common"
-  common-scripts: "./blue-green/common/*.sh"
-
-  bastion-script-dir: "./blue-green/bastion-host"
-  bastion-scripts: "./blue-green/bastion-host/*.sh"
-
-  app-script-dir: "./blue-green/app-instance"
-  app-scripts: "./blue-green/app-instance/*.sh"
+  target-dir: "./"
+  script-dir: "./blue-green"
+  scripts: "./blue-green/*"
 
   compose-file-path: "${{ inputs.compose-file-dir }}/${{ inputs.compose-file-name }}"
 
@@ -61,35 +53,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy common scripts
+      - name: Copy scripts
         uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.bastion-host-address }}
           username: ${{ secrets.bastion-host-id }}
           key: ${{ secrets.bastion-host-key }}
           overwrite: true
-          source: ${{ env.common-scripts }}
-          target: ${{ env.common-script-dir }}
-
-      - name: Copy bastion scripts
-        uses: appleboy/scp-action@v1.0.0
-        with:
-          host: ${{ secrets.bastion-host-address }}
-          username: ${{ secrets.bastion-host-id }}
-          key: ${{ secrets.bastion-host-key }}
-          overwrite: true
-          source: ${{ env.bastion-scripts }}
-          target: ${{ env.bastion-script-dir }}
-
-      - name: Copy rollback script
-        uses: appleboy/scp-action@v1.0.0
-        with:
-          host: ${{ secrets.bastion-host-address }}
-          username: ${{ secrets.bastion-host-id }}
-          key: ${{ secrets.bastion-host-key }}
-          overwrite: true
-          source: ${{ env.rollback-script }}
-          target: ${{ env.base-script-dir }}
+          source: ${{ env.scripts }}
+          target: ${{ env.target-dir }}
 
       - name: Change script permissions
         uses: appleboy/ssh-action@v1.2.2
@@ -97,7 +69,7 @@ jobs:
           host: ${{ secrets.bastion-host-address }}
           username: ${{ secrets.bastion-host-id }}
           key: ${{ secrets.bastion-host-key }}
-          script: chmod -R +x ${{ env.base-script-dir }}
+          script: chmod -R +x ${{ env.script-dir }}
 
   prepare-app-instance:
     runs-on: ubuntu-latest
@@ -106,7 +78,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy common scripts
+      - name: Copy scripts
         uses: appleboy/scp-action@v1.0.0
         with:
           proxy_host: ${{ secrets.bastion-host-address }}
@@ -116,34 +88,8 @@ jobs:
           username: ${{ secrets.remote-host-id }}
           key: ${{ secrets.remote-host-key }}
           overwrite: true
-          source: ${{ env.common-scripts }}
-          target: ${{ env.common-script-dir }}
-
-      - name: Copy app scripts
-        uses: appleboy/scp-action@v1.0.0
-        with:
-          proxy_host: ${{ secrets.bastion-host-address }}
-          proxy_username: ${{ secrets.bastion-host-id }}
-          proxy_key: ${{ secrets.bastion-host-key }}
-          host: ${{ secrets.remote-host-address }}
-          username: ${{ secrets.remote-host-id }}
-          key: ${{ secrets.remote-host-key }}
-          overwrite: true
-          source: ${{ env.app-scripts }}
-          target: ${{ env.app-script-dir }}
-
-      - name: Copy rollback script
-        uses: appleboy/scp-action@v1.0.0
-        with:
-          proxy_host: ${{ secrets.bastion-host-address }}
-          proxy_username: ${{ secrets.bastion-host-id }}
-          proxy_key: ${{ secrets.bastion-host-key }}
-          host: ${{ secrets.remote-host-address }}
-          username: ${{ secrets.remote-host-id }}
-          key: ${{ secrets.remote-host-key }}
-          overwrite: true
-          source: ${{ env.rollback-script }}
-          target: ${{ env.base-script-dir }}
+          source: ${{ env.scripts }}
+          target: ${{ env.target-dir }}
 
       - name: Change script permissions
         uses: appleboy/ssh-action@v1.2.2
@@ -154,7 +100,7 @@ jobs:
           host: ${{ secrets.remote-host-address }}
           username: ${{ secrets.remote-host-id }}
           key: ${{ secrets.remote-host-key }}
-          script: chmod -R +x ${{ env.base-script-dir }}
+          script: chmod -R +x ${{ env.script-dir }}
 
       - name: Copy compose file
         uses: appleboy/scp-action@v1.0.0
