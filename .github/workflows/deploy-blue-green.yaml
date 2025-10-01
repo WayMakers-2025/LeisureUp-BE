@@ -1,0 +1,296 @@
+name: Deploy blue green
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        required: true
+        type: string
+        description: 'Image tag to deploy'
+
+      rollback-dir:
+        required: true
+        type: string
+        description: 'Directory where rollback commands to be stored'
+
+      rollback-name:
+        required: true
+        type: string
+        description: 'File name where rollback commands to be stored'
+
+      compose-file-name:
+        required: true
+        type: string
+        description: 'A name of compose file to up service'
+
+      to-blue:
+        required: true
+        type: boolean
+        description: 'Whether to deploy blue version on call'
+
+      blue-name:
+        required: true
+        type: string
+        description: 'Service name for blue app container'
+
+      green-name:
+        required: true
+        type: string
+        description: 'Service name for green app container'
+
+      health-check-max-attempts:
+        required: true
+        type: number
+        description: 'Health check max attempts'
+
+      health-check-timeout:
+        required: true
+        type: number
+        description: 'Health check timeout'
+
+    secrets:
+      bastion-host-address:
+        required: true
+        description: 'An address of bastion host server'
+
+      bastion-host-id:
+        required: true
+        description: 'SSH user for bastion host'
+
+      bastion-host-key:
+        required: true
+        description: 'SSH key for bastion host'
+
+      remote-host-address:
+        required: true
+        description: 'An address of remote host (target) server that configurable on jump host'
+
+      remote-host-id:
+        required: true
+        description: 'SSH user for remote host'
+
+      remote-host-key:
+        required: true
+        description: 'SSH key for remote host'
+
+      docker-hub-id:
+        required: true
+        description: 'DockerHub ID'
+
+      docker-hub-pw:
+        required: true
+        description: 'DockerHub PW'
+
+      health-check-api:
+        required: true
+        description: 'Health check api to verify version switch'
+
+      health-check-api-blue:
+        required: true
+        description: 'Health check api for blue app container from bastion host'
+
+      health-check-api-green:
+        required: true
+        description: 'Health check api for green app container from bastion host'
+
+env:
+  image-to-pull: "waymakers/leisureupbe:${{ inputs.image-tag }}"
+
+  base-script-dir: "./blue-green"
+  rollback-script: "./blue-green/rollback.sh"
+
+  app-script-dir: "./blue-green/app-instance"
+  up-container-script: "./blue-green/app-instance/up-container.sh"
+
+  bastion-script-dir: "./blue-green/bastion-host"
+  health-check-script: "./blue-green/bastion-host/assert-health-check.sh"
+  switch-to-blue-script: "./blue-green/bastion-host/switch-to-blue.sh"
+  switch-to-green-script: "./blue-green/bastion-host/switch-to-green.sh"
+
+  rollback-path: "${{ inputs.rollback-dir }}/${{ inputs.rollback-name }}"
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull docker image
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          proxy_host: ${{ secrets.bastion-host-address }}
+          proxy_username: ${{ secrets.bastion-host-id }}
+          proxy_key: ${{ secrets.bastion-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          script: |
+            echo ${{ secrets.docker-hub-pw }} | \
+            docker login -u ${{ secrets.docker-hub-id }} --password-stdin
+            docker pull ${{ env.image-to-pull }}
+            docker logout
+
+      - name: Up blue instance
+        if: ${{ inputs.to-blue }}
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          IMAGE_TAG: ${{ inputs.image-tag }}
+        with:
+          proxy_host: ${{ secrets.bastion-host-address }}
+          proxy_username: ${{ secrets.bastion-host-id }}
+          proxy_key: ${{ secrets.bastion-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          script: |
+            ${{ env.up-container-script }} \ 
+            -c "${{ inputs.blue-name }}" \
+            -cp "${{ inputs.compose-file-name }}" \ 
+            -rd "${{ inputs.rollback-dir }}" \ 
+            -rn "${{ inputs.rollback-name }}"
+
+      - name: Up green instance
+        if: ${{ ! inputs.to-blue }}
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          IMAGE_TAG: ${{ inputs.image-tag }}
+        with:
+          proxy_host: ${{ secrets.bastion-host-address }}
+          proxy_username: ${{ secrets.bastion-host-id }}
+          proxy_key: ${{ secrets.bastion-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          script: |
+            ${{ env.up-container-script }} \ 
+            -c "${{ inputs.green-name }}" \
+            -cp "${{ inputs.compose-file-name }}" \ 
+            -rd "${{ inputs.rollback-dir }}" \ 
+            -rn "${{ inputs.rollback-name }}"
+
+
+  deploy-bastion:
+    runs-on: ubuntu-latest
+    needs: deploy-app
+
+    steps:
+      - name: Check blue health
+        if: ${{ inputs.to-blue }}
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.bastion-host-address }}
+          username: ${{ secrets.bastion-host-id }}
+          key: ${{ secrets.bastion-host-key }}
+          script: |
+            ${{ env.health-check-script }} \
+            -u "${{ secrets.health-check-api-blue }} \
+            -m "${{ inputs.health-check-max-attempts }} \
+            -t "${{ inputs.health-check-timeout }}
+
+      - name: Check green health
+        if: ${{ ! inputs.to-blue }}
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.bastion-host-address }}
+          username: ${{ secrets.bastion-host-id }}
+          key: ${{ secrets.bastion-host-key }}
+          script: |
+            ${{ env.health-check-script }} \
+            -u "${{ secrets.health-check-api-green }} \
+            -m "${{ inputs.health-check-max-attempts }} \
+            -t "${{ inputs.health-check-timeout }}
+
+      - name: Switch to blue
+        if: ${{ inputs.to-blue }}
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.bastion-host-address }}
+          username: ${{ secrets.bastion-host-id }}
+          key: ${{ secrets.bastion-host-key }}
+          script: |
+            ${{ env.switch-to-blue-script }} \
+            -rd ${{ inputs.rollback-dir }} \
+            -rn ${{ inputs.rollback-name }}
+
+      - name: Switch to green
+        if: ${{ ! inputs.to-blue }}
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.bastion-host-address }}
+          username: ${{ secrets.bastion-host-id }}
+          key: ${{ secrets.bastion-host-key }}
+          script: |
+            ${{ env.switch-to-green-script }} \
+            -rd ${{ inputs.rollback-dir }} \
+            -rn ${{ inputs.rollback-name }}
+
+
+  inspect-color:
+    needs:
+      - deploy-app
+      - deploy-bastion
+    uses: ./.github/workflows/inspect-color.yaml
+    with:
+      max_attempts: ${{ inputs.health-check-max-attempts }}
+      timeout: ${{ inputs.health-check-timeout }}
+    secrets:
+      health-check-api: ${{ secrets.health-check-api }}
+
+
+  validate-color:
+    runs-on: ubuntu-latest
+    needs: inspect-color
+
+    steps:
+      - name: Check blue transition
+        if: ${{ inputs.to-blue }}
+        shell: bash
+        run: |
+          if [[ "${{ needs.inspect-color.outputs.success }}" != "true" ]]; then
+            echo "Health check has been failed"
+            exit 1
+          fi
+          
+          if [[ "${{ needs.inspect-color.outputs.type }}" != "BLUE" ]]; then
+            echo "Color mismatch"
+            exit 1
+          fi
+
+      - name: Check green transition
+        if: ${{ ! inputs.to-blue }}
+        shell: bash
+        run: |
+          if [[ "${{ needs.inspect-color.outputs.success }}" != "true" ]]; then
+            echo "Health check has been failed"
+            exit 1
+          fi
+          
+          if [[ "${{ needs.inspect-color.outputs.type }}" != "GREEN" ]]; then
+            echo "Color mismatch"
+            exit 1
+          fi
+
+  rollback:
+    runs-on: ubuntu-latest
+    if: failure()
+
+    steps:
+      - name: Rollback bastion deploy
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.bastion-host-address }}
+          username: ${{ secrets.bastion-host-id }}
+          key: ${{ secrets.bastion-host-key }}
+          script: |
+            ${{ env.rollback-script }} -r "${{ env.rollback-path }}"
+
+      - name: Rollback app deploy
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          proxy_host: ${{ secrets.bastion-host-address }}
+          proxy_username: ${{ secrets.bastion-host-id }}
+          proxy_key: ${{ secrets.bastion-host-key }}
+          host: ${{ secrets.remote-host-address }}
+          username: ${{ secrets.remote-host-id }}
+          key: ${{ secrets.remote-host-key }}
+          script: |
+            ${{ env.rollback-script }} -r "${{ env.rollback-path }}"

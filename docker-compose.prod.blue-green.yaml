@@ -1,0 +1,55 @@
+name: prod-blue-green-compose
+
+services:
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+
+    restart: on-failure
+    networks:
+      - LeisureUpBE-net
+
+  app-blue:
+    container_name: app-blue
+    image: waymakers/leisureupbe:${IMAGE_TAG}
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod,blue"
+
+    volumes:
+      - ./logs:/LeisureUp-BE/logs
+
+    depends_on:
+      - redis
+    networks:
+      - LeisureUpBE-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  app-green:
+    container_name: app-green
+    image: waymakers/leisureupbe:${IMAGE_TAG}
+
+    ports:
+      - "8081:8080"
+
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod,green"
+
+    volumes:
+      - ./logs:/LeisureUp-BE/logs
+
+    depends_on:
+      - redis
+    networks:
+      - LeisureUpBE-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  LeisureUpBE-net: { }
