@@ -1,9 +1,7 @@
 name: CD prod
 
-on:
-  push:
-    branches:
-      - prod
+# disabled due to blue/green cd
+on: workflow_dispatch
 
 permissions:
   contents: read

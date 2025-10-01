@@ -1,0 +1,127 @@
+name: CD prod blue/green
+
+on:
+  push:
+    branches:
+      - prod
+
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
+env:
+  health-check-max-attempts: 50
+  health-check-timeout: 5
+
+  image-tag: "${{ github.ref_name }}-${{ github.sha }}"
+
+  blue-name: 'app-blue'
+  green-name: 'app-green'
+
+  rollback-directory: './.rollback'
+  rollback-file-name: 'rollback-commands'
+
+  compose-file-dir: './'
+  compose-file-name: 'docker-compose.prod.blue-green.yaml'
+
+
+jobs:
+  # 0
+  run-test-for-validation:
+    uses: ./.github/workflows/run-test.yaml
+    with:
+      comment-test-result: false
+    secrets:
+      common-test-secret: ${{ secrets.COMMON_TEST_SECRET }}
+
+  # 0
+  inspect-color:
+    uses: ./.github/workflows/inspect-color.yaml
+    with:
+      max_attempts: ${{ env.health-check-max-attempts }}
+      timeout: ${{ env.health-check-timeout }}
+    secrets:
+      health-check-api: ${{ secrets.PROD_HEALTH_CHECK_API }}
+
+  # 1
+  push-image:
+    needs:
+      - run-test-for-validation
+      - inspect-color
+    uses: ./.github/workflows/push-docker-image.yaml
+    with:
+      tags: ${{ env.image-tag }}
+    secrets:
+      docker-hub-id: ${{ secrets.DOCKER_HUB_ID }}
+      docker-hub-pw: ${{ secrets.DOCKER_HUB_PW }}
+      common-secret: ${{ secrets.COMMON_SECRET }}
+      prod-secret: ${{ secrets.PROD_SECRET }}
+      staging-secret: ${{ secrets.STAGING_SECRET }}
+
+  # 1
+  prepare-deploy:
+    needs:
+      - run-test-for-validation
+      - inspect-color
+    uses: ./.github/workflows/prepare-deploy.yaml
+    with:
+      compose-file-dir: ${{ env.compose-file-dir }}
+      compose-file-name: ${{ env.compose-file-name }}
+    secrets:
+      bastion-host-address: ${{ secrets.PROD_BASTION_ADDRESS }}
+      bastion-host-id: ${{ secrets.PROD_BASTION_ID }}
+      bastion-host-key: ${{ secrets.PROD_BASTION_KEY }}
+      remote-host-address: ${{ secrets.PROD_APPLICATION_ADDRESS }}
+      remote-host-id: ${{ secrets.PROD_APPLICATION_ID }}
+      remote-host-key: ${{ secrets.PROD_APPLICATION_KEY }}
+
+  # 2
+  deploy:
+    needs:
+      - prepare-deploy
+      - push-image
+      - inspect-color
+    uses: ./.github/workflows/deploy-blue-green.yaml
+    with:
+      image-tag: ${{ env.image-tag }}
+      rollback-dir: ${{ env.rollback-directory }}
+      rollback-name: ${{ env.rollback-file-name }}
+      compose-file-name: ${{ env.compose-file-name }}
+      to-blue: ${{ needs.inspect-color.outputs.type == 'BLUE' }}
+      blue-name: ${{ env.blue-name }}
+      green-name: ${{ env.green-name }}
+      health-check-max-attempts: ${{ env.health-check-max-attempts }}
+      health-check-timeout: ${{ env.health-check-timeout }}
+    secrets:
+      bastion-host-address: ${{ secrets.PROD_BASTION_ADDRESS }}
+      bastion-host-id: ${{ secrets.PROD_BASTION_ID }}
+      bastion-host-key: ${{ secrets.PROD_BASTION_KEY }}
+      remote-host-address: ${{ secrets.PROD_APPLICATION_ADDRESS }}
+      remote-host-id: ${{ secrets.PROD_APPLICATION_ID }}
+      remote-host-key: ${{ secrets.PROD_APPLICATION_KEY }}
+      docker-hub-id: ${{ secrets.DOCKER_HUB_ID }}
+      docker-hub-pw: ${{ secrets.DOCKER_HUB_PW }}
+      health-check-api: ${{ secrets.PROD_HEALTH_CHECK_API }}
+      health-check-api-blue: ${{ secrets.PROD_HEALTH_CHECK_API_BLUE }}
+      health-check-api-green: ${{ secrets.PROD_HELATH_CHECK_API_GREEN }}
+
+  # 3
+  clean:
+    needs:
+      - deploy
+      - inspect-color
+    uses: ./.github/workflows/clean-blue-green.yaml
+    with:
+      compose-file-name: ${{ env.compose-file-name }}
+      prune-blue: ${{ needs.inspect-color.outputs.type == 'GREEN' }}
+      blue-name: ${{ env.blue-name }}
+      green-name: ${{ env.green-name }}
+    secrets:
+      bastion-host-address: ${{ secrets.PROD_BASTION_ADDRESS }}
+      bastion-host-id: ${{ secrets.PROD_BASTION_ID }}
+      bastion-host-key: ${{ secrets.PROD_BASTION_KEY }}
+      remote-host-address: ${{ secrets.PROD_APPLICATION_ADDRESS }}
+      remote-host-id: ${{ secrets.PROD_APPLICATION_ID }}
+      remote-host-key: ${{ secrets.PROD_APPLICATION_KEY }}
