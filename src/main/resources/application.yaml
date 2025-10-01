@@ -26,7 +26,6 @@ spring:
         - common-secret
         - prod-secret
         - blue-green
-        - blue
         - file-logger
         - discord-error-logger
 
